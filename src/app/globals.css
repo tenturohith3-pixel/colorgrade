@@ -1,0 +1,272 @@
+@import "tailwindcss";
+@plugin "daisyui" {
+  themes: dark --default;
+}
+
+:root {
+  --background: #09090b;
+  --foreground: #fafafa;
+  --accent: #a78bfa;
+  --accent-warm: #f59e0b;
+  --accent-cool: #38bdf8;
+  --glass-bg: rgba(255, 255, 255, 0.03);
+  --glass-border: rgba(255, 255, 255, 0.06);
+  --glass-hover: rgba(255, 255, 255, 0.06);
+  --gradient-1: linear-gradient(135deg, #a78bfa 0%, #ec4899 50%, #f59e0b 100%);
+  --gradient-2: linear-gradient(135deg, #38bdf8 0%, #a78bfa 50%, #ec4899 100%);
+  --surface: rgba(15, 15, 20, 0.8);
+  --surface-elevated: rgba(25, 25, 35, 0.9);
+}
+
+@theme inline {
+  --color-background: var(--background);
+  --color-foreground: var(--foreground);
+  --color-accent: var(--accent);
+  --color-accent-warm: var(--accent-warm);
+  --color-accent-cool: var(--accent-cool);
+  --color-glass-bg: var(--glass-bg);
+  --color-glass-border: var(--glass-border);
+  --color-glass-hover: var(--glass-hover);
+  --color-surface: var(--surface);
+  --color-surface-elevated: var(--surface-elevated);
+  --font-sans: var(--font-geist-sans);
+  --font-mono: var(--font-geist-mono);
+}
+
+/* ── Base ─────────────────────────────────── */
+
+* {
+  scrollbar-width: thin;
+  scrollbar-color: rgba(167, 139, 250, 0.3) transparent;
+}
+
+html {
+  scroll-behavior: smooth;
+}
+
+body {
+  background: var(--background);
+  color: var(--foreground);
+  font-family: var(--font-sans), system-ui, -apple-system, sans-serif;
+  overflow-x: hidden;
+}
+
+::selection {
+  background: rgba(167, 139, 250, 0.3);
+  color: #fff;
+}
+
+/* ── Glassmorphism Utilities ─────────────── */
+
+.glass {
+  background: var(--glass-bg);
+  backdrop-filter: blur(24px) saturate(180%);
+  -webkit-backdrop-filter: blur(24px) saturate(180%);
+  border: 1px solid var(--glass-border);
+}
+
+.glass-strong {
+  background: rgba(255, 255, 255, 0.06);
+  backdrop-filter: blur(40px) saturate(200%);
+  -webkit-backdrop-filter: blur(40px) saturate(200%);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.glass-card {
+  background: var(--surface);
+  backdrop-filter: blur(32px) saturate(180%);
+  -webkit-backdrop-filter: blur(32px) saturate(180%);
+  border: 1px solid var(--glass-border);
+  border-radius: 20px;
+  transition: all 0.4s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+}
+
+.glass-card:hover {
+  background: var(--glass-hover);
+  border-color: rgba(255, 255, 255, 0.12);
+  transform: translateY(-2px);
+  box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3), 0 0 40px rgba(167, 139, 250, 0.05);
+}
+
+/* ── Gradient Utilities ──────────────────── */
+
+.gradient-text {
+  background: var(--gradient-1);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+
+.gradient-border {
+  position: relative;
+}
+
+.gradient-border::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  border-radius: inherit;
+  padding: 1px;
+  background: var(--gradient-1);
+  -webkit-mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
+  -webkit-mask-composite: xor;
+  mask-composite: exclude;
+  pointer-events: none;
+}
+
+/* ── Glow Effects ────────────────────────── */
+
+.glow-purple {
+  box-shadow: 0 0 40px rgba(167, 139, 250, 0.15), 0 0 80px rgba(167, 139, 250, 0.05);
+}
+
+.glow-warm {
+  box-shadow: 0 0 40px rgba(245, 158, 11, 0.15), 0 0 80px rgba(245, 158, 11, 0.05);
+}
+
+/* ── Noise Texture Overlay ───────────────── */
+
+.noise::after {
+  content: "";
+  position: fixed;
+  inset: 0;
+  pointer-events: none;
+  z-index: 9999;
+  opacity: 0.015;
+  background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)'/%3E%3C/svg%3E");
+  background-repeat: repeat;
+}
+
+/* ── Section Dividers ────────────────────── */
+
+.section-divider {
+  height: 1px;
+  background: linear-gradient(90deg, transparent 0%, rgba(167, 139, 250, 0.3) 50%, transparent 100%);
+}
+
+/* ── Slider Styling ──────────────────────── */
+
+input[type="range"] {
+  -webkit-appearance: none;
+  appearance: none;
+  height: 4px;
+  background: rgba(255, 255, 255, 0.1);
+  border-radius: 9999px;
+  outline: none;
+}
+
+input[type="range"]::-webkit-slider-thumb {
+  -webkit-appearance: none;
+  width: 16px;
+  height: 16px;
+  border-radius: 50%;
+  background: var(--accent);
+  cursor: pointer;
+  box-shadow: 0 0 10px rgba(167, 139, 250, 0.4);
+  transition: transform 0.15s ease;
+}
+
+input[type="range"]::-webkit-slider-thumb:hover {
+  transform: scale(1.2);
+}
+
+input[type="range"]::-moz-range-thumb {
+  width: 16px;
+  height: 16px;
+  border-radius: 50%;
+  background: var(--accent);
+  cursor: pointer;
+  border: none;
+  box-shadow: 0 0 10px rgba(167, 139, 250, 0.4);
+}
+
+/* ── Animations ──────────────────────────── */
+
+@keyframes float {
+  0%, 100% { transform: translateY(0px); }
+  50% { transform: translateY(-10px); }
+}
+
+@keyframes pulse-glow {
+  0%, 100% { opacity: 0.4; }
+  50% { opacity: 0.8; }
+}
+
+@keyframes gradient-shift {
+  0% { background-position: 0% 50%; }
+  50% { background-position: 100% 50%; }
+  100% { background-position: 0% 50%; }
+}
+
+.animate-float {
+  animation: float 6s ease-in-out infinite;
+}
+
+.animate-pulse-glow {
+  animation: pulse-glow 3s ease-in-out infinite;
+}
+
+.animate-gradient {
+  background-size: 200% 200%;
+  animation: gradient-shift 4s ease infinite;
+}
+
+/* ── Reveal animations (scroll) ──────────── */
+
+.reveal {
+  opacity: 0;
+  transform: translateY(30px);
+  transition: all 0.8s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+}
+
+.reveal.visible {
+  opacity: 1;
+  transform: translateY(0);
+}
+
+.reveal-delay-1 { transition-delay: 0.1s; }
+.reveal-delay-2 { transition-delay: 0.2s; }
+.reveal-delay-3 { transition-delay: 0.3s; }
+.reveal-delay-4 { transition-delay: 0.4s; }
+
+/* ── Custom cursor area ──────────────────── */
+
+.cursor-dot {
+  width: 8px;
+  height: 8px;
+  background: var(--accent);
+  border-radius: 50%;
+  position: fixed;
+  pointer-events: none;
+  z-index: 99999;
+  mix-blend-mode: difference;
+  transition: transform 0.1s ease;
+}
+
+/* ── Before/After slider ─────────────────── */
+
+.comparison-slider {
+  position: relative;
+  overflow: hidden;
+  cursor: col-resize;
+  user-select: none;
+}
+
+.comparison-slider .overlay {
+  position: absolute;
+  inset: 0;
+  clip-path: inset(0 50% 0 0);
+  transition: clip-path 0.05s ease;
+}
+
+.comparison-slider .divider {
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  width: 2px;
+  background: white;
+  left: 50%;
+  transform: translateX(-50%);
+  z-index: 10;
+  box-shadow: 0 0 12px rgba(167, 139, 250, 0.5);
+}
