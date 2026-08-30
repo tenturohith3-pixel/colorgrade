@@ -116,8 +116,9 @@ CREATE POLICY "Users can delete own presets"
 CREATE POLICY "Users can view own payments"
   ON public.payments FOR SELECT USING (auth.uid() = user_id);
 
-CREATE POLICY "Service role can manage payments"
-  ON public.payments FOR ALL USING (TRUE);
+-- Payments are managed server-side via service role only.
+-- No direct user access to other users' payments.
+-- RLS blocks all direct access; service role bypasses RLS.
 
 -- =============================================
 -- STORAGE BUCKET

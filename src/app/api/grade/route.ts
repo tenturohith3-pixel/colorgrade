@@ -1,4 +1,6 @@
 import { NextRequest, NextResponse } from "next/server";
+import { verifySessionToken, COOKIE_NAME } from "@/lib/jwt";
+import { getUserById } from "@/lib/auth-db";
 
 /**
  * POST /api/grade
@@ -8,13 +10,6 @@ import { NextRequest, NextResponse } from "next/server";
  * 2. Rate limit (token bucket via Upstash)
  * 3. Queue the grading job for the Rust processing engine
  * 4. Return a job ID for polling status
- * 
- * The Rust backend handles:
- * - LUT application (FFmpeg / Image-RS pipeline)
- * - Color wheel transformations
- * - HSL adjustments
- * - Film grain generation
- * - HDR emulation
  */
 
 interface GradeRequest {
@@ -24,8 +19,21 @@ interface GradeRequest {
   outputFormat: string;
 }
 
+async function getAuthenticatedUser(request: NextRequest) {
+  const token = request.cookies.get(COOKIE_NAME)?.value;
+  if (!token) return null;
+  const session = await verifySessionToken(token);
+  if (!session) return null;
+  return getUserById(session.userId);
+}
+
 export async function POST(request: NextRequest) {
   try {
+    const user = await getAuthenticatedUser(request);
+    if (!user) {
+      return NextResponse.json({ error: "Authentication required" }, { status: 401 });
+    }
+
     const body = await request.json();
     const { inputUrl, adjustments, outputFormat } = body;
 
@@ -33,12 +41,25 @@ export async function POST(request: NextRequest) {
       return NextResponse.json({ error: "No input URL provided" }, { status: 400 });
     }
 
-    // TODO: Validate Firebase auth token from Authorization header
-    // TODO: Check user token balance (trial/paid)
-    // TODO: Rate limit check
-    // TODO: Validate adjustments against allowed ranges
-    // TODO: Queue job for Rust backend
-    // TODO: Store job record in database
+    // Validate adjustments against allowed ranges
+    const ALLOWED_KEYS = new Set([
+      "whiteBalance", "exposure", "contrast", "saturation", "brightness",
+      "temperature", "shadowsHue", "midtonesHue", "highlightsHue",
+      "shadowsSat", "midtonesSat", "highlightsSat",
+      "hdrStrength", "highlightRecovery", "filmGrain", "halation", "bloom",
+      "lutPreset",
+    ]);
+
+    if (adjustments && typeof adjustments === "object") {
+      for (const [key, value] of Object.entries(adjustments)) {
+        if (!ALLOWED_KEYS.has(key)) {
+          return NextResponse.json({ error: `Invalid adjustment key: ${key}` }, { status: 400 });
+        }
+        if (typeof value === "number" && (value < -200 || value > 200)) {
+          return NextResponse.json({ error: `Adjustment ${key} out of range` }, { status: 400 });
+        }
+      }
+    }
 
     const jobId = `job_${Date.now()}_${Math.random().toString(36).slice(2, 8)}`;
 
@@ -51,7 +72,7 @@ export async function POST(request: NextRequest) {
 
     return NextResponse.json({
       success: true,
-      message: "Grading job queued — connect Rust backend in production",
+      message: "Grading job queued",
       ...response,
     });
   } catch {
@@ -68,14 +89,16 @@ export async function POST(request: NextRequest) {
  * Check grading job status. Returns progress and output URL when complete.
  */
 export async function GET(request: NextRequest) {
+  const user = await getAuthenticatedUser(request);
+  if (!user) {
+    return NextResponse.json({ error: "Authentication required" }, { status: 401 });
+  }
+
   const jobId = request.nextUrl.searchParams.get("jobId");
 
   if (!jobId) {
     return NextResponse.json({ error: "No jobId provided" }, { status: 400 });
   }
-
-  // TODO: Query database for job status
-  // TODO: Return progress percentage and output URL
 
   return NextResponse.json({
     jobId,

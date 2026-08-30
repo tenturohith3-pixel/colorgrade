@@ -105,20 +105,27 @@ export async function DELETE(request: NextRequest) {
         { error: "Authentication required" },
         { status: 401 }
       );
-    }
-
-    const { searchParams } = new URL(request.url);
+    }    const { searchParams } = new URL(request.url);
     const filePath = searchParams.get("path");
 
     if (!filePath) {
-      return NextResponse.json(
-        { error: "No file path provided" },
-        { status: 400 }
-      );
+      return NextResponse.json({ error: "No file path provided" }, { status: 400 });
     }
 
-    // Delete file from disk
-    const fullPath = path.join(UPLOAD_DIR, filePath);
+    // Sanitize path to prevent traversal attacks
+    const normalizedPath = path.normalize(filePath).replace(/^\.\.\/+/, "");
+    const fullPath = path.join(UPLOAD_DIR, normalizedPath);
+
+    // Ensure the resolved path is within UPLOAD_DIR
+    if (!fullPath.startsWith(UPLOAD_DIR)) {
+      return NextResponse.json({ error: "Invalid file path" }, { status: 400 });
+    }
+
+    // Only allow users to delete their own files
+    if (!normalizedPath.startsWith(user.id + "_")) {
+      return NextResponse.json({ error: "Access denied" }, { status: 403 });
+    }
+
     if (fs.existsSync(fullPath)) {
       fs.unlinkSync(fullPath);
     }

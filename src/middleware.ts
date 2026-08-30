@@ -2,7 +2,7 @@ import { NextRequest, NextResponse } from "next/server";
 import { jwtVerify, type JWTPayload } from "jose";
 
 const SECRET = new TextEncoder().encode(
-  process.env.JWT_SECRET || "ezcc-secret-key-change-in-production-2026"
+  process.env.JWT_SECRET || "ezcc-fallback-dev-only-key-2026"
 );
 
 interface SessionPayload extends JWTPayload {

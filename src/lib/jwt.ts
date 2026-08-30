@@ -7,9 +7,14 @@
 
 import { SignJWT, jwtVerify, type JWTPayload } from "jose";
 
-const SECRET = new TextEncoder().encode(
-  process.env.JWT_SECRET || "ezcc-secret-key-change-in-production-2026"
-);
+if (!process.env.JWT_SECRET) {
+  throw new Error(
+    "JWT_SECRET environment variable is required. " +
+    "Generate one with: openssl rand -base64 32"
+  );
+}
+
+const SECRET = new TextEncoder().encode(process.env.JWT_SECRET);
 
 const COOKIE_NAME = "ezcc_session";
 const EXPIRY = "7d";

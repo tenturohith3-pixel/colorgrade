@@ -39,6 +39,18 @@ export const metadata: Metadata = {
     description: "Professional color grading for cinematic creators",
     type: "website",
   },
+  viewport: {
+    width: "device-width",
+    initialScale: 1,
+    maximumScale: 5,
+    userScalable: true,
+  },
+  themeColor: "#0B0A08",
+  appleWebApp: {
+    capable: true,
+    statusBarStyle: "black-translucent",
+    title: "ColorGrade",
+  },
 };
 
 export default function RootLayout({

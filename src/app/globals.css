@@ -235,8 +235,8 @@ input[type="range"] {
 
 input[type="range"]::-webkit-slider-thumb {
   -webkit-appearance: none;
-  width: 12px;
-  height: 12px;
+  width: 16px;
+  height: 16px;
   border-radius: 50%;
   background: var(--accent-bronze);
   cursor: pointer;
@@ -248,12 +248,55 @@ input[type="range"]::-webkit-slider-thumb:hover {
 }
 
 input[type="range"]::-moz-range-thumb {
-  width: 12px;
-  height: 12px;
+  width: 16px;
+  height: 16px;
   border-radius: 50%;
   background: var(--accent-bronze);
   cursor: pointer;
   border: none;
+}
+
+/* ── Mobile Touch Improvements ──────────────────────────── */
+
+@media (max-width: 768px) {
+  /* Larger touch targets for sliders on mobile */
+  input[type="range"] {
+    height: 4px;
+    min-height: 44px; /* Apple HIG minimum touch target */
+    padding: 20px 0;
+    background: transparent;
+  }
+
+  input[type="range"]::-webkit-slider-runnable-track {
+    height: 4px;
+    background: var(--border-medium);
+    border-radius: 0;
+  }
+
+  input[type="range"]::-webkit-slider-thumb {
+    width: 20px;
+    height: 20px;
+    margin-top: -8px;
+  }
+
+  input[type="range"]::-moz-range-track {
+    height: 4px;
+    background: var(--border-medium);
+    border-radius: 0;
+  }
+
+  input[type="range"]::-moz-range-thumb {
+    width: 20px;
+    height: 20px;
+  }
+}
+
+/* ── Safe area insets for notched devices ─────────────── */
+
+@supports (padding: env(safe-area-inset-bottom)) {
+  body {
+    padding-bottom: env(safe-area-inset-bottom);
+  }
 }
 
 /* ── Animations ────────────────────────────────────────── */

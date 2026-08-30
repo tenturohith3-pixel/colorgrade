@@ -121,16 +121,14 @@ export async function POST(request: NextRequest) {
         return NextResponse.json({ error: "Invalid session" }, { status: 401 });
       }
 
-      const { fullName: name, avatarUrl } = await request.json();
-      const updates: any = {};
-      if (name) updates.full_name = name;
-      if (avatarUrl) updates.avatar_url = avatarUrl;
+      const updates: Record<string, string> = {};
+      if (fullName) updates.full_name = fullName;
 
       updateUser(session.userId, updates);
 
       const user = getUserByEmail(session.email);
       return NextResponse.json({ success: true, user: sanitizeUser(user!) });
-    }
+ }
 
     default:
       return NextResponse.json({ error: "Invalid action" }, { status: 400 });
