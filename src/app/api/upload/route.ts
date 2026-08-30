@@ -7,9 +7,10 @@ import fs from "fs";
 const UPLOAD_DIR = path.join(process.cwd(), "public", "uploads");
 const MAX_FILE_SIZE = 20 * 1024 * 1024; // 20MB
 
-// Ensure upload directory exists
-if (!fs.existsSync(UPLOAD_DIR)) {
-  fs.mkdirSync(UPLOAD_DIR, { recursive: true });
+function ensureUploadDir() {
+  if (!fs.existsSync(UPLOAD_DIR)) {
+    fs.mkdirSync(UPLOAD_DIR, { recursive: true });
+  }
 }
 
 async function getAuthenticatedUser(request: NextRequest) {
@@ -66,6 +67,7 @@ export async function POST(request: NextRequest) {
     }
 
     // Save file to disk
+    ensureUploadDir();
     const fileExt = file.name.split(".").pop();
     const fileName = `${user.id}_${Date.now()}.${fileExt}`;
     const filePath = path.join(UPLOAD_DIR, fileName);
