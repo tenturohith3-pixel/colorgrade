@@ -5,12 +5,12 @@ import { useState, useRef, useCallback } from "react";
 interface BeforeAfterCardProps {
   title: string;
   preset: string;
-  beforeColor: string;
-  afterColor: string;
+  beforeImage: string;
+  afterImage: string;
   size?: "large" | "normal";
 }
 
-function BeforeAfterCard({ title, preset, beforeColor, afterColor, size = "normal" }: BeforeAfterCardProps) {
+function BeforeAfterCard({ title, preset, beforeImage, afterImage, size = "normal" }: BeforeAfterCardProps) {
   const [position, setPosition] = useState(50);
   const containerRef = useRef<HTMLDivElement>(null);
   const isDragging = useRef(false);
@@ -43,9 +43,17 @@ function BeforeAfterCard({ title, preset, beforeColor, afterColor, size = "norma
       onTouchEnd={() => (isDragging.current = false)}
     >
       {/* Before (full width) */}
-      <div className="absolute inset-0" style={{ background: beforeColor }}>
+      <div className="absolute inset-0">
+        <img
+          src={beforeImage}
+          alt={`${title} - Before`}
+          className="w-full h-full object-cover"
+          loading="lazy"
+        />
         <div className="absolute inset-0 flex items-center justify-center">
-          <span className="text-[9px] text-white/20 tracking-[0.2em] uppercase">Original</span>
+          <span className="text-[9px] text-white/30 tracking-[0.2em] uppercase bg-black/30 px-3 py-1.5 backdrop-blur-sm">
+            Original
+          </span>
         </div>
       </div>
 
@@ -53,38 +61,49 @@ function BeforeAfterCard({ title, preset, beforeColor, afterColor, size = "norma
       <div
         className="absolute inset-0"
         style={{
-          background: afterColor,
           clipPath: `inset(0 ${100 - position}% 0 0)`,
         }}
       >
+        <img
+          src={afterImage}
+          alt={`${title} - ${preset}`}
+          className="w-full h-full object-cover"
+          loading="lazy"
+        />
         <div className="absolute inset-0 flex items-center justify-center">
-          <span className="text-[9px] text-white/30 tracking-[0.2em] uppercase">{preset}</span>
+          <span className="text-[9px] text-white/40 tracking-[0.2em] uppercase bg-black/30 px-3 py-1.5 backdrop-blur-sm">
+            {preset}
+          </span>
         </div>
       </div>
 
-      {/* Divider line */}
+      {/* Thicker divider line */}
       <div
-        className="absolute top-0 bottom-0 w-px bg-[var(--text-primary)]/30 z-10"
+        className="absolute top-0 bottom-0 w-[3px] bg-[var(--accent-bronze)] z-10 shadow-[0_0_12px_rgba(196,149,106,0.4)]"
         style={{ left: `${position}%`, transform: "translateX(-50%)" }}
       >
-        <div className="absolute top-1/2 -translate-y-1/2 -translate-x-1/2 w-6 h-6 rounded-full border border-[var(--text-primary)]/30 flex items-center justify-center backdrop-blur-sm">
-          <div className="flex gap-px">
-            <div className="w-px h-2.5 bg-[var(--text-primary)]/50" />
-            <div className="w-px h-2.5 bg-[var(--text-primary)]/50" />
+        <div className="absolute top-1/2 -translate-y-1/2 -translate-x-1/2 w-8 h-8 rounded-full bg-[var(--accent-bronze)]/90 backdrop-blur-sm border-2 border-white/30 flex items-center justify-center shadow-lg">
+          <div className="flex gap-1">
+            <div className="w-0.5 h-3 rounded-full bg-white/80" />
+            <div className="w-0.5 h-3 rounded-full bg-white/80" />
           </div>
         </div>
       </div>
 
       {/* Labels */}
       <div className="absolute bottom-4 left-4 z-10">
-        <span className="text-[9px] text-[var(--text-muted)] tracking-[0.15em] uppercase">Before</span>
+        <span className="text-[9px] text-white/50 tracking-[0.15em] uppercase bg-black/40 px-2 py-1 backdrop-blur-sm">
+          Before
+        </span>
       </div>
       <div className="absolute bottom-4 right-4 z-10">
-        <span className="text-[9px] text-[var(--text-muted)] tracking-[0.15em] uppercase">{preset}</span>
+        <span className="text-[9px] text-white/50 tracking-[0.15em] uppercase bg-black/40 px-2 py-1 backdrop-blur-sm">
+          {preset}
+        </span>
       </div>
 
-      {/* Frame border */}
-      <div className="absolute inset-0 border border-[var(--border-subtle)] pointer-events-none" />
+      {/* Thick frame border */}
+      <div className="absolute inset-0 border-[3px] border-[var(--bg-deep)] pointer-events-none" />
     </div>
   );
 }
@@ -93,46 +112,57 @@ const galleryItems = [
   {
     title: "Moody Teal & Orange",
     preset: "Moody Cinematic",
-    beforeColor: "linear-gradient(135deg, #3a3a3a 0%, #555 50%, #2a2a2a 100%)",
-    afterColor: "linear-gradient(135deg, #1a4a5a 0%, #d4845a 50%, #0d3040 100%)",
+    beforeImage: "https://images.unsplash.com/photo-1506905925346-21bda4d32df4?w=800&q=80",
+    afterImage: "https://images.unsplash.com/photo-1506905925346-21bda4d32df4?w=800&q=80",
     size: "large" as const,
+    // CSS filter applied via overlay for "after" effect
   },
   {
     title: "Warm Golden Hour",
     preset: "Warm Tone",
-    beforeColor: "linear-gradient(135deg, #444 0%, #666 50%, #333 100%)",
-    afterColor: "linear-gradient(135deg, #d4a54a 0%, #e8c070 50%, #c08030 100%)",
+    beforeImage: "https://images.unsplash.com/photo-1470071459604-3b5ec3a7fe05?w=600&q=80",
+    afterImage: "https://images.unsplash.com/photo-1470071459604-3b5ec3a7fe05?w=600&q=80",
     size: "normal" as const,
   },
   {
     title: "Clean Desaturated",
     preset: "Clean Minimal",
-    beforeColor: "linear-gradient(135deg, #3e3e3e 0%, #606060 50%, #2e2e2e 100%)",
-    afterColor: "linear-gradient(135deg, #e8e8e8 0%, #d0d0d0 50%, #c8c8c8 100%)",
+    beforeImage: "https://images.unsplash.com/photo-1501785888041-af3ef285b470?w=600&q=80",
+    afterImage: "https://images.unsplash.com/photo-1501785888041-af3ef285b470?w=600&q=80",
     size: "normal" as const,
   },
   {
     title: "Vintage Film",
     preset: "Film Emulation",
-    beforeColor: "linear-gradient(135deg, #353535 0%, #505050 50%, #252525 100%)",
-    afterColor: "linear-gradient(135deg, #c8a870 0%, #e0c898 50%, #a08050 100%)",
+    beforeImage: "https://images.unsplash.com/photo-1472214103451-9374bd1c798e?w=800&q=80",
+    afterImage: "https://images.unsplash.com/photo-1472214103451-9374bd1c798e?w=800&q=80",
     size: "large" as const,
   },
   {
     title: "Muted Pastel",
     preset: "Soft Pastel",
-    beforeColor: "linear-gradient(135deg, #484848 0%, #686868 50%, #383838 100%)",
-    afterColor: "linear-gradient(135deg, #c8a0b8 0%, #a0c8d0 50%, #b8c8a0 100%)",
+    beforeImage: "https://images.unsplash.com/photo-1433086966358-54859d0ed716?w=600&q=80",
+    afterImage: "https://images.unsplash.com/photo-1433086966358-54859d0ed716?w=600&q=80",
     size: "normal" as const,
   },
   {
     title: "Slate Noir",
     preset: "Noir Grade",
-    beforeColor: "linear-gradient(135deg, #3a3a3a 0%, #5a5a5a 50%, #2a2a2a 100%)",
-    afterColor: "linear-gradient(135deg, #4a5a6a 0%, #6a7a8a 50%, #3a4a5a 100%)",
+    beforeImage: "https://images.unsplash.com/photo-1518173946687-a16d22856aa4?w=600&q=80",
+    afterImage: "https://images.unsplash.com/photo-1518173946687-a16d22856aa4?w=600&q=80",
     size: "normal" as const,
   },
 ];
+
+// Color overlays for each preset to simulate grading
+const presetOverlays: Record<string, string> = {
+  "Moody Cinematic": "linear-gradient(135deg, rgba(26,74,90,0.4) 0%, rgba(212,132,90,0.3) 50%, rgba(13,48,64,0.4) 100%)",
+  "Warm Tone": "linear-gradient(135deg, rgba(212,165,74,0.35) 0%, rgba(232,192,112,0.25) 50%, rgba(192,128,48,0.35) 100%)",
+  "Clean Minimal": "linear-gradient(135deg, rgba(220,220,220,0.3) 0%, rgba(200,200,200,0.2) 50%, rgba(190,190,190,0.3) 100%)",
+  "Film Emulation": "linear-gradient(135deg, rgba(200,168,112,0.35) 0%, rgba(224,200,152,0.25) 50%, rgba(160,128,80,0.35) 100%)",
+  "Soft Pastel": "linear-gradient(135deg, rgba(200,160,184,0.3) 0%, rgba(160,200,208,0.25) 50%, rgba(184,200,160,0.3) 100%)",
+  "Noir Grade": "linear-gradient(135deg, rgba(74,90,106,0.4) 0%, rgba(106,122,138,0.3) 50%, rgba(58,74,90,0.4) 100%)",
+};
 
 export default function Gallery() {
   return (
@@ -162,13 +192,24 @@ export default function Gallery() {
         <div className="h-px bg-[var(--border-subtle)] mb-16" />
 
         {/* Gallery — asymmetric editorial grid */}
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-px bg-[var(--border-subtle)]">
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
           {galleryItems.map((item, i) => (
             <div
               key={item.title}
-              className={`bg-[var(--bg-card)] p-4 md:p-5 reveal reveal-delay-${(i % 4) + 1}`}
+              className={`reveal reveal-delay-${(i % 4) + 1}`}
             >
-              <BeforeAfterCard {...item} />
+              {/* Card with thick border frame */}
+              <div className="bg-[var(--bg-card)] border border-[var(--border-medium)] p-1.5">
+                <BeforeAfterCard
+                  {...item}
+                  afterImage={item.afterImage}
+                />
+                {/* Color overlay for the "after" side to simulate grading */}
+                <div
+                  className="absolute inset-0 pointer-events-none z-[5] opacity-0 group-hover:opacity-100 transition-opacity duration-500"
+                  style={{ background: presetOverlays[item.preset] || "none" }}
+                />
+              </div>
               <div className="flex items-center justify-between mt-4 px-1">
                 <div>
                   <h4

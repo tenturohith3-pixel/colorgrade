@@ -1,7 +1,8 @@
 "use client";
 
 import { useState, useEffect, useCallback } from "react";
-import { onAuthChange, type User } from "@/lib/firebase";
+import { createClient } from "@/lib/supabase";
+import type { User } from "@supabase/supabase-js";
 
 interface AuthState {
   user: User | null;
@@ -22,37 +23,62 @@ export function useAuth(): AuthState & { refresh: () => void } {
     plan: "free",
   });
 
-  const refresh = useCallback(() => {
-    // Re-fetch user data from API
-    setState((prev) => ({ ...prev }));
-  }, []);
+  const supabase = createClient();
+
+  const refresh = useCallback(async () => {
+    const { data: { user } } = await supabase.auth.getUser();
+    if (user) {
+      setState({
+        user,
+        loading: false,
+        isTrialActive: true,
+        trialEndsAt: new Date(Date.now() + 3 * 24 * 60 * 60 * 1000),
+        tokensRemaining: 3,
+        plan: "trial",
+      });
+    } else {
+      setState({
+        user: null,
+        loading: false,
+        isTrialActive: false,
+        trialEndsAt: null,
+        tokensRemaining: 0,
+        plan: "free",
+      });
+    }
+  }, [supabase]);
 
   useEffect(() => {
-    const unsubscribe = onAuthChange((user) => {
-      if (user) {
-        // In production, fetch user profile from API
-        setState({
-          user,
-          loading: false,
-          isTrialActive: true, // TODO: Check from API
-          trialEndsAt: new Date(Date.now() + 3 * 24 * 60 * 60 * 1000),
-          tokensRemaining: 3,
-          plan: "trial",
-        });
-      } else {
-        setState({
-          user: null,
-          loading: false,
-          isTrialActive: false,
-          trialEndsAt: null,
-          tokensRemaining: 0,
-          plan: "free",
-        });
-      }
-    });
+    // Get initial session
+    refresh();
 
-    return () => unsubscribe();
-  }, []);
+    // Listen for auth changes
+    const { data: { subscription } } = supabase.auth.onAuthStateChange(
+      async (event, session) => {
+        if (session?.user) {
+          setState({
+            user: session.user,
+            loading: false,
+            isTrialActive: true,
+            trialEndsAt: new Date(Date.now() + 3 * 24 * 60 * 60 * 1000),
+            tokensRemaining: 3,
+            plan: "trial",
+          });
+        } else {
+          setState({
+            user: null,
+            loading: false,
+            isTrialActive: false,
+            trialEndsAt: null,
+            tokensRemaining: 0,
+            plan: "free",
+          });
+        }
+      }
+    );
+
+    return () => subscription.unsubscribe();
+  }, [supabase, refresh]);
 
   return { ...state, refresh };
 }

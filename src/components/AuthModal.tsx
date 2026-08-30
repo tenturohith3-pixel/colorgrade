@@ -1,7 +1,8 @@
 "use client";
 
 import { useState } from "react";
-import { X, Mail, Lock, User, Eye, EyeOff, Loader2, Sparkles } from "lucide-react";
+import { X, Mail, Lock, User, Eye, EyeOff, Loader2 } from "lucide-react";
+import { createClient } from "@/lib/supabase";
 
 interface AuthModalProps {
   isOpen: boolean;
@@ -23,6 +24,8 @@ export default function AuthModal({ isOpen, onClose }: AuthModalProps) {
   const [needsParentalConsent, setNeedsParentalConsent] = useState(false);
   const [parentEmail, setParentEmail] = useState("");
   const [step, setStep] = useState<"form" | "age" | "parental">("form");
+
+  const supabase = createClient();
 
   if (!isOpen) return null;
 
@@ -64,7 +67,6 @@ export default function AuthModal({ isOpen, onClose }: AuthModalProps) {
     setAgeVerified(true);
     setStep("form");
     setError("");
-    // TODO: Send verification email to parent
   };
 
   const handleSubmit = async (e: React.FormEvent) => {
@@ -76,10 +78,49 @@ export default function AuthModal({ isOpen, onClose }: AuthModalProps) {
     setLoading(true);
     setError("");
 
-    // Simulate auth (replace with real Firebase calls)
-    await new Promise((r) => setTimeout(r, 1500));
+    if (mode === "signup") {
+      const { error: signUpError } = await supabase.auth.signUp({
+        email,
+        password,
+        options: {
+          data: { full_name: name },
+        },
+      });
+      if (signUpError) {
+        setError(signUpError.message);
+        setLoading(false);
+        return;
+      }
+      setError("Check your email for a verification link!");
+      setLoading(false);
+      return;
+    }
+
+    const { error: signInError } = await supabase.auth.signInWithPassword({
+      email,
+      password,
+    });
+
+    if (signInError) {
+      setError(signInError.message);
+      setLoading(false);
+      return;
+    }
+
     setLoading(false);
-    setError("Connect Firebase credentials to enable authentication");
+    onClose();
+  };
+
+  const handleGoogleSignIn = async () => {
+    const { error } = await supabase.auth.signInWithOAuth({
+      provider: "google",
+      options: {
+        redirectTo: `${window.location.origin}/auth/callback`,
+      },
+    });
+    if (error) {
+      setError(error.message);
+    }
   };
 
   return (
@@ -100,10 +141,24 @@ export default function AuthModal({ isOpen, onClose }: AuthModalProps) {
         {/* Header */}
         <div className="text-center mb-6">
           <div className="w-12 h-12 rounded-sm bg-[var(--accent-bronze)] flex items-center justify-center mx-auto mb-3">
-            <Sparkles className="w-6 h-6 text-white" />
+            <span
+              className="text-lg text-[var(--bg-deep)]"
+              style={{ fontFamily: "var(--font-playfair), Georgia, serif" }}
+            >
+              CG
+            </span>
           </div>
-          <h2 className="text-xl font-bold text-white">
-            {step === "age" ? "Age Verification" : step === "parental" ? "Parental Consent" : mode === "signin" ? "Welcome Back" : "Create Account"}
+          <h2
+            className="text-xl text-[var(--text-primary)]"
+            style={{ fontFamily: "var(--font-playfair), Georgia, serif" }}
+          >
+            {step === "age"
+              ? "Age Verification"
+              : step === "parental"
+              ? "Parental Consent"
+              : mode === "signin"
+              ? "Welcome Back"
+              : "Create Account"}
           </h2>
           <p className="text-sm text-[var(--text-muted)] mt-1">
             {step === "age"
@@ -118,7 +173,7 @@ export default function AuthModal({ isOpen, onClose }: AuthModalProps) {
 
         {/* Error */}
         {error && (
-          <div className="mb-4 p-3 rounded-lg bg-red-500/10 border border-red-500/20 text-sm text-red-400">
+          <div className="mb-4 p-3 rounded-sm bg-red-500/10 border border-red-500/20 text-sm text-red-400">
             {error}
           </div>
         )}
@@ -127,7 +182,9 @@ export default function AuthModal({ isOpen, onClose }: AuthModalProps) {
         {step === "age" && (
           <div className="space-y-4">
             <div>
-              <label className="text-xs text-[var(--text-secondary)] mb-1.5 block">Date of Birth</label>
+              <label className="text-xs text-[var(--text-secondary)] mb-1.5 block">
+                Date of Birth
+              </label>
               <input
                 type="date"
                 value={birthDate}
@@ -153,7 +210,9 @@ export default function AuthModal({ isOpen, onClose }: AuthModalProps) {
         {step === "parental" && (
           <div className="space-y-4">
             <div>
-              <label className="text-xs text-[var(--text-secondary)] mb-1.5 block">Parent/Guardian Email</label>
+              <label className="text-xs text-[var(--text-secondary)] mb-1.5 block">
+                Parent/Guardian Email
+              </label>
               <input
                 type="email"
                 placeholder="parent@example.com"
@@ -252,16 +311,19 @@ export default function AuthModal({ isOpen, onClose }: AuthModalProps) {
             {/* Divider */}
             <div className="relative my-4">
               <div className="absolute inset-0 flex items-center">
-                <div className="w-full border-t border-white/5" />
+                <div className="w-full border-t border-[var(--border-subtle)]" />
               </div>
               <div className="relative flex justify-center">
-                <span className="px-3 text-[10px] text-[var(--text-ghost)] uppercase tracking-wider bg-[var(--bg-deep)]">or</span>
+                <span className="px-3 text-[10px] text-[var(--text-ghost)] uppercase tracking-wider bg-[var(--bg-elevated)]">
+                  or
+                </span>
               </div>
             </div>
 
             {/* Google */}
             <button
               type="button"
+              onClick={handleGoogleSignIn}
               className="w-full py-2.5 rounded-sm border border-[var(--border-medium)] text-sm text-[var(--text-secondary)] hover:text-[var(--text-primary)] hover:bg-white/5 transition-all flex items-center justify-center gap-2"
             >
               <svg className="w-4 h-4" viewBox="0 0 24 24">
@@ -275,11 +337,11 @@ export default function AuthModal({ isOpen, onClose }: AuthModalProps) {
 
             {/* Toggle mode */}
             <p className="text-center text-xs text-[var(--text-muted)] mt-4">
-              {mode === "signin" ? "Don't have an account?" : "Already have an account?"}{" "}
+              {mode === "signin" ? "Don&apos;t have an account?" : "Already have an account?"}{" "}
               <button
                 type="button"
                 onClick={() => { setMode(mode === "signin" ? "signup" : "signin"); setError(""); }}
-                className="text-[var(--accent)] hover:underline"
+                className="text-[var(--accent-bronze)] hover:underline"
               >
                 {mode === "signin" ? "Sign up" : "Sign in"}
               </button>
