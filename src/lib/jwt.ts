@@ -7,14 +7,15 @@
 
 import { SignJWT, jwtVerify, type JWTPayload } from "jose";
 
-if (!process.env.JWT_SECRET) {
-  throw new Error(
-    "JWT_SECRET environment variable is required. " +
-    "Generate one with: openssl rand -base64 32"
-  );
+function getSecret(): Uint8Array {
+  if (!process.env.JWT_SECRET) {
+    throw new Error(
+      "JWT_SECRET environment variable is required. " +
+      "Generate one with: openssl rand -base64 32"
+    );
+  }
+  return new TextEncoder().encode(process.env.JWT_SECRET);
 }
-
-const SECRET = new TextEncoder().encode(process.env.JWT_SECRET);
 
 const COOKIE_NAME = "ezcc_session";
 const EXPIRY = "7d";
@@ -29,12 +30,12 @@ export async function createSessionToken(userId: string, email: string): Promise
     .setProtectedHeader({ alg: "HS256" })
     .setIssuedAt()
     .setExpirationTime(EXPIRY)
-    .sign(SECRET);
+    .sign(getSecret());
 }
 
 export async function verifySessionToken(token: string): Promise<SessionPayload | null> {
   try {
-    const { payload } = await jwtVerify(token, SECRET);
+    const { payload } = await jwtVerify(token, getSecret());
     return payload as SessionPayload;
   } catch {
     return null;
