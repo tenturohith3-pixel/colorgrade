@@ -2,17 +2,17 @@
  * Stripe Integration
  *
  * Handles checkout session creation for the 4 pricing tiers.
- * In production, replace with real Stripe publishable key.
+ * Uses server-side Stripe SDK for session creation.
  */
 
-import { loadStripe, type Stripe } from "@stripe/stripe-js";
+import { loadStripe } from "@stripe/stripe-js";
 
-let stripePromise: Promise<Stripe | null>;
+let stripePromise: ReturnType<typeof loadStripe>;
 
 export const getStripe = () => {
   if (!stripePromise) {
     stripePromise = loadStripe(
-      process.env.NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY || "pk_test_demo"
+      process.env.NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY || ""
     );
   }
   return stripePromise;
@@ -68,9 +68,10 @@ export async function createCheckoutSession(plan: PlanType) {
       return { success: false, error: data.error || "Checkout failed" };
     }
 
-    // In production, redirect to Stripe Checkout
-    // const stripe = await getStripe();
-    // await stripe?.redirectToCheckout({ sessionId: data.sessionId });
+    // Redirect to Stripe Checkout URL
+    if (data.url) {
+      window.location.href = data.url;
+    }
 
     return { success: true, sessionId: data.sessionId };
   } catch {

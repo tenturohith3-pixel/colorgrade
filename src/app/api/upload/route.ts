@@ -1,69 +1,169 @@
 import { NextRequest, NextResponse } from "next/server";
+import { createClient } from "@/lib/supabase-server";
 
-/**
- * POST /api/upload
- * 
- * Handles file upload initiation. In production, this would:
- * 1. Validate the user's auth token (Firebase Admin)
- * 2. Check rate limits (Upstash/Redis)
- * 3. Generate a pre-signed S3 upload URL with 5-min TTL
- * 4. Return the URL for direct-to-storage upload
- * 
- * Security layers:
- * - Layer 2: CORS, CSRF, Rate limiting
- * - Layer 3: MIME check, file size, magic bytes
- * - Layer 4: Pre-signed upload URLs with TTL
- */
+const BUCKET_NAME = "graded-images";
+const MAX_FILE_SIZE = 20 * 1024 * 1024; // 20MB
 
 export async function POST(request: NextRequest) {
   try {
+    const supabase = await createClient();
+    const { data: { user }, error: authError } = await supabase.auth.getUser();
+
+    if (authError || !user) {
+      return NextResponse.json(
+        { error: "Authentication required" },
+        { status: 401 }
+      );
+    }
+
     const formData = await request.formData();
     const file = formData.get("file") as File | null;
 
     if (!file) {
-      return NextResponse.json({ error: "No file provided" }, { status: 400 });
+      return NextResponse.json(
+        { error: "No file provided" },
+        { status: 400 }
+      );
     }
 
-    // Validate file type (production: check magic bytes, not just extension)
-    const allowedTypes = [
-      "video/mp4",
-      "video/quicktime",
-      "image/jpeg",
-      "image/png",
-      "image/webp",
-    ];
+    // Validate file size
+    if (file.size > MAX_FILE_SIZE) {
+      return NextResponse.json(
+        { error: "File too large. Maximum size is 20MB." },
+        { status: 400 }
+      );
+    }
+
+    // Validate file type
+    const allowedTypes = ["image/jpeg", "image/png", "image/webp", "image/tiff"];
     if (!allowedTypes.includes(file.type)) {
       return NextResponse.json(
-        { error: "Invalid file type. Allowed: mp4, mov, jpg, png, webp" },
+        { error: "Invalid file type. Allowed: JPEG, PNG, WebP, TIFF" },
         { status: 400 }
       );
     }
 
-    // Validate file size (max 500MB for video, 50MB for images)
-    const maxSize = file.type.startsWith("video/") ? 500 * 1024 * 1024 : 50 * 1024 * 1024;
-    if (file.size > maxSize) {
+    // Check user credits
+    const { data: profile } = await supabase
+      .from("user_profiles")
+      .select("plan, clips_remaining")
+      .eq("id", user.id)
+      .single();
+
+    if (profile?.plan === "free" && (!profile.clips_remaining || profile.clips_remaining <= 0)) {
       return NextResponse.json(
-        { error: `File too large. Max: ${maxSize / (1024 * 1024)}MB` },
-        { status: 400 }
+        { error: "No clips remaining. Please upgrade your plan." },
+        { status: 403 }
       );
     }
 
-    // TODO: Generate pre-signed S3 URL
-    // TODO: Store upload record in database with TTL
-    // TODO: Return upload URL to client
+    // Upload to Supabase Storage
+    const fileExt = file.name.split(".").pop();
+    const filePath = `${user.id}/${Date.now()}.${fileExt}`;
+
+    const { data: uploadData, error: uploadError } = await supabase.storage
+      .from(BUCKET_NAME)
+      .upload(filePath, file, {
+        cacheControl: "3600",
+        upsert: false,
+      });
+
+    if (uploadError) {
+      console.error("Upload error:", uploadError);
+      return NextResponse.json(
+        { error: "Upload failed: " + uploadError.message },
+        { status: 500 }
+      );
+    }
+
+    // Get public URL
+    const { data: urlData } = supabase.storage
+      .from(BUCKET_NAME)
+      .getPublicUrl(uploadData.path);
+
+    // Create grading job record
+    const { data: job, error: jobError } = await supabase
+      .from("grading_jobs")
+      .insert({
+        user_id: user.id,
+        input_url: urlData.publicUrl,
+        status: "pending",
+      })
+      .select()
+      .single();
+
+    if (jobError) {
+      console.error("Job creation error:", jobError);
+    }
+
+    // Decrement clips remaining for non-lifetime plans
+    if (profile?.plan !== "pro" && profile?.clips_remaining) {
+      await supabase
+        .from("user_profiles")
+        .update({ clips_remaining: profile.clips_remaining - 1 })
+        .eq("id", user.id);
+    }
 
     return NextResponse.json({
       success: true,
-      message: "Upload endpoint ready — connect S3 credentials in production",
-      meta: {
-        fileName: file.name,
-        fileType: file.type,
-        fileSize: file.size,
-      },
+      url: urlData.publicUrl,
+      path: uploadData.path,
+      jobId: job?.id,
     });
+  } catch (error) {
+    console.error("Upload route error:", error);
+    return NextResponse.json(
+      { error: "Upload failed" },
+      { status: 500 }
+    );
+  }
+}
+
+export async function DELETE(request: NextRequest) {
+  try {
+    const supabase = await createClient();
+    const { data: { user }, error: authError } = await supabase.auth.getUser();
+
+    if (authError || !user) {
+      return NextResponse.json(
+        { error: "Authentication required" },
+        { status: 401 }
+      );
+    }
+
+    const { searchParams } = new URL(request.url);
+    const filePath = searchParams.get("path");
+
+    if (!filePath) {
+      return NextResponse.json(
+        { error: "No file path provided" },
+        { status: 400 }
+      );
+    }
+
+    // Verify the file belongs to the user
+    if (!filePath.startsWith(user.id + "/")) {
+      return NextResponse.json(
+        { error: "Unauthorized" },
+        { status: 403 }
+      );
+    }
+
+    const { error } = await supabase.storage
+      .from(BUCKET_NAME)
+      .remove([filePath]);
+
+    if (error) {
+      return NextResponse.json(
+        { error: "Delete failed" },
+        { status: 500 }
+      );
+    }
+
+    return NextResponse.json({ success: true });
   } catch {
     return NextResponse.json(
-      { error: "Upload processing failed" },
+      { error: "Delete failed" },
       { status: 500 }
     );
   }
