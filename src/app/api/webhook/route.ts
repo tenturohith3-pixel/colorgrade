@@ -12,13 +12,21 @@ export async function POST(request: NextRequest) {
     return NextResponse.json({ error: "Missing signature" }, { status: 400 });
   }
 
-  const stripe = new Stripe(process.env.STRIPE_SECRET_KEY || "");
+  const stripeKey = process.env.STRIPE_SECRET_KEY;
+  if (!stripeKey) {
+    console.error("STRIPE_SECRET_KEY not configured");
+    return NextResponse.json({ error: "Payment system not configured" }, { status: 503 });
+  }
+  const stripe = new Stripe(stripeKey);
 
   // Use service role for webhook (bypasses RLS)
-  const supabaseAdmin = createClient(
-    process.env.NEXT_PUBLIC_SUPABASE_URL || "",
-    process.env.SUPABASE_SERVICE_ROLE_KEY || ""
-  );
+  const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL;
+  const supabaseKey = process.env.SUPABASE_SERVICE_ROLE_KEY;
+  if (!supabaseUrl || !supabaseKey) {
+    console.error("Supabase env vars not configured");
+    return NextResponse.json({ error: "Payment system not configured" }, { status: 503 });
+  }
+  const supabaseAdmin = createClient(supabaseUrl, supabaseKey);
 
   let event: Stripe.Event;
 
