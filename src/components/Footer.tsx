@@ -1,75 +1,81 @@
 "use client";
 
-import { Sparkles, Globe, Mail, ExternalLink } from "lucide-react";
+import Link from "next/link";
 
 export default function Footer() {
   return (
-    <footer className="relative border-t border-white/5">
-      <div className="section-divider" />
-      <div className="mx-auto max-w-7xl px-6 py-16">
-        <div className="grid grid-cols-1 md:grid-cols-4 gap-12 mb-12">
-          {/* Brand */}
-          <div className="md:col-span-1">
-            <div className="flex items-center gap-2 mb-4">
-              <div className="w-8 h-8 rounded-lg bg-gradient-to-br from-[var(--accent)] via-pink-500 to-amber-400 flex items-center justify-center">
-                <Sparkles className="w-4 h-4 text-white" />
-              </div>
-              <span className="text-lg font-semibold">
-                Color<span className="gradient-text">Grade</span>
-              </span>
-            </div>
-            <p className="text-sm text-zinc-500 leading-relaxed mb-6">
-              Professional cinematic color grading for mobile creators. Studio quality, browser-powered.
-            </p>
-            <div className="flex items-center gap-3">
-              {[Globe, Mail, ExternalLink].map((Icon, i) => (
-                <a
-                  key={i}
-                  href="#"
-                  className="w-9 h-9 rounded-lg glass flex items-center justify-center text-zinc-500 hover:text-white transition-colors"
+    <footer className="relative border-t border-[var(--border-subtle)]">
+      <div className="mx-auto max-w-[1400px] px-8 md:px-12">
+        {/* Top section */}
+        <div className="py-16 md:py-20">
+          <div className="grid grid-cols-1 md:grid-cols-12 gap-12">
+            {/* Brand */}
+            <div className="md:col-span-4">
+              <Link href="/" className="inline-block mb-6">
+                <span
+                  className="text-2xl text-[var(--text-primary)] tracking-tight"
+                  style={{ fontFamily: "var(--font-playfair), Georgia, serif" }}
                 >
-                  <Icon className="w-4 h-4" />
-                </a>
-              ))}
-            </div>
-          </div>
-
-          {/* Links */}
-          {[
-            {
-              title: "Product",
-              links: ["Features", "Pricing", "Gallery", "API Docs", "Changelog"],
-            },
-            {
-              title: "Company",
-              links: ["About", "Blog", "Careers", "Press Kit", "Contact"],
-            },
-            {
-              title: "Legal",
-              links: ["Privacy Policy", "Terms of Service", "Cookie Policy", "GDPR", "Age Verification"],
-            },
-          ].map((col) => (
-            <div key={col.title}>
-              <h4 className="text-sm font-semibold text-zinc-300 mb-4">{col.title}</h4>
-              <ul className="space-y-2.5">
-                {col.links.map((link) => (
-                  <li key={link}>
-                    <a href="#" className="text-sm text-zinc-500 hover:text-zinc-300 transition-colors">
-                      {link}
-                    </a>
-                  </li>
+                  Color<span className="text-[var(--accent-bronze)]">Grade</span>
+                </span>
+              </Link>
+              <p className="text-sm text-[var(--text-secondary)] leading-relaxed max-w-xs mb-6">
+                Professional cinematic color grading for mobile creators. Studio quality, browser-powered.
+              </p>
+              <div className="flex items-center gap-3">
+                {["Twitter", "Instagram", "GitHub"].map((social) => (
+                  <a
+                    key={social}
+                    href="#"
+                    className="text-[10px] text-[var(--text-muted)] hover:text-[var(--text-primary)] transition-colors duration-500 tracking-[0.12em] uppercase"
+                  >
+                    {social}
+                  </a>
                 ))}
-              </ul>
+              </div>
             </div>
-          ))}
+
+            {/* Links */}
+            {[
+              {
+                title: "Product",
+                links: ["Features", "Pricing", "Gallery", "API Docs", "Changelog"],
+              },
+              {
+                title: "Company",
+                links: ["About", "Blog", "Careers", "Press Kit", "Contact"],
+              },
+              {
+                title: "Legal",
+                links: ["Privacy Policy", "Terms of Service", "Cookie Policy", "GDPR"],
+              },
+            ].map((col) => (
+              <div key={col.title} className="md:col-span-2">
+                <h4 className="editorial-caption mb-6">{col.title}</h4>
+                <ul className="space-y-3">
+                  {col.links.map((link) => (
+                    <li key={link}>
+                      <a
+                        href="#"
+                        className="text-sm text-[var(--text-muted)] hover:text-[var(--text-primary)] transition-colors duration-500"
+                      >
+                        {link}
+                      </a>
+                    </li>
+                  ))}
+                </ul>
+              </div>
+            ))}
+          </div>
         </div>
 
-        <div className="border-t border-white/5 pt-8 flex flex-col md:flex-row items-center justify-between gap-4">
-          <p className="text-xs text-zinc-600">
+        {/* Bottom bar */}
+        <div className="border-t border-[var(--border-subtle)] py-8 flex flex-col md:flex-row items-center justify-between gap-4">
+          <p className="text-[10px] text-[var(--text-ghost)] tracking-wide">
             © 2026 ColorGrade. All rights reserved.
           </p>
-          <p className="text-xs text-zinc-700">
-            Built with ♥ for creators who demand the best.
+          <p className="text-[10px] text-[var(--text-ghost)] tracking-wide">
+            Crafted for creators who demand the best.
           </p>
         </div>
       </div>

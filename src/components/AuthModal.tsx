@@ -88,24 +88,24 @@ export default function AuthModal({ isOpen, onClose }: AuthModalProps) {
       <div className="absolute inset-0 bg-black/60 backdrop-blur-sm" onClick={onClose} />
 
       {/* Modal */}
-      <div className="relative w-full max-w-md glass-strong rounded-2xl p-6 shadow-2xl">
+      <div className="relative w-full max-w-md bg-[var(--bg-elevated)] border border-[var(--border-medium)] rounded-sm p-6 shadow-2xl">
         {/* Close */}
         <button
           onClick={onClose}
-          className="absolute top-4 right-4 p-1.5 rounded-lg text-zinc-500 hover:text-white hover:bg-white/5 transition-colors"
+          className="absolute top-4 right-4 p-1.5 rounded-lg text-[var(--text-muted)] hover:text-[var(--text-primary)] hover:bg-white/5 transition-colors"
         >
           <X className="w-4 h-4" />
         </button>
 
         {/* Header */}
         <div className="text-center mb-6">
-          <div className="w-12 h-12 rounded-2xl bg-gradient-to-br from-[var(--accent)] via-pink-500 to-amber-400 flex items-center justify-center mx-auto mb-3">
+          <div className="w-12 h-12 rounded-sm bg-[var(--accent-bronze)] flex items-center justify-center mx-auto mb-3">
             <Sparkles className="w-6 h-6 text-white" />
           </div>
           <h2 className="text-xl font-bold text-white">
             {step === "age" ? "Age Verification" : step === "parental" ? "Parental Consent" : mode === "signin" ? "Welcome Back" : "Create Account"}
           </h2>
-          <p className="text-sm text-zinc-500 mt-1">
+          <p className="text-sm text-[var(--text-muted)] mt-1">
             {step === "age"
               ? "Required for COPPA/GDPR/DPDP compliance"
               : step === "parental"
@@ -127,22 +127,22 @@ export default function AuthModal({ isOpen, onClose }: AuthModalProps) {
         {step === "age" && (
           <div className="space-y-4">
             <div>
-              <label className="text-xs text-zinc-400 mb-1.5 block">Date of Birth</label>
+              <label className="text-xs text-[var(--text-secondary)] mb-1.5 block">Date of Birth</label>
               <input
                 type="date"
                 value={birthDate}
                 onChange={(e) => setBirthDate(e.target.value)}
-                className="w-full px-3 py-2.5 rounded-xl bg-white/5 border border-white/10 text-white text-sm focus:outline-none focus:border-[var(--accent)] transition-colors"
+                className="w-full px-3 py-2.5 rounded-sm bg-[var(--bg-elevated)] border border-[var(--border-medium)] text-[var(--text-primary)] text-sm focus:outline-none focus:border-[var(--accent-bronze)] transition-colors"
               />
             </div>
-            <p className="text-[11px] text-zinc-600 leading-relaxed">
+            <p className="text-[11px] text-[var(--text-muted)] leading-relaxed">
               We collect your age to comply with COPPA (Children&apos;s Online Privacy Protection Act),
               GDPR, and India&apos;s DPDP Act. Users under 13 are not permitted. Users aged 13–17 require
               verified parental/guardian consent before payment processing.
             </p>
             <button
               onClick={handleAgeCheck}
-              className="w-full py-2.5 rounded-xl bg-gradient-to-r from-[var(--accent)] to-pink-500 text-white text-sm font-medium hover:opacity-90 transition-all"
+              className="w-full py-2.5 rounded-sm bg-[var(--accent-bronze)] text-[var(--bg-deep)] text-sm font-medium hover:bg-[var(--accent-umber)] transition-all"
             >
               Verify Age
             </button>
@@ -153,28 +153,28 @@ export default function AuthModal({ isOpen, onClose }: AuthModalProps) {
         {step === "parental" && (
           <div className="space-y-4">
             <div>
-              <label className="text-xs text-zinc-400 mb-1.5 block">Parent/Guardian Email</label>
+              <label className="text-xs text-[var(--text-secondary)] mb-1.5 block">Parent/Guardian Email</label>
               <input
                 type="email"
                 placeholder="parent@example.com"
                 value={parentEmail}
                 onChange={(e) => setParentEmail(e.target.value)}
-                className="w-full px-3 py-2.5 rounded-xl bg-white/5 border border-white/10 text-white text-sm placeholder-zinc-600 focus:outline-none focus:border-[var(--accent)] transition-colors"
+                className="w-full px-3 py-2.5 rounded-sm bg-[var(--bg-elevated)] border border-[var(--border-medium)] text-[var(--text-primary)] text-sm placeholder-[var(--text-ghost)] focus:outline-none focus:border-[var(--accent-bronze)] transition-colors"
               />
             </div>
-            <p className="text-[11px] text-zinc-600 leading-relaxed">
+            <p className="text-[11px] text-[var(--text-muted)] leading-relaxed">
               A verification email will be sent to this address. Your parent/guardian must approve
               your account before you can make purchases or upload content.
             </p>
             <button
               onClick={handleParentalConsent}
-              className="w-full py-2.5 rounded-xl bg-gradient-to-r from-[var(--accent)] to-pink-500 text-white text-sm font-medium hover:opacity-90 transition-all"
+              className="w-full py-2.5 rounded-sm bg-[var(--accent-bronze)] text-[var(--bg-deep)] text-sm font-medium hover:bg-[var(--accent-umber)] transition-all"
             >
               Send Consent Request
             </button>
             <button
               onClick={() => { setStep("age"); setError(""); }}
-              className="w-full py-2 text-sm text-zinc-500 hover:text-white transition-colors"
+              className="w-full py-2 text-sm text-[var(--text-muted)] hover:text-[var(--text-primary)] transition-colors"
             >
               Go Back
             </button>
@@ -187,45 +187,45 @@ export default function AuthModal({ isOpen, onClose }: AuthModalProps) {
             {/* Name (signup only) */}
             {mode === "signup" && (
               <div className="relative">
-                <User className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-zinc-600" />
+                <User className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-[var(--text-ghost)]" />
                 <input
                   type="text"
                   placeholder="Full name"
                   value={name}
                   onChange={(e) => setName(e.target.value)}
-                  className="w-full pl-10 pr-3 py-2.5 rounded-xl bg-white/5 border border-white/10 text-white text-sm placeholder-zinc-600 focus:outline-none focus:border-[var(--accent)] transition-colors"
+                  className="w-full pl-10 pr-3 py-2.5 rounded-sm bg-[var(--bg-elevated)] border border-[var(--border-medium)] text-[var(--text-primary)] text-sm placeholder-[var(--text-ghost)] focus:outline-none focus:border-[var(--accent-bronze)] transition-colors"
                 />
               </div>
             )}
 
             {/* Email */}
             <div className="relative">
-              <Mail className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-zinc-600" />
+              <Mail className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-[var(--text-ghost)]" />
               <input
                 type="email"
                 placeholder="Email address"
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}
                 required
-                className="w-full pl-10 pr-3 py-2.5 rounded-xl bg-white/5 border border-white/10 text-white text-sm placeholder-zinc-600 focus:outline-none focus:border-[var(--accent)] transition-colors"
+                className="w-full pl-10 pr-3 py-2.5 rounded-sm bg-[var(--bg-elevated)] border border-[var(--border-medium)] text-[var(--text-primary)] text-sm placeholder-[var(--text-ghost)] focus:outline-none focus:border-[var(--accent-bronze)] transition-colors"
               />
             </div>
 
             {/* Password */}
             <div className="relative">
-              <Lock className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-zinc-600" />
+              <Lock className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-[var(--text-ghost)]" />
               <input
                 type={showPassword ? "text" : "password"}
                 placeholder="Password"
                 value={password}
                 onChange={(e) => setPassword(e.target.value)}
                 required
-                className="w-full pl-10 pr-10 py-2.5 rounded-xl bg-white/5 border border-white/10 text-white text-sm placeholder-zinc-600 focus:outline-none focus:border-[var(--accent)] transition-colors"
+                className="w-full pl-10 pr-10 py-2.5 rounded-sm bg-[var(--bg-elevated)] border border-[var(--border-medium)] text-[var(--text-primary)] text-sm placeholder-[var(--text-ghost)] focus:outline-none focus:border-[var(--accent-bronze)] transition-colors"
               />
               <button
                 type="button"
                 onClick={() => setShowPassword(!showPassword)}
-                className="absolute right-3 top-1/2 -translate-y-1/2 text-zinc-600 hover:text-zinc-400"
+                className="absolute right-3 top-1/2 -translate-y-1/2 text-[var(--text-ghost)] hover:text-[var(--text-muted)]"
               >
                 {showPassword ? <EyeOff className="w-4 h-4" /> : <Eye className="w-4 h-4" />}
               </button>
@@ -235,7 +235,7 @@ export default function AuthModal({ isOpen, onClose }: AuthModalProps) {
             <button
               type="submit"
               disabled={loading}
-              className="w-full py-2.5 rounded-xl bg-gradient-to-r from-[var(--accent)] to-pink-500 text-white text-sm font-medium hover:opacity-90 transition-all disabled:opacity-50 flex items-center justify-center gap-2"
+              className="w-full py-2.5 rounded-sm bg-[var(--accent-bronze)] text-[var(--bg-deep)] text-sm font-medium hover:bg-[var(--accent-umber)] transition-all disabled:opacity-50 flex items-center justify-center gap-2"
             >
               {loading ? (
                 <>
@@ -255,14 +255,14 @@ export default function AuthModal({ isOpen, onClose }: AuthModalProps) {
                 <div className="w-full border-t border-white/5" />
               </div>
               <div className="relative flex justify-center">
-                <span className="px-3 text-[10px] text-zinc-600 uppercase tracking-wider bg-[#0a0a0c]">or</span>
+                <span className="px-3 text-[10px] text-[var(--text-ghost)] uppercase tracking-wider bg-[var(--bg-deep)]">or</span>
               </div>
             </div>
 
             {/* Google */}
             <button
               type="button"
-              className="w-full py-2.5 rounded-xl glass text-sm text-zinc-300 hover:text-white hover:bg-white/5 transition-all flex items-center justify-center gap-2"
+              className="w-full py-2.5 rounded-sm border border-[var(--border-medium)] text-sm text-[var(--text-secondary)] hover:text-[var(--text-primary)] hover:bg-white/5 transition-all flex items-center justify-center gap-2"
             >
               <svg className="w-4 h-4" viewBox="0 0 24 24">
                 <path d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92a5.06 5.06 0 0 1-2.2 3.32v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.1z" fill="#4285F4"/>
@@ -274,7 +274,7 @@ export default function AuthModal({ isOpen, onClose }: AuthModalProps) {
             </button>
 
             {/* Toggle mode */}
-            <p className="text-center text-xs text-zinc-500 mt-4">
+            <p className="text-center text-xs text-[var(--text-muted)] mt-4">
               {mode === "signin" ? "Don't have an account?" : "Already have an account?"}{" "}
               <button
                 type="button"

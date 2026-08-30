@@ -13,10 +13,10 @@ interface Props {
 }
 
 /**
- * GSAP ScrollTrigger Animations
+ * GSAP ScrollTrigger Animations — Editorial Style
  *
- * Provides scroll-triggered reveal animations for all sections.
- * Uses GSAP ScrollTrigger for precision timing and easing.
+ * Refined, subtle animations. No flashy effects —
+ * just smooth, cinematic reveals.
  */
 export default function GSAPAnimations({ children }: Props) {
   const containerRef = useRef<HTMLDivElement>(null);
@@ -25,38 +25,37 @@ export default function GSAPAnimations({ children }: Props) {
     if (!containerRef.current) return;
 
     const ctx = gsap.context(() => {
-      // ── Hero entrance ──
+      // ── Hero entrance — refined fade up ──
       const heroElements = document.querySelectorAll("[data-gsap='hero']");
       if (heroElements.length) {
         gsap.fromTo(
           heroElements,
-          { opacity: 0, y: 60, filter: "blur(10px)" },
+          { opacity: 0, y: 40 },
           {
             opacity: 1,
             y: 0,
-            filter: "blur(0px)",
-            duration: 1.2,
-            stagger: 0.15,
-            ease: "power3.out",
-            delay: 0.2,
+            duration: 1.4,
+            stagger: 0.2,
+            ease: "power2.out",
+            delay: 0.3,
           }
         );
       }
 
-      // ── Section reveals ──
+      // ── Section reveals — smooth slide up ──
       const sections = document.querySelectorAll("[data-gsap='section']");
       sections.forEach((section) => {
         gsap.fromTo(
           section,
-          { opacity: 0, y: 80 },
+          { opacity: 0, y: 60 },
           {
             opacity: 1,
             y: 0,
-            duration: 1,
+            duration: 1.2,
             ease: "power2.out",
             scrollTrigger: {
               trigger: section,
-              start: "top 85%",
+              start: "top 88%",
               end: "top 20%",
               toggleActions: "play none none reverse",
             },
@@ -64,80 +63,58 @@ export default function GSAPAnimations({ children }: Props) {
         );
       });
 
-      // ── Card stagger reveals ──
+      // ── Card group reveals — staggered fade ──
       const cardGroups = document.querySelectorAll("[data-gsap='cards']");
       cardGroups.forEach((group) => {
         const cards = group.querySelectorAll("[data-gsap='card']");
         gsap.fromTo(
           cards,
-          { opacity: 0, y: 50, scale: 0.95 },
+          { opacity: 0, y: 30 },
           {
             opacity: 1,
             y: 0,
-            scale: 1,
-            duration: 0.7,
-            stagger: 0.1,
+            duration: 0.8,
+            stagger: 0.08,
             ease: "power2.out",
             scrollTrigger: {
               trigger: group,
-              start: "top 80%",
+              start: "top 82%",
               toggleActions: "play none none reverse",
             },
           }
         );
       });
 
-      // ── Parallax gradient orbs ──
+      // ── Parallax elements — subtle depth ──
       const orbs = document.querySelectorAll("[data-gsap='orb']");
       orbs.forEach((orb, i) => {
         gsap.to(orb, {
-          y: -100 - i * 30,
+          y: -60 - i * 20,
           ease: "none",
           scrollTrigger: {
             trigger: orb,
             start: "top bottom",
             end: "bottom top",
-            scrub: 1,
+            scrub: 1.5,
           },
         });
       });
 
-      // ── Text gradient animation on scroll ──
-      const gradientTexts = document.querySelectorAll("[data-gsap='gradient-text']");
-      gradientTexts.forEach((text) => {
-        gsap.fromTo(
-          text,
-          { backgroundPosition: "200% center" },
-          {
-            backgroundPosition: "0% center",
-            duration: 1.5,
-            ease: "power2.out",
-            scrollTrigger: {
-              trigger: text,
-              start: "top 80%",
-              toggleActions: "play none none reverse",
-            },
-          }
-        );
-      });
-
-      // ── Pricing card hover tilt ──
+      // ── Pricing card hover — subtle lift ──
       const priceCards = document.querySelectorAll("[data-gsap='price-card']");
       priceCards.forEach((card) => {
         const el = card as HTMLElement;
         el.addEventListener("mouseenter", () => {
           gsap.to(el, {
-            y: -8,
-            scale: 1.02,
-            duration: 0.3,
+            y: -4,
+            duration: 0.4,
             ease: "power2.out",
           });
         });
         el.addEventListener("mouseleave", () => {
           gsap.to(el, {
             y: 0,
-            scale: 1,
-            duration: 0.3,
+            duration: 0.4,
             ease: "power2.out",
           });
         });
@@ -160,7 +137,7 @@ export default function GSAPAnimations({ children }: Props) {
           ease: "power2.out",
           scrollTrigger: {
             trigger: el,
-            start: "top 85%",
+            start: "top 88%",
             toggleActions: "play none none reverse",
           },
           onUpdate: () => {

@@ -2,159 +2,163 @@
 
 import { useEffect, useRef } from "react";
 import Link from "next/link";
-import { Play, ArrowRight, Zap, Film, Palette } from "lucide-react";
+import { ArrowRight } from "lucide-react";
 
 export default function Hero() {
-  const canvasRef = useRef<HTMLCanvasElement>(null);
+  const sectionRef = useRef<HTMLElement>(null);
 
-  // Particle background
   useEffect(() => {
-    const canvas = canvasRef.current;
-    if (!canvas) return;
-    const ctx = canvas.getContext("2d");
-    if (!ctx) return;
+    const section = sectionRef.current;
+    if (!section) return;
 
-    let animId: number;
-    const particles: { x: number; y: number; vx: number; vy: number; r: number; a: number }[] = [];
-
-    const resize = () => {
-      canvas.width = window.innerWidth;
-      canvas.height = window.innerHeight;
-    };
-    resize();
-    window.addEventListener("resize", resize);
-
-    for (let i = 0; i < 60; i++) {
-      particles.push({
-        x: Math.random() * canvas.width,
-        y: Math.random() * canvas.height,
-        vx: (Math.random() - 0.5) * 0.3,
-        vy: (Math.random() - 0.5) * 0.3,
-        r: Math.random() * 2 + 0.5,
-        a: Math.random() * 0.5 + 0.1,
+    // Simple parallax on scroll
+    const handleScroll = () => {
+      const scrollY = window.scrollY;
+      const els = section.querySelectorAll("[data-parallax]");
+      els.forEach((el) => {
+        const speed = parseFloat((el as HTMLElement).dataset.parallax || "0.5");
+        (el as HTMLElement).style.transform = `translateY(${scrollY * speed}px)`;
       });
-    }
-
-    const draw = () => {
-      ctx.clearRect(0, 0, canvas.width, canvas.height);
-      particles.forEach((p) => {
-        p.x += p.vx;
-        p.y += p.vy;
-        if (p.x < 0 || p.x > canvas.width) p.vx *= -1;
-        if (p.y < 0 || p.y > canvas.height) p.vy *= -1;
-
-        ctx.beginPath();
-        ctx.arc(p.x, p.y, p.r, 0, Math.PI * 2);
-        ctx.fillStyle = `rgba(167, 139, 250, ${p.a})`;
-        ctx.fill();
-      });
-
-      // Connect nearby particles
-      for (let i = 0; i < particles.length; i++) {
-        for (let j = i + 1; j < particles.length; j++) {
-          const dx = particles[i].x - particles[j].x;
-          const dy = particles[i].y - particles[j].y;
-          const dist = Math.sqrt(dx * dx + dy * dy);
-          if (dist < 120) {
-            ctx.beginPath();
-            ctx.moveTo(particles[i].x, particles[i].y);
-            ctx.lineTo(particles[j].x, particles[j].y);
-            ctx.strokeStyle = `rgba(167, 139, 250, ${0.06 * (1 - dist / 120)})`;
-            ctx.lineWidth = 0.5;
-            ctx.stroke();
-          }
-        }
-      }
-
-      animId = requestAnimationFrame(draw);
     };
-    draw();
 
-    return () => {
-      cancelAnimationFrame(animId);
-      window.removeEventListener("resize", resize);
-    };
+    window.addEventListener("scroll", handleScroll, { passive: true });
+    return () => window.removeEventListener("scroll", handleScroll);
   }, []);
 
   return (
-    <section className="relative min-h-screen flex items-center justify-center overflow-hidden">
-      {/* Particle canvas */}
-      <canvas ref={canvasRef} className="absolute inset-0 pointer-events-none" />
+    <section ref={sectionRef} className="relative min-h-screen flex items-center overflow-hidden">
+      {/* Subtle background grain */}
+      <div className="absolute inset-0 bg-[var(--bg-deep)]" />
 
-      {/* Gradient orbs */}
-      <div className="absolute top-1/4 -left-32 w-96 h-96 rounded-full bg-purple-500/10 blur-[120px] animate-float" />
-      <div className="absolute bottom-1/4 -right-32 w-96 h-96 rounded-full bg-pink-500/10 blur-[120px] animate-float" style={{ animationDelay: "2s" }} />
-      <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[600px] h-[600px] rounded-full bg-amber-500/5 blur-[150px]" />
+      {/* Cinematic gradient orbs — very muted */}
+      <div className="absolute top-[15%] right-[10%] w-[500px] h-[500px] rounded-full bg-[var(--accent-bronze)]/[0.03] blur-[150px]" />
+      <div className="absolute bottom-[10%] left-[5%] w-[400px] h-[400px] rounded-full bg-[var(--accent-sage)]/[0.03] blur-[120px]" />
 
-      {/* Content */}
-      <div className="relative z-10 mx-auto max-w-5xl px-6 text-center pt-24">
-        {/* Badge */}
-        <div className="inline-flex items-center gap-2 glass rounded-full px-4 py-2 mb-8">
-          <Zap className="w-3.5 h-3.5 text-amber-400" />
-          <span className="text-xs font-medium text-zinc-300 tracking-wide uppercase">
-            Professional Color Grading — Now in Your Browser
-          </span>
-        </div>
+      {/* Editorial decorative line — vertical */}
+      <div className="absolute left-8 md:left-16 top-32 bottom-32 w-px bg-[var(--border-subtle)] hidden lg:block" />
 
-        {/* Headline */}
-        <h1
-          className="text-5xl sm:text-6xl md:text-7xl lg:text-8xl font-bold tracking-tight leading-[0.95] mb-6"
-          style={{ fontFamily: "var(--font-playfair), Georgia, serif" }}
-        >
-          <span className="block text-white">Make Every</span>
-          <span className="block gradient-text">Frame Cinematic</span>
-        </h1>
-
-        {/* Subheadline */}
-        <p className="mx-auto max-w-2xl text-lg md:text-xl text-zinc-400 leading-relaxed mb-12">
-          Professional LUT presets, 3-way color wheels, and AI-powered corrections.
-          <br className="hidden sm:block" />
-          Studio-grade color grading — optimized for mobile creators.
-        </p>
-
-        {/* CTA buttons */}
-        <div className="flex flex-col sm:flex-row items-center justify-center gap-4 mb-16">
-          <Link
-            href="/tool"
-            className="group flex items-center gap-2 px-8 py-4 rounded-full bg-gradient-to-r from-[var(--accent)] to-pink-500 text-white font-medium text-base shadow-xl shadow-purple-500/25 hover:shadow-purple-500/40 transition-all hover:scale-105"
-          >
-            <Play className="w-4 h-4" />
-            Start Free Trial
-            <ArrowRight className="w-4 h-4 group-hover:translate-x-1 transition-transform" />
-          </Link>
-          <a
-            href="#gallery"
-            className="flex items-center gap-2 px-8 py-4 rounded-full glass text-zinc-300 hover:text-white font-medium text-base transition-all hover:bg-white/5"
-          >
-            <Film className="w-4 h-4" />
-            See Examples
-          </a>
-        </div>
-
-        {/* Stats */}
-        <div className="flex flex-wrap items-center justify-center gap-8 md:gap-16">
-          {[
-            { icon: Palette, value: "30+", label: "LUT Presets" },
-            { icon: Film, value: "4K", label: "Export Quality" },
-            { icon: Zap, value: "<2s", label: "Processing Time" },
-          ].map((stat) => (
-            <div key={stat.label} className="flex items-center gap-3">
-              <stat.icon className="w-5 h-5 text-zinc-500" />
-              <div className="text-left">
-                <div className="text-xl font-bold text-white">{stat.value}</div>
-                <div className="text-xs text-zinc-500">{stat.label}</div>
-              </div>
+      <div className="relative z-10 mx-auto max-w-[1400px] w-full px-8 md:px-12 pt-32 pb-20">
+        <div className="grid grid-cols-1 lg:grid-cols-12 gap-12 lg:gap-8 items-center">
+          {/* Left column — Main headline */}
+          <div className="lg:col-span-7">
+            {/* Issue number / editorial tag */}
+            <div className="flex items-center gap-4 mb-10" data-parallax="0.1">
+              <div className="editorial-dot" />
+              <span className="editorial-caption">Vol. 01 — Cinematic Color</span>
+              <div className="h-px flex-1 bg-[var(--border-subtle)] max-w-[100px]" />
             </div>
-          ))}
-        </div>
 
-        {/* Scroll indicator */}
-        <div className="mt-16 animate-float">
-          <div className="w-6 h-10 rounded-full border-2 border-zinc-600 mx-auto flex justify-center pt-2">
-            <div className="w-1 h-2.5 rounded-full bg-zinc-400 animate-pulse" />
+            {/* Main headline */}
+            <h1 className="mb-8" data-parallax="0.05">
+              <span
+                className="block text-[clamp(2.8rem,7vw,6.5rem)] editorial-display text-[var(--text-primary)] leading-[0.90] mb-2"
+              >
+                Make Every
+              </span>
+              <span
+                className="block text-[clamp(2.8rem,7vw,6.5rem)] editorial-display leading-[0.90]"
+              >
+                <span className="text-[var(--text-primary)]">Frame</span>{" "}
+                <span className="text-[var(--accent-bronze)] italic">Cinematic</span>
+              </span>
+            </h1>
+
+            {/* Subheadline — editorial body */}
+            <div className="max-w-lg mb-12" data-parallax="0.08">
+              <p className="editorial-body text-[var(--text-secondary)]">
+                Professional color grading for the modern creator.
+                LUT presets, 3-way color wheels, and AI-powered corrections —
+                all in your browser.
+              </p>
+            </div>
+
+            {/* CTA row */}
+            <div className="flex items-center gap-6" data-parallax="0.1">
+              <Link
+                href="/tool"
+                className="group inline-flex items-center gap-3 px-8 py-4 bg-[var(--accent-bronze)] text-[var(--bg-deep)] text-[11px] font-semibold tracking-[0.15em] uppercase hover:bg-[var(--accent-umber)] transition-all duration-500"
+              >
+                Start Free Trial
+                <ArrowRight className="w-3.5 h-3.5 group-hover:translate-x-1 transition-transform duration-300" />
+              </Link>
+              <a
+                href="#gallery"
+                className="text-[11px] font-medium text-[var(--text-muted)] hover:text-[var(--text-primary)] transition-colors duration-500 tracking-[0.15em] uppercase"
+              >
+                View Gallery
+              </a>
+            </div>
+          </div>
+
+          {/* Right column — Editorial visual element */}
+          <div className="lg:col-span-5 relative" data-parallax="0.15">
+            {/* Cinematic frame */}
+            <div className="relative aspect-[4/5] overflow-hidden">
+              {/* Gradient background simulating cinematic footage */}
+              <div
+                className="absolute inset-0"
+                style={{
+                  background: `
+                    radial-gradient(ellipse at 30% 20%, rgba(196,149,106,0.12) 0%, transparent 50%),
+                    radial-gradient(ellipse at 70% 80%, rgba(122,155,126,0.08) 0%, transparent 50%),
+                    linear-gradient(160deg, #1A1816 0%, #0B0A08 40%, #151312 100%)
+                  `,
+                }}
+              />
+
+              {/* Overlaid text — editorial style */}
+              <div className="absolute inset-0 flex flex-col justify-between p-8 md:p-10">
+                <div className="flex items-center justify-between">
+                  <span className="editorial-caption">Featured Work</span>
+                  <span className="section-number">01</span>
+                </div>
+
+                <div>
+                  <p
+                    className="text-[clamp(1.2rem,2.5vw,1.8rem)] text-[var(--text-primary)] leading-snug mb-4"
+                    style={{ fontFamily: "var(--font-playfair), Georgia, serif" }}
+                  >
+                    &ldquo;Color is the keyboard, the eyes are the harmonies, the soul is the piano with many strings.&rdquo;
+                  </p>
+                  <div className="flex items-center gap-3">
+                    <div className="h-px w-8 bg-[var(--accent-bronze)] opacity-40" />
+                    <span className="text-[10px] text-[var(--text-muted)] tracking-[0.15em] uppercase">
+                      Wassily Kandinsky
+                    </span>
+                  </div>
+                </div>
+              </div>
+
+              {/* Frame border */}
+              <div className="absolute inset-0 border border-[var(--border-subtle)]" />
+            </div>
+
+            {/* Stats — editorial style below the frame */}
+            <div className="grid grid-cols-3 gap-px bg-[var(--border-subtle)] mt-px">
+              {[
+                { value: "30+", label: "LUT Presets" },
+                { value: "4K", label: "Export Quality" },
+                { value: "<2s", label: "Processing" },
+              ].map((stat) => (
+                <div key={stat.label} className="bg-[var(--bg-card)] p-5 text-center">
+                  <div
+                    className="text-xl md:text-2xl text-[var(--text-primary)] mb-1"
+                    style={{ fontFamily: "var(--font-playfair), Georgia, serif" }}
+                  >
+                    {stat.value}
+                  </div>
+                  <div className="text-[9px] text-[var(--text-muted)] tracking-[0.12em] uppercase">
+                    {stat.label}
+                  </div>
+                </div>
+              ))}
+            </div>
           </div>
         </div>
       </div>
+
+      {/* Bottom editorial rule */}
+      <div className="absolute bottom-0 left-8 md:left-16 right-8 md:right-16 h-px bg-[var(--border-subtle)]" />
     </section>
   );
 }

@@ -2,7 +2,7 @@
 
 import { useState, useEffect } from "react";
 import Link from "next/link";
-import { Menu, X, Sparkles } from "lucide-react";
+import { Menu, X } from "lucide-react";
 
 export default function Navbar() {
   const [scrolled, setScrolled] = useState(false);
@@ -22,70 +22,82 @@ export default function Navbar() {
 
   return (
     <nav
-      className={`fixed top-0 left-0 right-0 z-50 transition-all duration-500 ${
+      className={`fixed top-0 left-0 right-0 z-50 transition-all duration-700 ${
         scrolled
-          ? "glass-strong py-3"
-          : "py-5 bg-transparent"
+          ? "bg-[var(--bg-deep)]/90 backdrop-blur-xl border-b border-[var(--border-subtle)]"
+          : "bg-transparent"
       }`}
     >
-      <div className="mx-auto max-w-7xl px-6 flex items-center justify-between">
-        {/* Logo */}
-        <Link href="/" className="flex items-center gap-2 group">
-          <div className="w-9 h-9 rounded-xl bg-gradient-to-br from-[var(--accent)] via-pink-500 to-amber-400 flex items-center justify-center group-hover:scale-110 transition-transform">
-            <Sparkles className="w-5 h-5 text-white" />
-          </div>
-          <span className="text-lg font-semibold tracking-tight">
-            Color<span className="gradient-text">Grade</span>
-          </span>
-        </Link>
+      <div className="mx-auto max-w-[1400px] px-8 md:px-12">
+        {/* Top rule line */}
+        <div className={`h-px bg-[var(--border-subtle)] transition-opacity duration-500 ${scrolled ? "opacity-0" : "opacity-100"}`} />
 
-        {/* Desktop links */}
-        <div className="hidden md:flex items-center gap-8">
-          {navLinks.map((link) => (
-            <a
-              key={link.href}
-              href={link.href}
-              className="text-sm text-zinc-400 hover:text-white transition-colors duration-300"
-            >
-              {link.label}
-            </a>
-          ))}
-          <Link
-            href="/tool"
-            className="px-5 py-2.5 rounded-full text-sm font-medium bg-gradient-to-r from-[var(--accent)] to-pink-500 text-white hover:opacity-90 transition-all shadow-lg shadow-purple-500/20"
-          >
-            Start Free Trial
+        <div className="flex items-center justify-between h-16 md:h-20">
+          {/* Logo */}
+          <Link href="/" className="flex items-center gap-3 group">
+            <div className="flex flex-col items-center leading-none">
+              <span
+                className="text-xl md:text-2xl tracking-tight text-[var(--text-primary)]"
+                style={{ fontFamily: "var(--font-playfair), Georgia, serif" }}
+              >
+                Color<span className="text-[var(--accent-bronze)]">Grade</span>
+              </span>
+            </div>
           </Link>
-        </div>
 
-        {/* Mobile menu button */}
-        <button
-          onClick={() => setMobileOpen(!mobileOpen)}
-          className="md:hidden p-2 text-zinc-400 hover:text-white"
-        >
-          {mobileOpen ? <X className="w-5 h-5" /> : <Menu className="w-5 h-5" />}
-        </button>
+          {/* Desktop links */}
+          <div className="hidden md:flex items-center gap-10">
+            {navLinks.map((link) => (
+              <a
+                key={link.href}
+                href={link.href}
+                className="text-[11px] font-medium text-[var(--text-muted)] hover:text-[var(--text-primary)] transition-colors duration-500 tracking-[0.15em] uppercase"
+              >
+                {link.label}
+              </a>
+            ))}
+            <div className="w-px h-4 bg-[var(--border-medium)]" />
+            <Link
+              href="/tool"
+              className="text-[11px] font-medium text-[var(--accent-bronze)] hover:text-[var(--text-primary)] transition-colors duration-500 tracking-[0.15em] uppercase"
+            >
+              Open Tool
+            </Link>
+          </div>
+
+          {/* Mobile menu button */}
+          <button
+            onClick={() => setMobileOpen(!mobileOpen)}
+            className="md:hidden p-2 text-[var(--text-muted)] hover:text-[var(--text-primary)] transition-colors"
+          >
+            {mobileOpen ? <X className="w-5 h-5" /> : <Menu className="w-5 h-5" />}
+          </button>
+        </div>
       </div>
 
       {/* Mobile menu */}
       {mobileOpen && (
-        <div className="md:hidden glass-strong mt-2 mx-4 rounded-2xl p-4 flex flex-col gap-3">
-          {navLinks.map((link) => (
-            <a
-              key={link.href}
-              href={link.href}
+        <div className="md:hidden bg-[var(--bg-deep)]/95 backdrop-blur-xl border-t border-[var(--border-subtle)]">
+          <div className="px-8 py-6 flex flex-col gap-4">
+            {navLinks.map((link) => (
+              <a
+                key={link.href}
+                href={link.href}
+                onClick={() => setMobileOpen(false)}
+                className="text-[11px] font-medium text-[var(--text-muted)] hover:text-[var(--text-primary)] transition-colors tracking-[0.15em] uppercase py-2"
+              >
+                {link.label}
+              </a>
+            ))}
+            <div className="h-px bg-[var(--border-subtle)] my-2" />
+            <Link
+              href="/tool"
               onClick={() => setMobileOpen(false)}
-              className="text-sm text-zinc-400 hover:text-white transition-colors px-3 py-2"
+              className="text-[11px] font-medium text-[var(--accent-bronze)] hover:text-[var(--text-primary)] transition-colors tracking-[0.15em] uppercase py-2"
             >
-              {link.label}
-            </a>
-          ))}
-          <Link
-            href="/tool"
-            className="mt-2 px-5 py-3 rounded-xl text-sm font-medium bg-gradient-to-r from-[var(--accent)] to-pink-500 text-white text-center"
-          >
-            Start Free Trial
-          </Link>
+              Open Tool
+            </Link>
+          </div>
         </div>
       )}
     </nav>

@@ -1,6 +1,6 @@
 "use client";
 
-import { Check, Crown, Zap, Infinity } from "lucide-react";
+import { Check } from "lucide-react";
 
 const plans = [
   {
@@ -8,18 +8,16 @@ const plans = [
     price: "₹29",
     period: "per clip",
     description: "Perfect for one-off projects",
-    icon: Zap,
     features: ["1 video export", "Basic LUT presets", "Auto white balance", "Contrast & saturation", "1080p export"],
     popular: false,
     cta: "Buy a Clip",
-    accent: "from-zinc-700 to-zinc-600",
+    accent: "var(--text-muted)",
   },
   {
     name: "Monthly",
     price: "₹249",
     period: "/month",
     description: "Up to 200 clips per month",
-    icon: Crown,
     features: [
       "200 clips / month",
       "All 8 Pro tools",
@@ -33,14 +31,13 @@ const plans = [
     ],
     popular: true,
     cta: "Start Monthly",
-    accent: "from-[var(--accent)] to-pink-500",
+    accent: "var(--accent-bronze)",
   },
   {
     name: "Yearly",
     price: "₹849",
     period: "/year",
     description: "Up to 1,800 clips per year",
-    icon: Crown,
     features: [
       "1,800 clips / year",
       "All Pro features",
@@ -50,85 +47,101 @@ const plans = [
     ],
     popular: false,
     cta: "Start Yearly",
-    accent: "from-amber-500 to-orange-500",
+    accent: "var(--accent-umber)",
   },
   {
     name: "Lifetime",
     price: "₹2,000",
     period: "one-time",
     description: "Unlimited access forever",
-    icon: Infinity,
     features: ["Unlimited clips", "All Pro features", "Lifetime updates", "Priority support", "4K export"],
     popular: false,
     cta: "Get Lifetime",
-    accent: "from-emerald-500 to-teal-500",
+    accent: "var(--accent-sage)",
   },
 ];
 
 export default function Pricing() {
   return (
-    <section id="pricing" className="relative py-32 px-6">
-      <div className="mx-auto max-w-7xl">
-        {/* Header */}
-        <div className="text-center mb-20">
-          <div className="inline-flex items-center gap-2 glass rounded-full px-4 py-2 mb-6">
-            <Zap className="w-3.5 h-3.5 text-amber-400" />
-            <span className="text-xs font-medium text-zinc-400 tracking-wide uppercase">
-              Simple Pricing
-            </span>
+    <section id="pricing" className="relative py-24 md:py-32">
+      <div className="mx-auto max-w-[1400px] px-8 md:px-12">
+        {/* Section header — editorial */}
+        <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 mb-20">
+          <div className="lg:col-span-1">
+            <span className="section-number">04</span>
           </div>
-          <h2
-            className="text-4xl md:text-5xl font-bold tracking-tight mb-4"
-            style={{ fontFamily: "var(--font-playfair), Georgia, serif" }}
-          >
-            Start Free. <span className="gradient-text">Upgrade Anytime.</span>
-          </h2>
-          <p className="text-zinc-500 max-w-lg mx-auto">
-            3-day free trial with 3 exports. No credit card required.
-          </p>
+          <div className="lg:col-span-5">
+            <h2
+              className="text-[clamp(2rem,4vw,3.5rem)] editorial-heading text-[var(--text-primary)] leading-[1.05]"
+            >
+              Start Free.{" "}
+              <span className="text-[var(--accent-bronze)] italic">Upgrade Anytime.</span>
+            </h2>
+          </div>
+          <div className="lg:col-span-4 lg:col-start-8 flex items-end">
+            <p className="editorial-body text-[var(--text-secondary)]">
+              3-day free trial with 3 exports. No credit card required.
+            </p>
+          </div>
         </div>
 
-        {/* Cards */}
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+        {/* Decorative rule */}
+        <div className="h-px bg-[var(--border-subtle)] mb-16" />
+
+        {/* Cards — editorial grid */}
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-px bg-[var(--border-subtle)]">
           {plans.map((plan) => (
             <div
               key={plan.name}
-              className={`relative glass-card p-6 flex flex-col ${
-                plan.popular ? "gradient-border glow-purple" : ""
+              className={`bg-[var(--bg-card)] p-8 md:p-10 flex flex-col relative group hover:bg-[var(--bg-card-hover)] transition-colors duration-500 ${
+                plan.popular ? "bg-[var(--bg-elevated)]" : ""
               }`}
             >
+              {/* Popular badge */}
               {plan.popular && (
-                <div className="absolute -top-3 left-1/2 -translate-x-1/2 px-4 py-1 rounded-full bg-gradient-to-r from-[var(--accent)] to-pink-500 text-[10px] font-bold uppercase tracking-wider text-white">
-                  Most Popular
-                </div>
+                <div className="absolute top-0 left-0 right-0 h-px bg-[var(--accent-bronze)] opacity-60" />
               )}
 
-              <div className="mb-6">
-                <div className={`w-10 h-10 rounded-xl bg-gradient-to-br ${plan.accent} flex items-center justify-center mb-4`}>
-                  <plan.icon className="w-5 h-5 text-white" />
+              {/* Plan header */}
+              <div className="mb-8">
+                <div className="flex items-center gap-3 mb-4">
+                  <div
+                    className="w-2 h-2 rounded-full"
+                    style={{ background: plan.accent }}
+                  />
+                  <span className="editorial-caption">{plan.name}</span>
                 </div>
-                <h3 className="text-lg font-semibold text-white mb-1">{plan.name}</h3>
-                <div className="flex items-baseline gap-1">
-                  <span className="text-3xl font-bold text-white">{plan.price}</span>
-                  <span className="text-sm text-zinc-500">{plan.period}</span>
+                <div className="flex items-baseline gap-1.5 mb-2">
+                  <span
+                    className="text-3xl md:text-4xl text-[var(--text-primary)]"
+                    style={{ fontFamily: "var(--font-playfair), Georgia, serif" }}
+                  >
+                    {plan.price}
+                  </span>
+                  <span className="text-xs text-[var(--text-muted)]">{plan.period}</span>
                 </div>
-                <p className="text-xs text-zinc-500 mt-1">{plan.description}</p>
+                <p className="text-xs text-[var(--text-secondary)]">{plan.description}</p>
               </div>
 
-              <ul className="space-y-2.5 mb-8 flex-1">
+              {/* Features */}
+              <ul className="space-y-3 mb-10 flex-1">
                 {plan.features.map((f) => (
-                  <li key={f} className="flex items-start gap-2.5 text-sm text-zinc-400">
-                    <Check className="w-4 h-4 text-green-400 mt-0.5 shrink-0" />
+                  <li key={f} className="flex items-start gap-3 text-sm text-[var(--text-secondary)]">
+                    <Check
+                      className="w-3.5 h-3.5 mt-0.5 shrink-0"
+                      style={{ color: plan.accent }}
+                    />
                     {f}
                   </li>
                 ))}
               </ul>
 
+              {/* CTA */}
               <button
-                className={`w-full py-3 rounded-xl text-sm font-medium transition-all ${
+                className={`w-full py-3.5 text-[11px] font-semibold tracking-[0.15em] uppercase transition-all duration-500 ${
                   plan.popular
-                    ? "bg-gradient-to-r from-[var(--accent)] to-pink-500 text-white shadow-lg shadow-purple-500/20 hover:shadow-purple-500/30"
-                    : "glass text-zinc-300 hover:text-white hover:bg-white/5"
+                    ? "bg-[var(--accent-bronze)] text-[var(--bg-deep)] hover:bg-[var(--accent-umber)]"
+                    : "border border-[var(--border-medium)] text-[var(--text-secondary)] hover:text-[var(--text-primary)] hover:border-[var(--border-accent)]"
                 }`}
               >
                 {plan.cta}
@@ -138,7 +151,7 @@ export default function Pricing() {
         </div>
 
         {/* Footer note */}
-        <p className="text-center text-xs text-zinc-600 mt-12">
+        <p className="text-center text-[10px] text-[var(--text-ghost)] mt-12 tracking-wide">
           All plans include watermark-free preview. 50/50 weekly mystery card gives you a chance to win free exports.
         </p>
       </div>

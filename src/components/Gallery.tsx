@@ -1,16 +1,16 @@
 "use client";
 
 import { useState, useRef, useCallback } from "react";
-import { ImageIcon } from "lucide-react";
 
 interface BeforeAfterCardProps {
   title: string;
   preset: string;
   beforeColor: string;
   afterColor: string;
+  size?: "large" | "normal";
 }
 
-function BeforeAfterCard({ title, preset, beforeColor, afterColor }: BeforeAfterCardProps) {
+function BeforeAfterCard({ title, preset, beforeColor, afterColor, size = "normal" }: BeforeAfterCardProps) {
   const [position, setPosition] = useState(50);
   const containerRef = useRef<HTMLDivElement>(null);
   const isDragging = useRef(false);
@@ -31,7 +31,9 @@ function BeforeAfterCard({ title, preset, beforeColor, afterColor }: BeforeAfter
   return (
     <div
       ref={containerRef}
-      className="relative rounded-2xl overflow-hidden cursor-col-resize group aspect-[4/3]"
+      className={`relative overflow-hidden cursor-col-resize group ${
+        size === "large" ? "aspect-[16/10]" : "aspect-[3/4]"
+      }`}
       onMouseDown={(e) => handleStart(e.clientX)}
       onMouseMove={(e) => isDragging.current && updatePosition(e.clientX)}
       onMouseUp={() => (isDragging.current = false)}
@@ -43,10 +45,7 @@ function BeforeAfterCard({ title, preset, beforeColor, afterColor }: BeforeAfter
       {/* Before (full width) */}
       <div className="absolute inset-0" style={{ background: beforeColor }}>
         <div className="absolute inset-0 flex items-center justify-center">
-          <div className="text-center opacity-40">
-            <ImageIcon className="w-12 h-12 mx-auto mb-2 text-white/30" />
-            <span className="text-xs text-white/40 uppercase tracking-wider">Original</span>
-          </div>
+          <span className="text-[9px] text-white/20 tracking-[0.2em] uppercase">Original</span>
         </div>
       </div>
 
@@ -59,33 +58,33 @@ function BeforeAfterCard({ title, preset, beforeColor, afterColor }: BeforeAfter
         }}
       >
         <div className="absolute inset-0 flex items-center justify-center">
-          <div className="text-center opacity-60">
-            <ImageIcon className="w-12 h-12 mx-auto mb-2 text-white/50" />
-            <span className="text-xs text-white/60 uppercase tracking-wider">Graded</span>
-          </div>
+          <span className="text-[9px] text-white/30 tracking-[0.2em] uppercase">{preset}</span>
         </div>
       </div>
 
       {/* Divider line */}
       <div
-        className="absolute top-0 bottom-0 w-0.5 bg-white/80 z-10 shadow-lg"
+        className="absolute top-0 bottom-0 w-px bg-[var(--text-primary)]/30 z-10"
         style={{ left: `${position}%`, transform: "translateX(-50%)" }}
       >
-        <div className="absolute top-1/2 -translate-y-1/2 -translate-x-1/2 w-8 h-8 rounded-full bg-white/20 backdrop-blur-lg border border-white/40 flex items-center justify-center">
-          <div className="flex gap-0.5">
-            <div className="w-0.5 h-3 rounded-full bg-white/80" />
-            <div className="w-0.5 h-3 rounded-full bg-white/80" />
+        <div className="absolute top-1/2 -translate-y-1/2 -translate-x-1/2 w-6 h-6 rounded-full border border-[var(--text-primary)]/30 flex items-center justify-center backdrop-blur-sm">
+          <div className="flex gap-px">
+            <div className="w-px h-2.5 bg-[var(--text-primary)]/50" />
+            <div className="w-px h-2.5 bg-[var(--text-primary)]/50" />
           </div>
         </div>
       </div>
 
       {/* Labels */}
-      <div className="absolute bottom-3 left-3 z-10 glass rounded-full px-3 py-1 text-[10px] text-white/70 uppercase tracking-wider">
-        Before
+      <div className="absolute bottom-4 left-4 z-10">
+        <span className="text-[9px] text-[var(--text-muted)] tracking-[0.15em] uppercase">Before</span>
       </div>
-      <div className="absolute bottom-3 right-3 z-10 glass rounded-full px-3 py-1 text-[10px] text-white/70 uppercase tracking-wider">
-        {preset}
+      <div className="absolute bottom-4 right-4 z-10">
+        <span className="text-[9px] text-[var(--text-muted)] tracking-[0.15em] uppercase">{preset}</span>
       </div>
+
+      {/* Frame border */}
+      <div className="absolute inset-0 border border-[var(--border-subtle)] pointer-events-none" />
     </div>
   );
 }
@@ -94,69 +93,95 @@ const galleryItems = [
   {
     title: "Moody Teal & Orange",
     preset: "Moody Cinematic",
-    beforeColor: "linear-gradient(135deg, #4a4a4a 0%, #6b6b6b 50%, #3a3a3a 100%)",
+    beforeColor: "linear-gradient(135deg, #3a3a3a 0%, #555 50%, #2a2a2a 100%)",
     afterColor: "linear-gradient(135deg, #1a4a5a 0%, #d4845a 50%, #0d3040 100%)",
+    size: "large" as const,
   },
   {
     title: "Warm Golden Hour",
     preset: "Warm Tone",
-    beforeColor: "linear-gradient(135deg, #555 0%, #777 50%, #444 100%)",
+    beforeColor: "linear-gradient(135deg, #444 0%, #666 50%, #333 100%)",
     afterColor: "linear-gradient(135deg, #d4a54a 0%, #e8c070 50%, #c08030 100%)",
+    size: "normal" as const,
   },
   {
     title: "Clean Desaturated",
     preset: "Clean Minimal",
-    beforeColor: "linear-gradient(135deg, #484848 0%, #707070 50%, #383838 100%)",
+    beforeColor: "linear-gradient(135deg, #3e3e3e 0%, #606060 50%, #2e2e2e 100%)",
     afterColor: "linear-gradient(135deg, #e8e8e8 0%, #d0d0d0 50%, #c8c8c8 100%)",
+    size: "normal" as const,
   },
   {
     title: "Vintage Film",
     preset: "Film Emulation",
-    beforeColor: "linear-gradient(135deg, #404040 0%, #606060 50%, #303030 100%)",
+    beforeColor: "linear-gradient(135deg, #353535 0%, #505050 50%, #252525 100%)",
     afterColor: "linear-gradient(135deg, #c8a870 0%, #e0c898 50%, #a08050 100%)",
-  },
-  {
-    title: "Neon Night",
-    preset: "Neon Pop",
-    beforeColor: "linear-gradient(135deg, #303038 0%, #484850 50%, #282830 100%)",
-    afterColor: "linear-gradient(135deg, #ff00ff 0%, #00ffff 50%, #ff4080 100%)",
+    size: "large" as const,
   },
   {
     title: "Muted Pastel",
     preset: "Soft Pastel",
-    beforeColor: "linear-gradient(135deg, #585858 0%, #787878 50%, #484848 100%)",
+    beforeColor: "linear-gradient(135deg, #484848 0%, #686868 50%, #383838 100%)",
     afterColor: "linear-gradient(135deg, #c8a0b8 0%, #a0c8d0 50%, #b8c8a0 100%)",
+    size: "normal" as const,
+  },
+  {
+    title: "Slate Noir",
+    preset: "Noir Grade",
+    beforeColor: "linear-gradient(135deg, #3a3a3a 0%, #5a5a5a 50%, #2a2a2a 100%)",
+    afterColor: "linear-gradient(135deg, #4a5a6a 0%, #6a7a8a 50%, #3a4a5a 100%)",
+    size: "normal" as const,
   },
 ];
 
 export default function Gallery() {
   return (
-    <section id="gallery" className="relative py-32 px-6">
-      {/* Background accent */}
-      <div className="absolute top-0 left-1/2 -translate-x-1/2 w-[800px] h-[800px] rounded-full bg-purple-500/5 blur-[200px] pointer-events-none" />
-
-      <div className="mx-auto max-w-7xl relative">
-        {/* Header */}
-        <div className="text-center mb-20">
-          <h2
-            className="text-4xl md:text-5xl font-bold tracking-tight mb-4"
-            style={{ fontFamily: "var(--font-playfair), Georgia, serif" }}
-          >
-            See the <span className="gradient-text">Transformation</span>
-          </h2>
-          <p className="text-zinc-500 max-w-lg mx-auto">
-            Drag the slider to compare original footage with our cinematic color grades.
-          </p>
+    <section id="gallery" className="relative py-24 md:py-32">
+      <div className="mx-auto max-w-[1400px] px-8 md:px-12 relative">
+        {/* Section header — editorial */}
+        <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 mb-20">
+          <div className="lg:col-span-1">
+            <span className="section-number">03</span>
+          </div>
+          <div className="lg:col-span-5">
+            <h2
+              className="text-[clamp(2rem,4vw,3.5rem)] editorial-heading text-[var(--text-primary)] leading-[1.05]"
+            >
+              See the{" "}
+              <span className="text-[var(--accent-bronze)] italic">Transformation</span>
+            </h2>
+          </div>
+          <div className="lg:col-span-4 lg:col-start-8 flex items-end">
+            <p className="editorial-body text-[var(--text-secondary)]">
+              Drag the slider to compare original footage with our cinematic color grades.
+            </p>
+          </div>
         </div>
 
-        {/* Gallery grid */}
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-          {galleryItems.map((item) => (
-            <div key={item.title} className="glass-card p-3 reveal">
+        {/* Decorative rule */}
+        <div className="h-px bg-[var(--border-subtle)] mb-16" />
+
+        {/* Gallery — asymmetric editorial grid */}
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-px bg-[var(--border-subtle)]">
+          {galleryItems.map((item, i) => (
+            <div
+              key={item.title}
+              className={`bg-[var(--bg-card)] p-4 md:p-5 reveal reveal-delay-${(i % 4) + 1}`}
+            >
               <BeforeAfterCard {...item} />
-              <div className="px-3 pt-3 pb-1">
-                <h4 className="text-sm font-medium text-white">{item.title}</h4>
-                <p className="text-xs text-zinc-500">{item.preset}</p>
+              <div className="flex items-center justify-between mt-4 px-1">
+                <div>
+                  <h4
+                    className="text-sm text-[var(--text-primary)] mb-0.5"
+                    style={{ fontFamily: "var(--font-playfair), Georgia, serif" }}
+                  >
+                    {item.title}
+                  </h4>
+                  <p className="text-[10px] text-[var(--text-muted)] tracking-[0.1em] uppercase">
+                    {item.preset}
+                  </p>
+                </div>
+                <span className="section-number">{`0${i + 1}`}</span>
               </div>
             </div>
           ))}

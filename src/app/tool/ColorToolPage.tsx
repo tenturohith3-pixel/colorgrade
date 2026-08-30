@@ -150,43 +150,43 @@ export default function ColorToolPage() {
   ];
 
   return (
-    <div className="min-h-screen bg-[#0a0a0c]">
+    <div className="min-h-screen bg-[var(--bg-deep)]">
       {/* Top bar */}
-      <header className="h-14 glass-strong border-b border-white/5 flex items-center justify-between px-4 sticky top-0 z-50">
+      <header className="h-14 bg-[var(--bg-deep)]/90 backdrop-blur-xl border-b border-[var(--border-subtle)] flex items-center justify-between px-4 sticky top-0 z-50">
         <div className="flex items-center gap-4">
           <Link
             href="/"
-            className="flex items-center gap-2 text-zinc-400 hover:text-white transition-colors"
+            className="flex items-center gap-2 text-[var(--text-muted)] hover:text-[var(--text-primary)] transition-colors"
           >
             <ArrowLeft className="w-4 h-4" />
             <span className="text-sm">Back</span>
           </Link>
           <div className="w-px h-5 bg-white/10" />
-          <span className="text-sm font-medium text-zinc-300">Color Grading Tool</span>
+          <span className="text-sm font-medium text-[var(--text-secondary)]">Color Grading Tool</span>
         </div>
         <div className="flex items-center gap-3">
           {processingTime > 0 && (
-            <span className="text-[10px] text-zinc-600 font-mono">
+            <span            className="text-[10px] text-[var(--text-ghost)] font-mono">
               {processingTime}ms
             </span>
           )}
           <button
             onClick={reset}
-            className="p-2 rounded-lg text-zinc-500 hover:text-white hover:bg-white/5 transition-all"
+            className="p-2 rounded-lg text-[var(--text-muted)] hover:text-[var(--text-primary)] hover:bg-white/5 transition-all"
             title="Reset"
           >
             <RotateCcw className="w-4 h-4" />
           </button>
           <button
             onClick={() => fileInputRef.current?.click()}
-            className="flex items-center gap-2 px-4 py-2 rounded-lg glass text-sm text-zinc-300 hover:text-white transition-all"
+            className="flex items-center gap-2 px-4 py-2 rounded-lg border border-[var(--border-medium)] text-sm text-[var(--text-secondary)] hover:text-[var(--text-primary)] transition-all"
           >
             <Upload className="w-4 h-4" />
             Upload
           </button>
           <button
             onClick={handleDownload}
-            className="flex items-center gap-2 px-4 py-2 rounded-lg bg-gradient-to-r from-[var(--accent)] to-pink-500 text-white text-sm font-medium hover:opacity-90 transition-all"
+            className="flex items-center gap-2 px-4 py-2 rounded-lg bg-[var(--accent-bronze)] text-[var(--bg-deep)] text-sm font-medium hover:bg-[var(--accent-umber)] transition-all"
           >
             <Download className="w-4 h-4" />
             Export
@@ -203,25 +203,24 @@ export default function ColorToolPage() {
 
       <div className="flex h-[calc(100vh-56px)]">
         {/* Left sidebar — Tools */}
-        <aside className="w-72 border-r border-white/5 overflow-y-auto flex-shrink-0">
+        <aside className="w-72 border-r border-[var(--border-subtle)] overflow-y-auto flex-shrink-0 bg-[var(--bg-primary)]">
           <div className="p-4">
             {/* Tool tabs */}
-            <div className="flex gap-1 p-1 rounded-xl glass mb-4">
+            <div className="flex gap-1 p-1 rounded-sm border border-[var(--border-subtle)] mb-4">
               {proTabs.map((tab) => (
                 <button
                   key={tab.id}
                   onClick={() => !tab.locked && setActiveTab(tab.id)}
                   className={`flex-1 flex items-center justify-center gap-1.5 py-2 rounded-lg text-xs font-medium transition-all ${
                     activeTab === tab.id
-                      ? "bg-white/10 text-white"
+                      ? "bg-[var(--bg-elevated)] text-[var(--text-primary)]"
                       : tab.locked
-                      ? "text-zinc-600 cursor-not-allowed"
-                      : "text-zinc-500 hover:text-zinc-300"
+                      ? "text-[var(--text-ghost)] cursor-not-allowed"
+                      : "text-[var(--text-muted)] hover:text-[var(--text-secondary)]"
                   }`}
                 >
-                  <tab.icon className="w-3.5 h-3.5" />
-                  {tab.label}
-                  {tab.locked && <Lock className="w-2.5 h-2.5" />}
+                  <tab.icon className="w-3.5 h-3.5" />                          { tab.label }
+                  { tab.locked && <Lock className="w-2.5 h-2.5 opacity-50" /> }
                 </button>
               ))}
             </div>
@@ -231,7 +230,7 @@ export default function ColorToolPage() {
               <div className="space-y-5">
                 {/* LUT Presets */}
                 <div>
-                  <label className="text-xs font-medium text-zinc-400 uppercase tracking-wider mb-3 block">
+                  <label                  className="text-xs font-medium text-[var(--text-muted)] uppercase tracking-wider mb-3 block">
                     LUT Presets
                   </label>
                   <div className="grid grid-cols-4 gap-2">
@@ -241,8 +240,8 @@ export default function ColorToolPage() {
                         onClick={() => update("lutPreset", lut.id as GradeSettings["lutPreset"])}
                         className={`aspect-square rounded-lg overflow-hidden border-2 transition-all ${
                           settings.lutPreset === lut.id
-                            ? "border-[var(--accent)] shadow-lg shadow-purple-500/20"
-                            : "border-transparent hover:border-white/10"
+                            ? "border-[var(--accent-bronze)] shadow-lg shadow-[var(--accent-bronze)]/20"
+                            : "border-transparent hover:border-[var(--border-medium)]"
                         }`}
                         title={lut.name}
                       >
@@ -270,11 +269,10 @@ export default function ColorToolPage() {
                 ].map((s) => (
                   <div key={s.key}>
                     <div className="flex items-center justify-between mb-2">
-                      <div className="flex items-center gap-2">
-                        <s.icon className="w-3.5 h-3.5 text-zinc-500" />
-                        <span className="text-xs text-zinc-400">{s.label}</span>
+                      <div className="flex items-center gap-2">                         <s.icon className="w-3.5 h-3.5 text-[var(--text-muted)]" />
+                        <span className="text-xs text-[var(--text-secondary)]">{s.label}</span>
                       </div>
-                      <span className="text-xs text-zinc-600 font-mono">
+                      <span className="text-xs text-[var(--text-ghost)] font-mono">
                         {settings[s.key] > 0 ? "+" : ""}
                         {settings[s.key]}
                       </span>
@@ -298,16 +296,15 @@ export default function ColorToolPage() {
                 {isPro ? (
                   <>
                     {[
-                      { label: "Shadows", key: "shadows", hueKey: "shadowsHue" as const, satKey: "shadowsSat" as const, color: "#6366f1" },
-                      { label: "Midtones", key: "midtones", hueKey: "midtonesHue" as const, satKey: "midtonesSat" as const, color: "#f59e0b" },
-                      { label: "Highlights", key: "highlights", hueKey: "highlightsHue" as const, satKey: "highlightsSat" as const, color: "#ec4899" },
+                      { label: "Shadows", key: "shadows", hueKey: "shadowsHue" as const, satKey: "shadowsSat" as const, color: "var(--accent-slate)" },
+                      { label: "Midtones", key: "midtones", hueKey: "midtonesHue" as const, satKey: "midtonesSat" as const, color: "var(--accent-bronze)" },
+                      { label: "Highlights", key: "highlights", hueKey: "highlightsHue" as const, satKey: "highlightsSat" as const, color: "var(--accent-wine)" },
                     ].map((wheel) => (
                       <div key={wheel.key}>
-                        <label className="text-xs font-medium text-zinc-400 uppercase tracking-wider mb-3 block">
+                        <label                  className="text-xs font-medium text-[var(--text-muted)] uppercase tracking-wider mb-3 block">
                           {wheel.label}
                         </label>
-                        <div className="glass rounded-xl p-4">
-                          <div className="w-full aspect-square rounded-full bg-zinc-900 mb-3 relative overflow-hidden">
+                        <div className="glass rounded-xl p-4">                           <div className="w-full aspect-square rounded-full bg-[var(--bg-deep)] mb-3 relative overflow-hidden">
                             <div
                               className="absolute inset-0 rounded-full"
                               style={{
@@ -327,8 +324,8 @@ export default function ColorToolPage() {
                           </div>
                           <div className="space-y-2">
                             <div className="flex items-center justify-between">
-                              <span className="text-xs text-zinc-500">Hue</span>
-                              <span className="text-xs text-zinc-600 font-mono">{settings[wheel.hueKey]}°</span>
+                              <span                          className="text-xs text-[var(--text-muted)]">Hue</span>
+                              <span className="text-xs text-[var(--text-ghost)] font-mono">{settings[wheel.hueKey]}°</span>
                             </div>
                             <input
                               type="range"
@@ -339,8 +336,8 @@ export default function ColorToolPage() {
                               className="w-full"
                             />
                             <div className="flex items-center justify-between">
-                              <span className="text-xs text-zinc-500">Saturation</span>
-                              <span className="text-xs text-zinc-600 font-mono">{settings[wheel.satKey]}%</span>
+                              <span                          className="text-xs text-[var(--text-muted)]">Saturation</span>
+                              <span className="text-xs text-[var(--text-ghost)] font-mono">{settings[wheel.satKey]}%</span>
                             </div>
                             <input
                               type="range"
@@ -357,13 +354,13 @@ export default function ColorToolPage() {
                   </>
                 ) : (
                   <div className="flex flex-col items-center justify-center h-64 text-center">
-                    <Lock className="w-8 h-8 text-zinc-700 mb-3" />
-                    <p className="text-sm text-zinc-500 mb-4">3-Way Color Wheels require Pro</p>
+                    <Lock className="w-8 h-8 text-[var(--text-ghost)] mb-3" />
+                    <p className="text-sm text-[var(--text-muted)] mb-4">3-Way Color Wheels require Pro</p>
                     <button
                       onClick={() => setIsPro(true)}
-                      className="px-4 py-2 rounded-lg bg-gradient-to-r from-[var(--accent)] to-pink-500 text-white text-xs font-medium"
+                      className="px-4 py-2 rounded-sm bg-[var(--accent-bronze)] text-[var(--bg-deep)] text-xs font-medium"
                     >
-                      <Crown className="w-3 h-3 inline mr-1" />
+                      <Crown className="w-3 h-3 inline mr-1 opacity-70" />
                       Unlock Pro
                     </button>
                   </div>
@@ -377,10 +374,10 @@ export default function ColorToolPage() {
                 {isPro ? (
                   <>
                     <div>
-                      <label className="text-xs font-medium text-zinc-400 uppercase tracking-wider mb-3 block">
+                      <label                  className="text-xs font-medium text-[var(--text-muted)] uppercase tracking-wider mb-3 block">
                         HSL Target Isolation
                       </label>
-                      <p className="text-[11px] text-zinc-600 mb-3">
+                      <p className="text-[11px] text-[var(--text-muted)] mb-3">
                         Adjust hue, saturation, and luminance for specific color ranges.
                       </p>
                       {[
@@ -390,20 +387,16 @@ export default function ColorToolPage() {
                       ].map((c) => (
                         <div key={c.label} className="glass rounded-lg p-3 mb-3">
                           <div className="flex items-center gap-2 mb-2">
-                            <div className="w-3 h-3 rounded-full" style={{ background: c.color }} />
-                            <span className="text-xs font-medium text-zinc-300">{c.label}</span>
+                            <div className="w-3 h-3 rounded-full" style={{ background: c.color }} />                             <span className="text-xs font-medium text-[var(--text-secondary)]">{c.label}</span>
                           </div>
                           <div className="space-y-1.5">
-                            <div className="flex items-center justify-between">
-                              <span className="text-[10px] text-zinc-600">Hue</span>
+                            <div className="flex items-center justify-between">                               <span className="text-[10px] text-[var(--text-muted)]">Hue</span>
                             </div>
                             <input type="range" min={-180} max={180} defaultValue={0} className="w-full" />
-                            <div className="flex items-center justify-between">
-                              <span className="text-[10px] text-zinc-600">Saturation</span>
+                            <div className="flex items-center justify-between">                               <span className="text-[10px] text-[var(--text-muted)]">Saturation</span>
                             </div>
                             <input type="range" min={0} max={200} defaultValue={100} className="w-full" />
-                            <div className="flex items-center justify-between">
-                              <span className="text-[10px] text-zinc-600">Luminance</span>
+                            <div className="flex items-center justify-between">                               <span className="text-[10px] text-[var(--text-muted)]">Luminance</span>
                             </div>
                             <input type="range" min={0} max={200} defaultValue={100} className="w-full" />
                           </div>
@@ -413,13 +406,13 @@ export default function ColorToolPage() {
                   </>
                 ) : (
                   <div className="flex flex-col items-center justify-center h-64 text-center">
-                    <Lock className="w-8 h-8 text-zinc-700 mb-3" />
-                    <p className="text-sm text-zinc-500 mb-4">HSL Target Isolation requires Pro</p>
+                    <Lock className="w-8 h-8 text-[var(--text-ghost)] mb-3" />
+                    <p className="text-sm text-[var(--text-muted)] mb-4">HSL Target Isolation requires Pro</p>
                     <button
                       onClick={() => setIsPro(true)}
-                      className="px-4 py-2 rounded-lg bg-gradient-to-r from-[var(--accent)] to-pink-500 text-white text-xs font-medium"
+                      className="px-4 py-2 rounded-sm bg-[var(--accent-bronze)] text-[var(--bg-deep)] text-xs font-medium"
                     >
-                      <Crown className="w-3 h-3 inline mr-1" />
+                      <Crown className="w-3 h-3 inline mr-1 opacity-70" />
                       Unlock Pro
                     </button>
                   </div>
@@ -442,10 +435,10 @@ export default function ColorToolPage() {
                       <div key={s.key}>
                         <div className="flex items-center justify-between mb-2">
                           <div className="flex items-center gap-2">
-                            <s.icon className="w-3.5 h-3.5 text-zinc-500" />
-                            <span className="text-xs text-zinc-400">{s.label}</span>
+                            <s.icon className="w-3.5 h-3.5 text-[var(--text-muted)]" />
+                            <span className="text-xs text-[var(--text-secondary)]">{s.label}</span>
                           </div>
-                          <span className="text-xs text-zinc-600 font-mono">{settings[s.key]}%</span>
+                          <span className="text-xs text-[var(--text-ghost)] font-mono">{settings[s.key]}%</span>
                         </div>
                         <input
                           type="range"
@@ -460,13 +453,13 @@ export default function ColorToolPage() {
                   </>
                 ) : (
                   <div className="flex flex-col items-center justify-center h-64 text-center">
-                    <Lock className="w-8 h-8 text-zinc-700 mb-3" />
-                    <p className="text-sm text-zinc-500 mb-4">Film Grain & Effects require Pro</p>
+                    <Lock className="w-8 h-8 text-[var(--text-ghost)] mb-3" />
+                    <p className="text-sm text-[var(--text-muted)] mb-4">Film Grain & Effects require Pro</p>
                     <button
                       onClick={() => setIsPro(true)}
-                      className="px-4 py-2 rounded-lg bg-gradient-to-r from-[var(--accent)] to-pink-500 text-white text-xs font-medium"
+                      className="px-4 py-2 rounded-sm bg-[var(--accent-bronze)] text-[var(--bg-deep)] text-xs font-medium"
                     >
-                      <Crown className="w-3 h-3 inline mr-1" />
+                      <Crown className="w-3 h-3 inline mr-1 opacity-70" />
                       Unlock Pro
                     </button>
                   </div>
@@ -479,8 +472,7 @@ export default function ColorToolPage() {
         {/* Main canvas area */}
         <main className="flex-1 flex flex-col">
           {/* Preview toolbar */}
-          <div className="h-10 border-b border-white/5 flex items-center justify-between px-4">
-            <div className="flex items-center gap-3 text-xs text-zinc-500">
+          <div className="h-10 border-b border-white/5 flex items-center justify-between px-4">             <div className="flex items-center gap-3 text-xs text-[var(--text-muted)]">
               <span>Preview</span>
               <button
                 onClick={() => setShowPreview(!showPreview)}
@@ -488,13 +480,11 @@ export default function ColorToolPage() {
               >
                 {showPreview ? <Eye className="w-3.5 h-3.5" /> : <EyeOff className="w-3.5 h-3.5" />}
               </button>
-              {uploadedImage && (
-                <span className="text-zinc-600">
+              {uploadedImage && (                 <span className="text-[var(--text-ghost)]">
                   {processingTime > 0 && `Processed in ${processingTime}ms`}
                 </span>
               )}
-            </div>
-            <div className="flex items-center gap-3 text-xs text-zinc-600">
+            </div>             <div className="flex items-center gap-3 text-xs text-[var(--text-ghost)]">
               <span>Client-Side Engine</span>
               <span>•</span>
               <span>Canvas 2D</span>
@@ -533,10 +523,7 @@ export default function ColorToolPage() {
                     `,
                   }}
                 >
-                  <div className="text-center">
-                    <Upload className="w-12 h-12 text-zinc-700 mx-auto mb-3" />
-                    <p className="text-sm text-zinc-600">Drop an image here or click Upload</p>
-                    <p className="text-xs text-zinc-700 mt-1">Real-time Canvas color grading</p>
+                  <div className="text-center">                     <Upload className="w-12 h-12 text-[var(--text-ghost)] mx-auto mb-3" />                     <p className="text-sm text-[var(--text-muted)]">Drop an image here or click Upload</p>                     <p className="text-xs text-[var(--text-ghost)] mt-1">Real-time Canvas color grading</p>
                   </div>
                 </div>
               )}
@@ -546,7 +533,7 @@ export default function ColorToolPage() {
           {/* Bottom bar */}
           <div className="h-24 border-t border-white/5 px-6 flex items-center gap-6">
             {/* Mini histogram */}
-            <div className="flex-1 h-14 flex items-end gap-px">
+            <div className="flex-1 h-14 flex items-end gap-px opacity-60">
               {Array.from({ length: 64 }, (_, i) => {
                 const h =
                   Math.sin(i * 0.15 + settings.contrast * 0.01) * 0.3 +
@@ -558,22 +545,21 @@ export default function ColorToolPage() {
                     className="flex-1 rounded-t-sm transition-all duration-300"
                     style={{
                       height: `${Math.max(5, h * 100)}%`,
-                      background: `linear-gradient(to top, rgba(167,139,250,0.3), rgba(167,139,250,0.1))`,
+                      background: `linear-gradient(to top, rgba(196,149,106,0.3), rgba(196,149,106,0.1))`,
                     }}
                   />
                 );
               })}
-            </div>
-            <div className="text-xs text-zinc-600">
-              <div>RGB Histogram</div>
-              <div className="font-mono mt-1">256 levels</div>
+            </div>             <div className="text-xs text-[var(--text-ghost)]">
+              <div className="text-[var(--text-muted)]">RGB Histogram</div>
+              <div className="font-mono mt-1 text-[var(--text-ghost)]">256 levels</div>
             </div>
           </div>
         </main>
 
         {/* Right sidebar — Active Adjustments */}
-        <aside className="w-60 border-l border-white/5 overflow-y-auto flex-shrink-0 p-4">
-          <h3 className="text-xs font-medium text-zinc-400 uppercase tracking-wider mb-4">
+        <aside className="w-60 border-l border-[var(--border-subtle)] overflow-y-auto flex-shrink-0 p-4 bg-[var(--bg-primary)]">
+          <h3 className="text-xs font-medium text-[var(--text-muted)] uppercase tracking-wider mb-4">
             Active Adjustments
           </h3>
           <div className="space-y-3">
@@ -581,10 +567,10 @@ export default function ColorToolPage() {
               .filter(([_, v]) => v !== 0 && v !== "none" && v !== 100)
               .map(([key, value]) => (
                 <div key={key} className="glass rounded-lg px-3 py-2">
-                  <div className="text-[10px] text-zinc-500 uppercase tracking-wider">
+                  <div className="text-[10px] text-[var(--text-muted)] uppercase tracking-wider">
                     {key.replace(/([A-Z])/g, " $1").trim()}
                   </div>
-                  <div className="text-sm text-white font-mono">
+                  <div className="text-sm text-[var(--text-primary)] font-mono">
                     {typeof value === "number" ? (value > 0 ? `+${value}` : value) : String(value)}
                   </div>
                 </div>
@@ -592,7 +578,7 @@ export default function ColorToolPage() {
             {Object.entries(settings).filter(
               ([_, v]) => v !== 0 && v !== "none" && v !== 100
             ).length === 0 && (
-              <p className="text-xs text-zinc-700 text-center py-8">
+              <p className="text-xs text-[var(--text-ghost)] text-center py-8">
                 No adjustments yet.
                 <br />
                 Start tweaking.
@@ -602,15 +588,15 @@ export default function ColorToolPage() {
 
           {/* Pro unlock CTA */}
           {!isPro && (
-            <div className="mt-8 p-4 glass rounded-xl gradient-border">
-              <Crown className="w-5 h-5 text-purple-400 mb-2" />
-              <h4 className="text-xs font-semibold text-white mb-1">Unlock Pro Tools</h4>
-              <p className="text-[10px] text-zinc-500 mb-3">
+            <div className="mt-8 p-4 border border-[var(--border-accent)] rounded-sm">
+              <Crown className="w-5 h-5 text-[var(--accent-bronze)] mb-2" />
+              <h4 className="text-xs font-semibold text-[var(--text-primary)] mb-1">Unlock Pro Tools</h4>
+              <p className="text-[10px] text-[var(--text-secondary)] mb-3">
                 3-Way wheels, HSL, HDR, grain & more
               </p>
               <button
                 onClick={() => setIsPro(true)}
-                className="w-full py-2 rounded-lg bg-gradient-to-r from-[var(--accent)] to-pink-500 text-white text-xs font-medium hover:opacity-90 transition-all"
+                className="w-full py-2 rounded-sm bg-[var(--accent-bronze)] text-[var(--bg-deep)] text-xs font-medium hover:bg-[var(--accent-umber)] transition-all"
               >
                 Try Pro Free
               </button>

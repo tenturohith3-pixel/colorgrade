@@ -9,8 +9,8 @@ export default function SmoothScroll({ children }: { children: React.ReactNode }
     if (!cursor) return;
 
     const move = (e: MouseEvent) => {
-      cursor.style.left = `${e.clientX - 4}px`;
-      cursor.style.top = `${e.clientY - 4}px`;
+      cursor.style.left = `${e.clientX - 3}px`;
+      cursor.style.top = `${e.clientY - 3}px`;
     };
 
     // Scroll reveal
@@ -22,7 +22,7 @@ export default function SmoothScroll({ children }: { children: React.ReactNode }
           }
         });
       },
-      { threshold: 0.1, rootMargin: "0px 0px -50px 0px" }
+      { threshold: 0.08, rootMargin: "0px 0px -60px 0px" }
     );
 
     document.querySelectorAll(".reveal").forEach((el) => observer.observe(el));
