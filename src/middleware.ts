@@ -1,50 +1,56 @@
-import { createServerClient, type CookieOptions } from "@supabase/ssr";
-import { type NextRequest, NextResponse } from "next/server";
+import { NextRequest, NextResponse } from "next/server";
+import { jwtVerify, type JWTPayload } from "jose";
+
+const SECRET = new TextEncoder().encode(
+  process.env.JWT_SECRET || "ezcc-secret-key-change-in-production-2026"
+);
+
+interface SessionPayload extends JWTPayload {
+  userId: string;
+  email: string;
+}
+
+async function verifyToken(token: string): Promise<SessionPayload | null> {
+  try {
+    const { payload } = await jwtVerify(token, SECRET);
+    return payload as SessionPayload;
+  } catch {
+    return null;
+  }
+}
 
 export async function middleware(request: NextRequest) {
-  let response = NextResponse.next({
-    request: { headers: request.headers },
-  });
+  const { pathname } = request.nextUrl;
 
-  const supabase = createServerClient(
-    process.env.NEXT_PUBLIC_SUPABASE_URL!,
-    process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!,
-    {
-      cookies: {
-        getAll() {
-          return request.cookies.getAll();
-        },
-        setAll(cookiesToSet) {
-          cookiesToSet.forEach(({ name, value }) =>
-            request.cookies.set(name, value)
-          );
-          response = NextResponse.next({
-            request: { headers: request.headers },
-          });
-          cookiesToSet.forEach(({ name, value, options }) =>
-            response.cookies.set(name, value, options)
-          );
-        },
-      },
-    }
-  );
+  // Skip static files and API auth routes
+  if (
+    pathname.startsWith("/_next") ||
+    pathname.startsWith("/favicon") ||
+    pathname.match(/\.(svg|png|jpg|jpeg|gif|webp)$/) ||
+    pathname === "/api/auth"
+  ) {
+    return NextResponse.next();
+  }
 
-  // Refresh session if expired
-  const {
-    data: { user },
-  } = await supabase.auth.getUser();
+  const token = request.cookies.get("ezcc_session")?.value;
+  const session = token ? await verifyToken(token) : null;
 
   // Protected routes — redirect to home if not authenticated
   const protectedPaths = ["/tool"];
-  const isProtected = protectedPaths.some((path) =>
-    request.nextUrl.pathname.startsWith(path)
-  );
+  const isProtected = protectedPaths.some((path) => pathname.startsWith(path));
 
-  if (isProtected && !user) {
+  if (isProtected && !session) {
     const url = request.nextUrl.clone();
     url.pathname = "/";
     url.searchParams.set("auth", "signin");
     return NextResponse.redirect(url);
+  }
+
+  // Add user info to headers for server components
+  const response = NextResponse.next();
+  if (session) {
+    response.headers.set("x-user-id", session.userId);
+    response.headers.set("x-user-email", session.email);
   }
 
   return response;
@@ -52,13 +58,6 @@ export async function middleware(request: NextRequest) {
 
 export const config = {
   matcher: [
-    /*
-     * Match all request paths except:
-     * - _next/static (static files)
-     * - _next/image (image optimization files)
-     * - favicon.ico (favicon file)
-     * - public files
-     */
     "/((?!_next/static|_next/image|favicon.ico|.*\\.(?:svg|png|jpg|jpeg|gif|webp)$).*)",
   ],
 };

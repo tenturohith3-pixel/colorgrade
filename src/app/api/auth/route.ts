@@ -1,54 +1,170 @@
 import { NextRequest, NextResponse } from "next/server";
+import bcrypt from "bcryptjs";
+import { createUser, getUserByEmail, updateUser, type UserRow } from "@/lib/auth-db";
+import { createSessionToken, verifySessionToken, COOKIE_NAME } from "@/lib/jwt";
 
-/**
- * POST /api/auth
- * 
- * Validates Firebase auth tokens and manages sessions.
- * In production:
- * 1. Verify Firebase ID token using Admin SDK
- * 2. Check age compliance (COPPA/GDPR/DPDP - min 13 years)
- * 3. Return session info and token balance
- * 
- * Security:
- * - Firebase Admin SDK validation
- * - MFA support
- * - Age & parental consent verification for under-18
- */
+// ── POST /api/auth ───────────────────────────────
+// Actions: signup, signin, signout
 
 export async function POST(request: NextRequest) {
-  try {
-    const body = await request.json();
-    const { idToken } = body;
+  const { action, email, password, fullName, birthDate } = await request.json();
 
-    if (!idToken) {
-      return NextResponse.json({ error: "No auth token provided" }, { status: 401 });
+  switch (action) {
+    case "signup": {
+      // Age verification
+      if (birthDate) {
+        const birth = new Date(birthDate);
+        const today = new Date();
+        let age = today.getFullYear() - birth.getFullYear();
+        const m = today.getMonth() - birth.getMonth();
+        if (m < 0 || (m === 0 && today.getDate() < birth.getDate())) age--;
+
+        if (age < 13) {
+          return NextResponse.json(
+            { error: "You must be at least 13 years old" },
+            { status: 400 }
+          );
+        }
+      }
+
+      // Check if user exists
+      const existing = getUserByEmail(email);
+      if (existing) {
+        return NextResponse.json(
+          { error: "Email already registered" },
+          { status: 409 }
+        );
+      }
+
+      // Hash password
+      const passwordHash = await bcrypt.hash(password, 12);
+
+      // Create user
+      const user = createUser(email, passwordHash, fullName || "");
+
+      // Create session token
+      const token = await createSessionToken(user.id, user.email);
+
+      // Set cookie
+      const response = NextResponse.json({
+        success: true,
+        user: sanitizeUser(user),
+      });
+
+      response.cookies.set(COOKIE_NAME, token, {
+        httpOnly: true,
+        secure: process.env.NODE_ENV === "production",
+        sameSite: "lax",
+        path: "/",
+        maxAge: 7 * 24 * 60 * 60, // 7 days
+      });
+
+      return response;
     }
 
-    // TODO: Verify Firebase ID token
-    // const decoded = await admin.auth().verifyIdToken(idToken);
+    case "signin": {
+      const user = getUserByEmail(email);
+      if (!user) {
+        return NextResponse.json(
+          { error: "Invalid email or password" },
+          { status: 401 }
+        );
+      }
 
-    // TODO: Check age compliance
-    // if (decoded.age < 13) reject based on COPPA
-    // if (decoded.age < 18) require parental consent
+      const valid = await bcrypt.compare(password, user.password_hash);
+      if (!valid) {
+        return NextResponse.json(
+          { error: "Invalid email or password" },
+          { status: 401 }
+        );
+      }
 
-    // TODO: Check/update trial status
-    // TODO: Return user profile and token balance
+      const token = await createSessionToken(user.id, user.email);
 
-    return NextResponse.json({
-      success: true,
-      message: "Auth endpoint ready — configure Firebase Admin SDK",
-      user: {
-        uid: "demo_user",
-        email: "demo@colorgrade.app",
-        plan: "trial",
-        tokensRemaining: 3,
-        trialEndsAt: new Date(Date.now() + 3 * 24 * 60 * 60 * 1000).toISOString(),
-      },
-    });
-  } catch {
-    return NextResponse.json(
-      { error: "Authentication failed" },
-      { status: 401 }
-    );
+      const response = NextResponse.json({
+        success: true,
+        user: sanitizeUser(user),
+      });
+
+      response.cookies.set(COOKIE_NAME, token, {
+        httpOnly: true,
+        secure: process.env.NODE_ENV === "production",
+        sameSite: "lax",
+        path: "/",
+        maxAge: 7 * 24 * 60 * 60,
+      });
+
+      return response;
+    }
+
+    case "signout": {
+      const response = NextResponse.json({ success: true });
+      response.cookies.set(COOKIE_NAME, "", {
+        httpOnly: true,
+        secure: process.env.NODE_ENV === "production",
+        sameSite: "lax",
+        path: "/",
+        maxAge: 0,
+      });
+      return response;
+    }
+
+    case "update_profile": {
+      // Verify session
+      const token = request.cookies.get(COOKIE_NAME)?.value;
+      if (!token) {
+        return NextResponse.json({ error: "Not authenticated" }, { status: 401 });
+      }
+
+      const session = await verifySessionToken(token);
+      if (!session) {
+        return NextResponse.json({ error: "Invalid session" }, { status: 401 });
+      }
+
+      const { fullName: name, avatarUrl } = await request.json();
+      const updates: any = {};
+      if (name) updates.full_name = name;
+      if (avatarUrl) updates.avatar_url = avatarUrl;
+
+      updateUser(session.userId, updates);
+
+      const user = getUserByEmail(session.email);
+      return NextResponse.json({ success: true, user: sanitizeUser(user!) });
+    }
+
+    default:
+      return NextResponse.json({ error: "Invalid action" }, { status: 400 });
   }
+}
+
+// ── GET /api/auth ────────────────────────────────
+// Get current session
+
+export async function GET(request: NextRequest) {
+  const token = request.cookies.get(COOKIE_NAME)?.value;
+
+  if (!token) {
+    return NextResponse.json({ user: null });
+  }
+
+  const session = await verifySessionToken(token);
+  if (!session) {
+    return NextResponse.json({ user: null });
+  }
+
+  // Import dynamically to avoid issues
+  const { getUserById } = await import("@/lib/auth-db");
+  const user = getUserById(session.userId);
+
+  if (!user) {
+    return NextResponse.json({ user: null });
+  }
+
+  return NextResponse.json({ user: sanitizeUser(user) });
+}
+
+// Remove password hash from response
+function sanitizeUser(user: UserRow) {
+  const { password_hash, ...safe } = user;
+  return safe;
 }

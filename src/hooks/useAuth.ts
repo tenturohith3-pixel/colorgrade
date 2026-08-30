@@ -1,19 +1,33 @@
 "use client";
 
 import { useState, useEffect, useCallback } from "react";
-import { createClient } from "@/lib/supabase";
-import type { User } from "@supabase/supabase-js";
+
+interface UserProfile {
+  id: string;
+  email: string;
+  full_name: string;
+  avatar_url: string;
+  plan: string;
+  clips_remaining: number;
+  age_verified: number;
+  created_at: string;
+}
 
 interface AuthState {
-  user: User | null;
+  user: UserProfile | null;
   loading: boolean;
   isTrialActive: boolean;
   trialEndsAt: Date | null;
   tokensRemaining: number;
-  plan: "free" | "trial" | "basic" | "pro";
+  plan: string;
 }
 
-export function useAuth(): AuthState & { refresh: () => void } {
+export function useAuth(): AuthState & {
+  signUp: (email: string, password: string, fullName?: string, birthDate?: string) => Promise<{ success: boolean; error?: string }>;
+  signIn: (email: string, password: string) => Promise<{ success: boolean; error?: string }>;
+  signOut: () => Promise<void>;
+  refresh: () => Promise<void>;
+} {
   const [state, setState] = useState<AuthState>({
     user: null,
     loading: true,
@@ -23,18 +37,15 @@ export function useAuth(): AuthState & { refresh: () => void } {
     plan: "free",
   });
 
-  const supabase = createClient();
-
-  const refresh = useCallback(async () => {
-    const { data: { user } } = await supabase.auth.getUser();
+  const updateUserState = useCallback((user: UserProfile | null) => {
     if (user) {
       setState({
         user,
         loading: false,
-        isTrialActive: true,
-        trialEndsAt: new Date(Date.now() + 3 * 24 * 60 * 60 * 1000),
-        tokensRemaining: 3,
-        plan: "trial",
+        isTrialActive: user.plan === "trial",
+        trialEndsAt: null,
+        tokensRemaining: user.clips_remaining,
+        plan: user.plan,
       });
     } else {
       setState({
@@ -46,39 +57,64 @@ export function useAuth(): AuthState & { refresh: () => void } {
         plan: "free",
       });
     }
-  }, [supabase]);
+  }, []);
+
+  const refresh = useCallback(async () => {
+    try {
+      const res = await fetch("/api/auth");
+      const data = await res.json();
+      updateUserState(data.user);
+    } catch {
+      updateUserState(null);
+    }
+  }, [updateUserState]);
+
+  const signUp = useCallback(async (email: string, password: string, fullName?: string, birthDate?: string) => {
+    const res = await fetch("/api/auth", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ action: "signup", email, password, fullName, birthDate }),
+    });
+
+    const data = await res.json();
+
+    if (!res.ok) {
+      return { success: false, error: data.error };
+    }
+
+    updateUserState(data.user);
+    return { success: true };
+  }, [updateUserState]);
+
+  const signIn = useCallback(async (email: string, password: string) => {
+    const res = await fetch("/api/auth", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ action: "signin", email, password }),
+    });
+
+    const data = await res.json();
+
+    if (!res.ok) {
+      return { success: false, error: data.error };
+    }
+
+    updateUserState(data.user);
+    return { success: true };
+  }, [updateUserState]);
+
+  const signOut = useCallback(async () => {
+    await fetch("/api/auth", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ action: "signout" }),
+    });
+    updateUserState(null);
+  }, [updateUserState]);
 
   useEffect(() => {
-    // Get initial session
     refresh();
+  }, [refresh]);
 
-    // Listen for auth changes
-    const { data: { subscription } } = supabase.auth.onAuthStateChange(
-      async (event, session) => {
-        if (session?.user) {
-          setState({
-            user: session.user,
-            loading: false,
-            isTrialActive: true,
-            trialEndsAt: new Date(Date.now() + 3 * 24 * 60 * 60 * 1000),
-            tokensRemaining: 3,
-            plan: "trial",
-          });
-        } else {
-          setState({
-            user: null,
-            loading: false,
-            isTrialActive: false,
-            trialEndsAt: null,
-            tokensRemaining: 0,
-            plan: "free",
-          });
-        }
-      }
-    );
-
-    return () => subscription.unsubscribe();
-  }, [supabase, refresh]);
-
-  return { ...state, refresh };
+  return { ...state, signUp, signIn, signOut, refresh };
 }

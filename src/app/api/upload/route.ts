@@ -1,15 +1,29 @@
 import { NextRequest, NextResponse } from "next/server";
-import { createClient } from "@/lib/supabase-server";
+import { verifySessionToken, COOKIE_NAME } from "@/lib/jwt";
+import { createGradingJob, updateGradingJob, getUserById, updateUser } from "@/lib/auth-db";
+import path from "path";
+import fs from "fs";
 
-const BUCKET_NAME = "graded-images";
+const UPLOAD_DIR = path.join(process.cwd(), "public", "uploads");
 const MAX_FILE_SIZE = 20 * 1024 * 1024; // 20MB
+
+// Ensure upload directory exists
+if (!fs.existsSync(UPLOAD_DIR)) {
+  fs.mkdirSync(UPLOAD_DIR, { recursive: true });
+}
+
+async function getAuthenticatedUser(request: NextRequest) {
+  const token = request.cookies.get(COOKIE_NAME)?.value;
+  if (!token) return null;
+  const session = await verifySessionToken(token);
+  if (!session) return null;
+  return getUserById(session.userId);
+}
 
 export async function POST(request: NextRequest) {
   try {
-    const supabase = await createClient();
-    const { data: { user }, error: authError } = await supabase.auth.getUser();
-
-    if (authError || !user) {
+    const user = await getAuthenticatedUser(request);
+    if (!user) {
       return NextResponse.json(
         { error: "Authentication required" },
         { status: 401 }
@@ -44,71 +58,35 @@ export async function POST(request: NextRequest) {
     }
 
     // Check user credits
-    const { data: profile } = await supabase
-      .from("user_profiles")
-      .select("plan, clips_remaining")
-      .eq("id", user.id)
-      .single();
-
-    if (profile?.plan === "free" && (!profile.clips_remaining || profile.clips_remaining <= 0)) {
+    if (user.plan === "free" && user.clips_remaining <= 0) {
       return NextResponse.json(
         { error: "No clips remaining. Please upgrade your plan." },
         { status: 403 }
       );
     }
 
-    // Upload to Supabase Storage
+    // Save file to disk
     const fileExt = file.name.split(".").pop();
-    const filePath = `${user.id}/${Date.now()}.${fileExt}`;
+    const fileName = `${user.id}_${Date.now()}.${fileExt}`;
+    const filePath = path.join(UPLOAD_DIR, fileName);
+    const publicUrl = `/uploads/${fileName}`;
 
-    const { data: uploadData, error: uploadError } = await supabase.storage
-      .from(BUCKET_NAME)
-      .upload(filePath, file, {
-        cacheControl: "3600",
-        upsert: false,
-      });
-
-    if (uploadError) {
-      console.error("Upload error:", uploadError);
-      return NextResponse.json(
-        { error: "Upload failed: " + uploadError.message },
-        { status: 500 }
-      );
-    }
-
-    // Get public URL
-    const { data: urlData } = supabase.storage
-      .from(BUCKET_NAME)
-      .getPublicUrl(uploadData.path);
+    const buffer = Buffer.from(await file.arrayBuffer());
+    fs.writeFileSync(filePath, buffer);
 
     // Create grading job record
-    const { data: job, error: jobError } = await supabase
-      .from("grading_jobs")
-      .insert({
-        user_id: user.id,
-        input_url: urlData.publicUrl,
-        status: "pending",
-      })
-      .select()
-      .single();
+    const job = createGradingJob(user.id, publicUrl);
 
-    if (jobError) {
-      console.error("Job creation error:", jobError);
-    }
-
-    // Decrement clips remaining for non-lifetime plans
-    if (profile?.plan !== "pro" && profile?.clips_remaining) {
-      await supabase
-        .from("user_profiles")
-        .update({ clips_remaining: profile.clips_remaining - 1 })
-        .eq("id", user.id);
+    // Decrement clips remaining
+    if (user.plan !== "pro" && user.plan !== "lifetime" && user.clips_remaining > 0) {
+      updateUser(user.id, { clips_remaining: user.clips_remaining - 1 });
     }
 
     return NextResponse.json({
       success: true,
-      url: urlData.publicUrl,
-      path: uploadData.path,
-      jobId: job?.id,
+      url: publicUrl,
+      path: fileName,
+      jobId: job.id,
     });
   } catch (error) {
     console.error("Upload route error:", error);
@@ -121,10 +99,8 @@ export async function POST(request: NextRequest) {
 
 export async function DELETE(request: NextRequest) {
   try {
-    const supabase = await createClient();
-    const { data: { user }, error: authError } = await supabase.auth.getUser();
-
-    if (authError || !user) {
+    const user = await getAuthenticatedUser(request);
+    if (!user) {
       return NextResponse.json(
         { error: "Authentication required" },
         { status: 401 }
@@ -141,23 +117,10 @@ export async function DELETE(request: NextRequest) {
       );
     }
 
-    // Verify the file belongs to the user
-    if (!filePath.startsWith(user.id + "/")) {
-      return NextResponse.json(
-        { error: "Unauthorized" },
-        { status: 403 }
-      );
-    }
-
-    const { error } = await supabase.storage
-      .from(BUCKET_NAME)
-      .remove([filePath]);
-
-    if (error) {
-      return NextResponse.json(
-        { error: "Delete failed" },
-        { status: 500 }
-      );
+    // Delete file from disk
+    const fullPath = path.join(UPLOAD_DIR, filePath);
+    if (fs.existsSync(fullPath)) {
+      fs.unlinkSync(fullPath);
     }
 
     return NextResponse.json({ success: true });

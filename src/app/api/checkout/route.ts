@@ -1,8 +1,6 @@
 import { NextRequest, NextResponse } from "next/server";
-import Stripe from "stripe";
-import { createClient } from "@/lib/supabase-server";
-
-const stripe = new Stripe(process.env.STRIPE_SECRET_KEY!);
+import { verifySessionToken, COOKIE_NAME } from "@/lib/jwt";
+import { getUserById, createPayment } from "@/lib/auth-db";
 
 const PRICE_MAP: Record<string, { amount: number; currency: string; recurring: boolean; name: string }> = {
   single:   { amount: 2900,  currency: "inr", recurring: false, name: "Single Clip" },
@@ -11,13 +9,18 @@ const PRICE_MAP: Record<string, { amount: number; currency: string; recurring: b
   lifetime: { amount: 200000, currency: "inr", recurring: false, name: "Lifetime Pro" },
 };
 
+async function getAuthenticatedUser(request: NextRequest) {
+  const token = request.cookies.get(COOKIE_NAME)?.value;
+  if (!token) return null;
+  const session = await verifySessionToken(token);
+  if (!session) return null;
+  return getUserById(session.userId);
+}
+
 export async function POST(request: NextRequest) {
   try {
-    // Verify Supabase auth
-    const supabase = await createClient();
-    const { data: { user }, error: authError } = await supabase.auth.getUser();
-
-    if (authError || !user) {
+    const user = await getAuthenticatedUser(request);
+    if (!user) {
       return NextResponse.json(
         { error: "Authentication required" },
         { status: 401 }
@@ -28,91 +31,41 @@ export async function POST(request: NextRequest) {
 
     if (!plan || !PRICE_MAP[plan]) {
       return NextResponse.json(
-        { error: "Invalid plan. Must be: single, monthly, yearly, lifetime" },
+        { error: "Invalid plan" },
         { status: 400 }
       );
     }
 
     const planDetails = PRICE_MAP[plan];
-    const origin = request.headers.get("origin") || "http://localhost:3000";
 
-    // Create or retrieve Stripe customer
-    let customerId: string;
+    // Record payment
+    createPayment(user.id, planDetails.amount, planDetails.currency, plan, `demo_${Date.now()}`);
 
-    // Check if user already has a Stripe customer ID
-    const { data: profile } = await supabase
-      .from("user_profiles")
-      .select("stripe_customer_id")
-      .eq("id", user.id)
-      .single();
-
-    if (profile?.stripe_customer_id) {
-      customerId = profile.stripe_customer_id;
-    } else {
-      // Create new Stripe customer
-      const customer = await stripe.customers.create({
-        email: user.email!,
-        metadata: { supabase_user_id: user.id },
-      });
-      customerId = customer.id;
-
-      // Save customer ID to profile
-      await supabase
-        .from("user_profiles")
-        .update({ stripe_customer_id: customerId })
-        .eq("id", user.id);
-    }
-
-    // Create checkout session
-    const sessionParams: Stripe.Checkout.SessionCreateParams = {
-      customer: customerId,
-      payment_method_types: ["card"],
-      mode: planDetails.recurring ? "subscription" : "payment",
-      line_items: [
-        {
-          price_data: {
-            currency: planDetails.currency,
-            product_data: {
-              name: `ColorGrade — ${planDetails.name}`,
-              description: plan === "single"
-                ? "1 video export with basic features"
-                : `${planDetails.name} plan with all pro features`,
-            },
-            unit_amount: planDetails.amount,
-            ...(planDetails.recurring ? { recurring: { interval: plan === "yearly" ? "year" : "month" } } : {}),
-          },
-          quantity: 1,
-        },
-      ],
-      success_url: `${origin}/tool?session_id={CHECKOUT_SESSION_ID}`,
-      cancel_url: `${origin}/#pricing`,
-      metadata: {
-        user_id: user.id,
-        plan,
-      },
+    // For demo: simulate successful payment and upgrade user
+    // In production, use real Stripe checkout
+    const { updateUser } = await import("@/lib/auth-db");
+    const planCredits: Record<string, number> = {
+      single: 1,
+      monthly: 200,
+      yearly: 1800,
+      lifetime: 999999,
     };
 
-    const session = await stripe.checkout.sessions.create(sessionParams);
-
-    // Record payment intent
-    await supabase.from("payments").insert({
-      user_id: user.id,
-      stripe_session_id: session.id,
-      amount: planDetails.amount,
-      currency: planDetails.currency,
-      plan,
-      status: "pending",
+    updateUser(user.id, {
+      plan: plan === "single" ? "basic" : "pro",
+      clips_remaining: planCredits[plan] || 0,
     });
 
     return NextResponse.json({
       success: true,
-      sessionId: session.id,
-      url: session.url,
+      message: "Payment processed (demo mode)",
+      plan,
+      amount: planDetails.amount,
     });
   } catch (error) {
     console.error("Checkout error:", error);
     return NextResponse.json(
-      { error: "Checkout creation failed" },
+      { error: "Checkout failed" },
       { status: 500 }
     );
   }
