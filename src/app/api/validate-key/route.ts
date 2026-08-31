@@ -11,13 +11,7 @@
 import { NextResponse } from "next/server";
 import { createClient } from "@supabase/supabase-js";
 
-const supabase = createClient(
-  process.env.NEXT_PUBLIC_SUPABASE_URL || "",
-  process.env.SUPABASE_SERVICE_ROLE_KEY || ""
-);
-
 function generateFingerprint(): string {
-  // Simple browser fingerprint for key binding
   return `fp_${Date.now()}_${Math.random().toString(36).slice(2, 10)}`;
 }
 
@@ -33,10 +27,8 @@ export async function POST(request: Request) {
       );
     }
 
-    // Normalize the key
     const normalizedKey = keyCode.trim().toUpperCase();
 
-    // Validate format: CG-XXXX-XXXX-XXXX
     const keyRegex = /^CG-[A-Z0-9]{4}-[A-Z0-9]{4}-[A-Z0-9]{4}$/;
     if (!keyRegex.test(normalizedKey)) {
       return NextResponse.json(
@@ -45,7 +37,12 @@ export async function POST(request: Request) {
       );
     }
 
-    // Look up the key
+    // Lazy-init Supabase inside handler to avoid build-time env var errors
+    const supabase = createClient(
+      process.env.NEXT_PUBLIC_SUPABASE_URL || "",
+      process.env.SUPABASE_SERVICE_ROLE_KEY || ""
+    );
+
     const { data: keyRecord, error: lookupError } = await supabase
       .from("access_keys")
       .select("*")
