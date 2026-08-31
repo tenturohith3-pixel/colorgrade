@@ -13,7 +13,7 @@ interface SessionPayload extends JWTPayload {
 async function verifyToken(token: string): Promise<SessionPayload | null> {
   try {
     const { payload } = await jwtVerify(token, SECRET);
-    return payload as SessionPayload;
+    return payload as unknown as SessionPayload;
   } catch {
     return null;
   }
@@ -22,29 +22,18 @@ async function verifyToken(token: string): Promise<SessionPayload | null> {
 export async function middleware(request: NextRequest) {
   const { pathname } = request.nextUrl;
 
-  // Skip static files and API auth routes
+  // Skip static files, API routes, and internal Next.js paths
   if (
     pathname.startsWith("/_next") ||
     pathname.startsWith("/favicon") ||
-    pathname.match(/\.(svg|png|jpg|jpeg|gif|webp)$/) ||
-    pathname === "/api/auth"
+    pathname.startsWith("/api/") ||
+    pathname.match(/\.(svg|png|jpg|jpeg|gif|webp)$/)
   ) {
     return NextResponse.next();
   }
 
   const token = request.cookies.get("ezcc_session")?.value;
   const session = token ? await verifyToken(token) : null;
-
-  // Protected routes — redirect to home if not authenticated
-  const protectedPaths = ["/tool"];
-  const isProtected = protectedPaths.some((path) => pathname.startsWith(path));
-
-  if (isProtected && !session) {
-    const url = request.nextUrl.clone();
-    url.pathname = "/";
-    url.searchParams.set("auth", "signin");
-    return NextResponse.redirect(url);
-  }
 
   // Add user info to headers for server components
   const response = NextResponse.next();
