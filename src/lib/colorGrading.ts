@@ -111,6 +111,128 @@ const LUT_MAPS: Record<string, (r: number, g: number, b: number) => [number, num
   ],
 };
 
+// ── Auto Color Correction ─────────────────────
+
+/**
+ * Analyze an image's pixel data and return optimal GradeSettings.
+ * Fully client-side — no API calls, no credits, runs instantly.
+ */
+export function autoColorCorrect(
+  ctx: CanvasRenderingContext2D,
+  width: number,
+  height: number
+): GradeSettings {
+  const imageData = ctx.getImageData(0, 0, width, height);
+  const data = imageData.data;
+  const pixelCount = data.length / 4;
+
+  // Accumulate channel stats
+  let rSum = 0, gSum = 0, bSum = 0;
+  let rMin = 255, gMin = 255, bMin = 255;
+  let rMax = 0, gMax = 0, bMax = 0;
+  let rHistogram = new Array(256).fill(0);
+  let gHistogram = new Array(256).fill(0);
+  let bHistogram = new Array(256).fill(0);
+  let lumHistogram = new Array(256).fill(0);
+  let darkPixels = 0;
+  let brightPixels = 0;
+
+  for (let i = 0; i < data.length; i += 4) {
+    const r = data[i], g = data[i + 1], b = data[i + 2];
+    rSum += r; gSum += g; bSum += b;
+    rMin = Math.min(rMin, r); gMin = Math.min(gMin, g); bMin = Math.min(bMin, b);
+    rMax = Math.max(rMax, r); gMax = Math.max(gMax, g); bMax = Math.max(bMax, b);
+    rHistogram[r]++; gHistogram[g]++; bHistogram[b]++;
+    const lum = Math.round(0.299 * r + 0.587 * g + 0.114 * b);
+    lumHistogram[lum]++;
+    if (lum < 50) darkPixels++;
+    if (lum > 205) brightPixels++;
+  }
+
+  const rAvg = rSum / pixelCount;
+  const gAvg = gSum / pixelCount;
+  const bAvg = bSum / pixelCount;
+  const lumAvg = 0.299 * rAvg + 0.587 * gAvg + 0.114 * bAvg;
+
+  // --- White Balance ---
+  // Gray world assumption: in a well-balanced image, R≈G≈B averages
+  const grayDiff = (rAvg - bAvg);
+  const whiteBalance = Math.round(Math.max(-50, Math.min(50, grayDiff * 0.4)));
+
+  // --- Temperature ---
+  // Slight warm shift if image is cool, vice versa
+  const tempShift = Math.round(Math.max(-30, Math.min(30, (bAvg - rAvg) * 0.2)));
+
+  // --- Exposure ---
+  // Target luminance around 128 (mid-gray)
+  const exposureTarget = 128;
+  const exposureDiff = exposureTarget - lumAvg;
+  const exposure = Math.round(Math.max(-40, Math.min(40, exposureDiff * 0.3)));
+
+  // --- Contrast ---
+  // Measure histogram spread — low spread = low contrast
+  let lowestBin = 255, highestBin = 0;
+  for (let i = 0; i < 256; i++) {
+    if (lumHistogram[i] > pixelCount * 0.001) {
+      lowestBin = Math.min(lowestBin, i);
+      highestBin = Math.max(highestBin, i);
+    }
+  }
+  const spread = highestBin - lowestBin;
+  const contrast = spread < 180
+    ? Math.round(Math.min(30, (180 - spread) * 0.25))
+    : spread > 230
+    ? Math.round(Math.max(-20, (230 - spread) * 0.15))
+    : 0;
+
+  // --- Saturation ---
+  // Measure color variance — low variance = desaturated
+  let chromaSum = 0;
+  for (let i = 0; i < data.length; i += 4) {
+    const r = data[i], g = data[i + 1], b = data[i + 2];
+    const max = Math.max(r, g, b);
+    const min = Math.min(r, g, b);
+    chromaSum += max > 0 ? (max - min) / max : 0;
+  }
+  const avgChroma = chromaSum / pixelCount;
+  const saturation = avgChroma < 0.3
+    ? Math.round(Math.min(25, (0.3 - avgChroma) * 80))
+    : 0;
+
+  // --- Brightness ---
+  // Nudge if overall too dark or too bright
+  const brightness = Math.round(Math.max(-15, Math.min(15, (128 - lumAvg) * 0.12)));
+
+  // --- HDR ---
+  // Boost if highlights are clipped or shadows are crushed
+  const highlightClip = brightPixels / pixelCount;
+  const shadowCrush = darkPixels / pixelCount;
+  const hdrStrength = (highlightClip > 0.02 || shadowCrush > 0.15)
+    ? Math.round(Math.min(20, (highlightClip + shadowCrush) * 100))
+    : 0;
+
+  return {
+    lutPreset: "none",
+    whiteBalance,
+    exposure,
+    contrast,
+    saturation,
+    brightness,
+    temperature: tempShift,
+    shadowsHue: 0,
+    midtonesHue: 0,
+    highlightsHue: 0,
+    shadowsSat: 100,
+    midtonesSat: 100,
+    highlightsSat: 100,
+    hdrStrength,
+    highlightRecovery: 0,
+    filmGrain: 0,
+    halation: 0,
+    bloom: 0,
+  };
+}
+
 // ── Main Grading Function ───────────────────────
 
 export function applyColorGrading(

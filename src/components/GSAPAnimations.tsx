@@ -13,10 +13,10 @@ interface Props {
 }
 
 /**
- * GSAP ScrollTrigger Animations — Editorial Style
+ * GSAP ScrollTrigger Animations — Premium Editorial Style
  *
- * Refined, subtle animations. No flashy effects —
- * just smooth, cinematic reveals.
+ * Refined, cinematic animations with stagger timing,
+ * parallax depth, and smooth reveal choreography.
  */
 export default function GSAPAnimations({ children }: Props) {
   const containerRef = useRef<HTMLDivElement>(null);
@@ -25,37 +25,37 @@ export default function GSAPAnimations({ children }: Props) {
     if (!containerRef.current) return;
 
     const ctx = gsap.context(() => {
-      // ── Hero entrance — refined fade up ──
+      // ── Hero entrance — staggered cinematic reveal ──
       const heroElements = document.querySelectorAll("[data-gsap='hero']");
       if (heroElements.length) {
         gsap.fromTo(
           heroElements,
-          { opacity: 0, y: 40 },
+          { opacity: 0, y: 50 },
           {
             opacity: 1,
             y: 0,
-            duration: 1.4,
-            stagger: 0.2,
-            ease: "power2.out",
-            delay: 0.3,
+            duration: 1.6,
+            stagger: 0.15,
+            ease: "power3.out",
+            delay: 0.4,
           }
         );
       }
 
-      // ── Section reveals — smooth slide up ──
+      // ── Section reveals — smooth slide up with scale ──
       const sections = document.querySelectorAll("[data-gsap='section']");
       sections.forEach((section) => {
         gsap.fromTo(
           section,
-          { opacity: 0, y: 60 },
+          { opacity: 0, y: 80 },
           {
             opacity: 1,
             y: 0,
-            duration: 1.2,
+            duration: 1.4,
             ease: "power2.out",
             scrollTrigger: {
               trigger: section,
-              start: "top 88%",
+              start: "top 85%",
               end: "top 20%",
               toggleActions: "play none none reverse",
             },
@@ -63,58 +63,59 @@ export default function GSAPAnimations({ children }: Props) {
         );
       });
 
-      // ── Card group reveals — staggered fade ──
+      // ── Card group reveals — staggered fade + scale ──
       const cardGroups = document.querySelectorAll("[data-gsap='cards']");
       cardGroups.forEach((group) => {
         const cards = group.querySelectorAll("[data-gsap='card']");
         gsap.fromTo(
           cards,
-          { opacity: 0, y: 30 },
+          { opacity: 0, y: 40, scale: 0.97 },
           {
             opacity: 1,
             y: 0,
-            duration: 0.8,
-            stagger: 0.08,
+            scale: 1,
+            duration: 0.9,
+            stagger: 0.1,
             ease: "power2.out",
             scrollTrigger: {
               trigger: group,
-              start: "top 82%",
+              start: "top 80%",
               toggleActions: "play none none reverse",
             },
           }
         );
       });
 
-      // ── Parallax elements — subtle depth ──
+      // ── Parallax orbs — subtle depth movement ──
       const orbs = document.querySelectorAll("[data-gsap='orb']");
       orbs.forEach((orb, i) => {
         gsap.to(orb, {
-          y: -60 - i * 20,
+          y: -80 - i * 25,
           ease: "none",
           scrollTrigger: {
             trigger: orb,
             start: "top bottom",
             end: "bottom top",
-            scrub: 1.5,
+            scrub: 2,
           },
         });
       });
 
-      // ── Pricing card hover — subtle lift ──
-      const priceCards = document.querySelectorAll("[data-gsap='price-card']");
-      priceCards.forEach((card) => {
+      // ── Card hover lift — subtle 3D effect ──
+      const hoverCards = document.querySelectorAll("[data-gsap='hover-card']");
+      hoverCards.forEach((card) => {
         const el = card as HTMLElement;
         el.addEventListener("mouseenter", () => {
           gsap.to(el, {
-            y: -4,
-            duration: 0.4,
+            y: -6,
+            duration: 0.5,
             ease: "power2.out",
           });
         });
         el.addEventListener("mouseleave", () => {
           gsap.to(el, {
             y: 0,
-            duration: 0.4,
+            duration: 0.5,
             ease: "power2.out",
           });
         });
@@ -133,17 +134,59 @@ export default function GSAPAnimations({ children }: Props) {
 
         gsap.to(proxy, {
           val: num,
-          duration: 2,
+          duration: 2.5,
           ease: "power2.out",
           scrollTrigger: {
             trigger: el,
-            start: "top 88%",
+            start: "top 85%",
             toggleActions: "play none none reverse",
           },
           onUpdate: () => {
             el.textContent = Math.round(proxy.val) + suffix;
           },
         });
+      });
+
+      // ── Line reveal animations ──
+      const lines = document.querySelectorAll("[data-gsap='line']");
+      lines.forEach((line) => {
+        gsap.fromTo(
+          line,
+          { scaleX: 0 },
+          {
+            scaleX: 1,
+            duration: 1.2,
+            ease: "power2.inOut",
+            transformOrigin: "left center",
+            scrollTrigger: {
+              trigger: line,
+              start: "top 90%",
+              toggleActions: "play none none reverse",
+            },
+          }
+        );
+      });
+
+      // ── Text stagger — word by word reveal ──
+      const textStaggers = document.querySelectorAll("[data-gsap='text-stagger']");
+      textStaggers.forEach((container) => {
+        const words = container.querySelectorAll("span");
+        gsap.fromTo(
+          words,
+          { opacity: 0.15, y: 10 },
+          {
+            opacity: 1,
+            y: 0,
+            duration: 0.6,
+            stagger: 0.04,
+            ease: "power2.out",
+            scrollTrigger: {
+              trigger: container,
+              start: "top 85%",
+              toggleActions: "play none none reverse",
+            },
+          }
+        );
       });
     }, containerRef);
 

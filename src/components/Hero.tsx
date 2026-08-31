@@ -2,7 +2,7 @@
 
 import { useEffect, useRef } from "react";
 import Link from "next/link";
-import { ArrowRight } from "lucide-react";
+import { ArrowRight, ArrowUpRight, Play } from "lucide-react";
 
 export default function Hero() {
   const sectionRef = useRef<HTMLElement>(null);
@@ -11,7 +11,6 @@ export default function Hero() {
     const section = sectionRef.current;
     if (!section) return;
 
-    // Simple parallax on scroll
     const handleScroll = () => {
       const scrollY = window.scrollY;
       const els = section.querySelectorAll("[data-parallax]");
@@ -27,45 +26,52 @@ export default function Hero() {
 
   return (
     <section ref={sectionRef} className="relative min-h-screen flex items-center overflow-hidden">
-      {/* Subtle background grain */}
+      {/* Deep atmospheric background */}
       <div className="absolute inset-0 bg-[var(--bg-deep)]" />
 
-      {/* Cinematic gradient orbs — very muted */}
-      <div className="absolute top-[15%] right-[10%] w-[500px] h-[500px] rounded-full bg-[var(--accent-bronze)]/[0.03] blur-[150px]" />
-      <div className="absolute bottom-[10%] left-[5%] w-[400px] h-[400px] rounded-full bg-[var(--accent-sage)]/[0.03] blur-[120px]" />
+      {/* Cinematic gradient orbs */}
+      <div
+        className="absolute top-[10%] right-[5%] w-[400px] h-[400px] md:w-[600px] md:h-[600px] rounded-full blur-[120px] md:blur-[180px]"
+        style={{ background: "radial-gradient(circle, rgba(212,165,116,0.06) 0%, transparent 70%)" }}
+      />
+      <div
+        className="absolute bottom-[5%] left-[0%] w-[350px] h-[350px] md:w-[500px] md:h-[500px] rounded-full blur-[100px] md:blur-[160px]"
+        style={{ background: "radial-gradient(circle, rgba(122,155,126,0.05) 0%, transparent 70%)" }}
+      />
+      <div
+        className="absolute top-[50%] left-[40%] w-[300px] h-[300px] md:w-[400px] md:h-[400px] rounded-full blur-[140px] md:blur-[200px]"
+        style={{ background: "radial-gradient(circle, rgba(166,124,82,0.04) 0%, transparent 70%)" }}
+      />
 
-      {/* Editorial decorative line — vertical */}
-      <div className="absolute left-8 md:left-16 top-32 bottom-32 w-px bg-[var(--border-subtle)] hidden lg:block" />
+      {/* Subtle vertical accent line — desktop only */}
+      <div className="absolute left-8 md:left-16 top-28 bottom-28 w-px bg-[var(--border-subtle)] hidden lg:block" />
 
-      <div className="relative z-10 mx-auto max-w-[1400px] w-full px-8 md:px-12 pt-32 pb-20">
+      {/* Main content */}
+      <div className="relative z-10 mx-auto max-w-[1400px] w-full px-6 md:px-12 pt-28 pb-16 md:pt-36 md:pb-24">
         <div className="grid grid-cols-1 lg:grid-cols-12 gap-12 lg:gap-8 items-center">
-          {/* Left column — Main headline */}
+          {/* Left column — Headline */}
           <div className="lg:col-span-7">
-            {/* Issue number / editorial tag */}
-            <div className="flex items-center gap-4 mb-10" data-parallax="0.1">
+            {/* Editorial tag */}
+            <div className="flex items-center gap-4 mb-8 md:mb-12" data-parallax="0.1">
               <div className="editorial-dot" />
               <span className="editorial-caption">Vol. 01 — Cinematic Color</span>
               <div className="h-px flex-1 bg-[var(--border-subtle)] max-w-[100px]" />
             </div>
 
-            {/* Main headline */}
-            <h1 className="mb-8" data-parallax="0.05">
-              <span
-                className="block text-[clamp(2.8rem,7vw,6.5rem)] editorial-display text-[var(--text-primary)] leading-[0.90] mb-2"
-              >
+            {/* Main headline — responsive scale */}
+            <h1 className="mb-8 md:mb-10" data-parallax="0.05">
+              <span className="block text-[clamp(2.5rem,8vw,7.5rem)] editorial-display text-[var(--text-primary)] leading-[0.88] mb-2 md:mb-3">
                 Make Every
               </span>
-              <span
-                className="block text-[clamp(2.8rem,7vw,6.5rem)] editorial-display leading-[0.90]"
-              >
+              <span className="block text-[clamp(2.5rem,8vw,7.5rem)] editorial-display leading-[0.88]">
                 <span className="text-[var(--text-primary)]">Frame</span>{" "}
                 <span className="text-[var(--accent-bronze)] italic">Cinematic</span>
               </span>
             </h1>
 
-            {/* Subheadline — editorial body */}
-            <div className="max-w-lg mb-12" data-parallax="0.08">
-              <p className="editorial-body text-[var(--text-secondary)]">
+            {/* Subheadline */}
+            <div className="max-w-lg mb-10 md:mb-14" data-parallax="0.08">
+              <p className="editorial-body text-[var(--text-secondary)] text-base md:text-lg">
                 Professional color grading for the modern creator.
                 LUT presets, 3-way color wheels, and AI-powered corrections —
                 all in your browser.
@@ -73,41 +79,68 @@ export default function Hero() {
             </div>
 
             {/* CTA row */}
-            <div className="flex items-center gap-6" data-parallax="0.1">
+            <div className="flex flex-wrap items-center gap-4 md:gap-5" data-parallax="0.1">
               <Link
                 href="/tool"
-                className="group inline-flex items-center gap-3 px-8 py-4 bg-[var(--accent-bronze)] text-[var(--bg-deep)] text-[11px] font-semibold tracking-[0.15em] uppercase hover:bg-[var(--accent-umber)] transition-all duration-500"
+                className="editorial-btn editorial-btn-primary !px-8 md:!px-10 !py-4 !text-xs group"
               >
                 Start Free Trial
-                <ArrowRight className="w-3.5 h-3.5 group-hover:translate-x-1 transition-transform duration-300" />
+                <ArrowRight className="w-4 h-4 group-hover:translate-x-1 transition-transform duration-300" />
               </Link>
               <a
                 href="#gallery"
-                className="text-[11px] font-medium text-[var(--text-muted)] hover:text-[var(--text-primary)] transition-colors duration-500 tracking-[0.15em] uppercase"
+                className="editorial-btn editorial-btn-secondary !py-4 group"
               >
+                <Play className="w-3.5 h-3.5 opacity-60" />
                 View Gallery
               </a>
             </div>
+
+            {/* Trust signals */}
+            <div className="flex flex-wrap items-center gap-4 md:gap-6 mt-8 md:mt-10" data-parallax="0.12">
+              <div className="flex items-center gap-2">
+                <div className="flex -space-x-1.5">
+                  {["bg-[var(--accent-bronze)]", "bg-[var(--accent-sage)]", "bg-[var(--accent-umber)]"].map(
+                    (bg, i) => (
+                      <div
+                        key={i}
+                        className={`w-5 h-5 rounded-full ${bg} border border-[var(--bg-deep)] opacity-70`}
+                      />
+                    )
+                  )}
+                </div>
+                <span className="text-[10px] text-[var(--text-muted)] tracking-wide">
+                  2,400+ creators
+                </span>
+              </div>
+              <div className="w-px h-3 bg-[var(--border-medium)]" />
+              <span className="text-[10px] text-[var(--text-muted)] tracking-wide">
+                No credit card required
+              </span>
+            </div>
           </div>
 
-          {/* Right column — Editorial visual element */}
+          {/* Right column — Cinematic visual */}
           <div className="lg:col-span-5 relative" data-parallax="0.15">
-            {/* Cinematic frame */}
-            <div className="relative aspect-[4/5] overflow-hidden">
-              {/* Gradient background simulating cinematic footage */}
+            {/* Main cinematic frame */}
+            <div
+              className="relative aspect-[4/5] overflow-hidden rounded-[var(--radius-md)]"
+              style={{ boxShadow: "var(--shadow-elevated)" }}
+            >
+              {/* Gradient background */}
               <div
                 className="absolute inset-0"
                 style={{
                   background: `
-                    radial-gradient(ellipse at 30% 20%, rgba(196,149,106,0.12) 0%, transparent 50%),
-                    radial-gradient(ellipse at 70% 80%, rgba(122,155,126,0.08) 0%, transparent 50%),
-                    linear-gradient(160deg, #1A1816 0%, #0B0A08 40%, #151312 100%)
+                    radial-gradient(ellipse at 30% 20%, rgba(212,165,116,0.10) 0%, transparent 50%),
+                    radial-gradient(ellipse at 70% 80%, rgba(122,155,126,0.07) 0%, transparent 50%),
+                    linear-gradient(160deg, #161618 0%, #08080A 40%, #111113 100%)
                   `,
                 }}
               />
 
-              {/* Overlaid text — editorial style */}
-              <div className="absolute inset-0 flex flex-col justify-between p-8 md:p-10">
+              {/* Inner content */}
+              <div className="absolute inset-0 flex flex-col justify-between p-6 md:p-10">
                 <div className="flex items-center justify-between">
                   <span className="editorial-caption">Featured Work</span>
                   <span className="section-number">01</span>
@@ -115,7 +148,7 @@ export default function Hero() {
 
                 <div>
                   <p
-                    className="text-[clamp(1.2rem,2.5vw,1.8rem)] text-[var(--text-primary)] leading-snug mb-4"
+                    className="text-[clamp(1rem,2.5vw,1.8rem)] text-[var(--text-primary)] leading-snug mb-4 md:mb-5"
                     style={{ fontFamily: "var(--font-playfair), Georgia, serif" }}
                   >
                     &ldquo;Color is the keyboard, the eyes are the harmonies, the soul is the piano with many strings.&rdquo;
@@ -130,24 +163,30 @@ export default function Hero() {
               </div>
 
               {/* Frame border */}
-              <div className="absolute inset-0 border border-[var(--border-subtle)]" />
+              <div
+                className="absolute inset-0 rounded-[var(--radius-md)] pointer-events-none"
+                style={{ border: "1px solid var(--glass-border)" }}
+              />
             </div>
 
-            {/* Stats — editorial style below the frame */}
-            <div className="grid grid-cols-3 gap-px bg-[var(--border-subtle)] mt-px">
+            {/* Stats bar */}
+            <div
+              className="grid grid-cols-3 gap-px mt-px rounded-b-[var(--radius-md)] overflow-hidden"
+              style={{ background: "var(--glass-border)" }}
+            >
               {[
                 { value: "30+", label: "LUT Presets" },
                 { value: "4K", label: "Export Quality" },
                 { value: "<2s", label: "Processing" },
               ].map((stat) => (
-                <div key={stat.label} className="bg-[var(--bg-card)] p-5 text-center">
+                <div key={stat.label} className="p-4 md:p-5 text-center" style={{ background: "var(--bg-card)" }}>
                   <div
-                    className="text-xl md:text-2xl text-[var(--text-primary)] mb-1"
+                    className="text-lg md:text-2xl text-[var(--text-primary)] mb-1"
                     style={{ fontFamily: "var(--font-playfair), Georgia, serif" }}
                   >
                     {stat.value}
                   </div>
-                  <div className="text-[9px] text-[var(--text-muted)] tracking-[0.12em] uppercase">
+                  <div className="text-[8px] md:text-[9px] text-[var(--text-muted)] tracking-[0.12em] uppercase">
                     {stat.label}
                   </div>
                 </div>
@@ -158,7 +197,7 @@ export default function Hero() {
       </div>
 
       {/* Bottom editorial rule */}
-      <div className="absolute bottom-0 left-8 md:left-16 right-8 md:right-16 h-px bg-[var(--border-subtle)]" />
+      <div className="absolute bottom-0 left-6 md:left-16 right-6 md:right-16 h-px bg-[var(--border-subtle)]" />
     </section>
   );
 }

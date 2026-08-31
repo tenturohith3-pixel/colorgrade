@@ -1,18 +1,43 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useState, useEffect, useCallback } from "react";
 import Link from "next/link";
-import { Menu, X } from "lucide-react";
+import { Menu, X, ArrowUpRight } from "lucide-react";
 
 export default function Navbar() {
   const [scrolled, setScrolled] = useState(false);
   const [mobileOpen, setMobileOpen] = useState(false);
+  const [mounted, setMounted] = useState(false);
 
   useEffect(() => {
+    setMounted(true);
     const onScroll = () => setScrolled(window.scrollY > 40);
     window.addEventListener("scroll", onScroll, { passive: true });
     return () => window.removeEventListener("scroll", onScroll);
   }, []);
+
+  // Lock body scroll when mobile menu is open
+  useEffect(() => {
+    if (mobileOpen) {
+      document.body.style.overflow = "hidden";
+    } else {
+      document.body.style.overflow = "";
+    }
+    return () => { document.body.style.overflow = ""; };
+  }, [mobileOpen]);
+
+  // Close on Escape key
+  useEffect(() => {
+    const handleEscape = (e: KeyboardEvent) => {
+      if (e.key === "Escape") setMobileOpen(false);
+    };
+    if (mobileOpen) {
+      document.addEventListener("keydown", handleEscape);
+      return () => document.removeEventListener("keydown", handleEscape);
+    }
+  }, [mobileOpen]);
+
+  const closeMobile = useCallback(() => setMobileOpen(false), []);
 
   const navLinks = [
     { label: "Features", href: "#features" },
@@ -21,85 +46,172 @@ export default function Navbar() {
   ];
 
   return (
-    <nav
-      className={`fixed top-0 left-0 right-0 z-50 transition-all duration-700 ${
-        scrolled
-          ? "bg-[var(--bg-deep)]/90 backdrop-blur-xl border-b border-[var(--border-subtle)]"
-          : "bg-transparent"
-      }`}
-    >
-      <div className="mx-auto max-w-[1400px] px-8 md:px-12">
-        {/* Top rule line */}
-        <div className={`h-px bg-[var(--border-subtle)] transition-opacity duration-500 ${scrolled ? "opacity-0" : "opacity-100"}`} />
-
-        <div className="flex items-center justify-between h-16 md:h-20">
-          {/* Logo */}
-          <Link href="/" className="flex items-center gap-3 group">
-            <div className="flex flex-col items-center leading-none">
+    <>
+      <nav
+        className={`fixed top-0 left-0 right-0 z-50 transition-all duration-700 ${
+          scrolled ? "py-3" : "py-5"
+        }`}
+        style={{
+          background: scrolled ? "var(--glass-bg-heavy)" : "transparent",
+          backdropFilter: scrolled ? "blur(24px)" : "none",
+          WebkitBackdropFilter: scrolled ? "blur(24px)" : "none",
+          borderBottom: scrolled ? "1px solid var(--glass-border)" : "1px solid transparent",
+        }}
+        role="navigation"
+        aria-label="Main navigation"
+      >
+        <div className="mx-auto max-w-[1400px] px-6 md:px-12">
+          <div className="flex items-center justify-between h-12 md:h-14">
+            {/* Logo */}
+            <Link href="/" className="flex items-center gap-3 group" aria-label="ColorGrade home">
               <span
-                className="text-xl md:text-2xl tracking-tight text-[var(--text-primary)]"
+                className="text-xl md:text-2xl tracking-tight text-[var(--text-primary)] transition-all duration-500 group-hover:tracking-normal"
                 style={{ fontFamily: "var(--font-playfair), Georgia, serif" }}
               >
                 Color<span className="text-[var(--accent-bronze)]">Grade</span>
               </span>
-            </div>
-          </Link>
+            </Link>
 
-          {/* Desktop links */}
-          <div className="hidden md:flex items-center gap-10">
-            {navLinks.map((link) => (
+            {/* Desktop links */}
+            <div className="hidden md:flex items-center gap-10">
+              {navLinks.map((link) => (
+                <a
+                  key={link.href}
+                  href={link.href}
+                  className="relative text-[11px] font-medium text-[var(--text-muted)] hover:text-[var(--text-primary)] transition-colors duration-500 tracking-[0.15em] uppercase group py-2"
+                >
+                  {link.label}
+                  <span className="absolute -bottom-1 left-0 w-0 h-px bg-[var(--accent-bronze)] transition-all duration-500 group-hover:w-full opacity-40" />
+                </a>
+              ))}
+              <div className="w-px h-4 bg-[var(--border-medium)]" />
+              <Link
+                href="/tool"
+                className="editorial-btn editorial-btn-primary !py-2.5 !px-5 !text-[10px] !gap-2"
+              >
+                Open Tool
+                <ArrowUpRight className="w-3 h-3" />
+              </Link>
+            </div>
+
+            {/* Mobile menu button — 44px touch target */}
+            <button
+              onClick={() => setMobileOpen(!mobileOpen)}
+              className="md:hidden flex items-center justify-center w-11 h-11 text-[var(--text-muted)] hover:text-[var(--text-primary)] transition-colors duration-300 rounded-xl hover:bg-[rgba(255,255,255,0.04)]"
+              aria-label={mobileOpen ? "Close menu" : "Open menu"}
+              aria-expanded={mobileOpen}
+              aria-controls="mobile-menu"
+            >
+              <div className="relative w-5 h-5">
+                <span
+                  className={`absolute inset-0 transition-all duration-300 ${
+                    mobileOpen ? "rotate-45 opacity-0" : "rotate-0 opacity-100"
+                  }`}
+                >
+                  <Menu className="w-5 h-5" />
+                </span>
+                <span
+                  className={`absolute inset-0 transition-all duration-300 ${
+                    mobileOpen ? "rotate-0 opacity-100" : "-rotate-45 opacity-0"
+                  }`}
+                >
+                  <X className="w-5 h-5" />
+                </span>
+              </div>
+            </button>
+          </div>
+        </div>
+      </nav>
+
+      {/* Mobile menu — full-screen glass overlay with animation */}
+      <div
+        id="mobile-menu"
+        role="dialog"
+        aria-modal="true"
+        aria-label="Mobile navigation"
+        className={`fixed inset-0 z-40 md:hidden transition-all duration-500 ${
+          mounted && mobileOpen
+            ? "opacity-100 pointer-events-auto"
+            : "opacity-0 pointer-events-none"
+        }`}
+      >
+        {/* Backdrop */}
+        <div
+          className="absolute inset-0 transition-all duration-500"
+          style={{
+            background: "var(--glass-bg-heavy)",
+            backdropFilter: "blur(24px)",
+            WebkitBackdropFilter: "blur(24px)",
+          }}
+          onClick={closeMobile}
+          aria-hidden="true"
+        />
+
+        {/* Menu content — slide up */}
+        <div
+          className={`relative z-10 flex flex-col justify-center items-center h-full px-8 transition-all duration-500 ease-[var(--ease-smooth)] ${
+            mounted && mobileOpen
+              ? "translate-y-0 opacity-100"
+              : "translate-y-8 opacity-0"
+          }`}
+        >
+          {/* Decorative top line */}
+          <div className="absolute top-24 left-8 right-8 h-px bg-[var(--border-subtle)]" />
+
+          {/* Links */}
+          <nav className="flex flex-col items-center gap-10">
+            {navLinks.map((link, i) => (
               <a
                 key={link.href}
                 href={link.href}
-                className="text-[11px] font-medium text-[var(--text-muted)] hover:text-[var(--text-primary)] transition-colors duration-500 tracking-[0.15em] uppercase"
+                onClick={closeMobile}
+                className={`text-2xl text-[var(--text-muted)] hover:text-[var(--text-primary)] transition-all duration-500 tracking-[0.08em] uppercase ${
+                  mounted && mobileOpen
+                    ? "translate-y-0 opacity-100"
+                    : "translate-y-4 opacity-0"
+                }`}
+                style={{
+                  fontFamily: "var(--font-playfair), Georgia, serif",
+                  transitionDelay: mounted && mobileOpen ? `${i * 80 + 100}ms` : "0ms",
+                }}
               >
                 {link.label}
               </a>
             ))}
-            <div className="w-px h-4 bg-[var(--border-medium)]" />
+
+            {/* Divider */}
+            <div
+              className={`w-12 h-px bg-[var(--accent-bronze)] transition-all duration-500 ${
+                mounted && mobileOpen ? "opacity-30 scale-x-100" : "opacity-0 scale-x-0"
+              }`}
+              style={{ transitionDelay: mounted && mobileOpen ? "300ms" : "0ms" }}
+            />
+
+            {/* CTA */}
             <Link
               href="/tool"
-              className="text-[11px] font-medium text-[var(--accent-bronze)] hover:text-[var(--text-primary)] transition-colors duration-500 tracking-[0.15em] uppercase"
+              onClick={closeMobile}
+              className={`editorial-btn editorial-btn-primary !px-10 !py-4 !text-xs transition-all duration-500 ${
+                mounted && mobileOpen
+                  ? "translate-y-0 opacity-100"
+                  : "translate-y-4 opacity-0"
+              }`}
+              style={{ transitionDelay: mounted && mobileOpen ? "400ms" : "0ms" }}
             >
               Open Tool
+              <ArrowUpRight className="w-4 h-4" />
             </Link>
-          </div>
+          </nav>
 
-          {/* Mobile menu button */}
-          <button
-            onClick={() => setMobileOpen(!mobileOpen)}
-            className="md:hidden p-2 text-[var(--text-muted)] hover:text-[var(--text-primary)] transition-colors"
-          >
-            {mobileOpen ? <X className="w-5 h-5" /> : <Menu className="w-5 h-5" />}
-          </button>
+          {/* Decorative bottom line */}
+          <div className="absolute bottom-24 left-8 right-8 h-px bg-[var(--border-subtle)]" />
+
+          {/* Footer tagline */}
+          <p className="absolute bottom-12 text-[10px] text-[var(--text-ghost)] tracking-[0.15em] uppercase">
+            Editorial Color Grading
+          </p>
         </div>
       </div>
-
-      {/* Mobile menu */}
-      {mobileOpen && (
-        <div className="md:hidden bg-[var(--bg-deep)]/95 backdrop-blur-xl border-t border-[var(--border-subtle)]">
-          <div className="px-8 py-6 flex flex-col gap-4">
-            {navLinks.map((link) => (
-              <a
-                key={link.href}
-                href={link.href}
-                onClick={() => setMobileOpen(false)}
-                className="text-[11px] font-medium text-[var(--text-muted)] hover:text-[var(--text-primary)] transition-colors tracking-[0.15em] uppercase py-2"
-              >
-                {link.label}
-              </a>
-            ))}
-            <div className="h-px bg-[var(--border-subtle)] my-2" />
-            <Link
-              href="/tool"
-              onClick={() => setMobileOpen(false)}
-              className="text-[11px] font-medium text-[var(--accent-bronze)] hover:text-[var(--text-primary)] transition-colors tracking-[0.15em] uppercase py-2"
-            >
-              Open Tool
-            </Link>
-          </div>
-        </div>
-      )}
-    </nav>
+    </>
   );
 }

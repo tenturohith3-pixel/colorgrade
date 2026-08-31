@@ -1,9 +1,11 @@
-import type { Metadata } from "next";
-import { Inter, Playfair_Display, JetBrains_Mono } from "next/font/google";
+import type { Metadata, Viewport } from "next";
+import { Geist, Playfair_Display, JetBrains_Mono } from "next/font/google";
+import LoadingScreen from "@/components/LoadingScreen";
+import CookieConsent from "@/components/CookieConsent";
 import "./globals.css";
 
-const inter = Inter({
-  variable: "--font-inter",
+const geist = Geist({
+  variable: "--font-geist",
   subsets: ["latin"],
   display: "swap",
 });
@@ -39,18 +41,19 @@ export const metadata: Metadata = {
     description: "Professional color grading for cinematic creators",
     type: "website",
   },
-  viewport: {
-    width: "device-width",
-    initialScale: 1,
-    maximumScale: 5,
-    userScalable: true,
-  },
-  themeColor: "#0B0A08",
   appleWebApp: {
     capable: true,
     statusBarStyle: "black-translucent",
     title: "ColorGrade",
   },
+};
+
+export const viewport: Viewport = {
+  width: "device-width",
+  initialScale: 1,
+  maximumScale: 5,
+  userScalable: true,
+  themeColor: "#08080A",
 };
 
 export default function RootLayout({
@@ -59,9 +62,11 @@ export default function RootLayout({
   children: React.ReactNode;
 }) {
   return (
-    <html lang="en" className={`${inter.variable} ${playfair.variable} ${jetbrains.variable}`}>
+    <html lang="en" className={`${geist.variable} ${playfair.variable} ${jetbrains.variable}`}>
       <body className="min-h-screen bg-background text-foreground antialiased noise grain">
+        <LoadingScreen />
         {children}
+        <CookieConsent />
         <div id="cursor-dot" className="cursor-dot hidden lg:block" />
       </body>
     </html>
