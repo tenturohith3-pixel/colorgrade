@@ -22,7 +22,7 @@ export default function SmoothScroll({ children }: { children: React.ReactNode }
           }
         });
       },
-      { threshold: 0.08, rootMargin: "0px 0px -60px 0px" }
+      { threshold: 0.02, rootMargin: "0px 0px -20px 0px" }
     );
 
     document.querySelectorAll(".reveal").forEach((el) => observer.observe(el));

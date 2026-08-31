@@ -12,7 +12,7 @@ export default function SectionDivider({ number, accent = false }: SectionDivide
             className="flex-1 h-px"
             style={{
               background: accent
-                ? "linear-gradient(90deg, var(--border-subtle) 0%, var(--accent-bronze) 50%, var(--border-subtle) 100%)"
+                ? "linear-gradient(90deg, var(--border-subtle) 0%, var(--accent-teal) 50%, var(--border-subtle) 100%)"
                 : "var(--border-subtle)",
               opacity: accent ? 0.25 : 1,
             }}
@@ -24,7 +24,7 @@ export default function SectionDivider({ number, accent = false }: SectionDivide
             className="flex-1 h-px"
             style={{
               background: accent
-                ? "linear-gradient(90deg, var(--border-subtle) 0%, var(--accent-bronze) 50%, var(--border-subtle) 100%)"
+                ? "linear-gradient(90deg, var(--border-subtle) 0%, var(--accent-teal) 50%, var(--border-subtle) 100%)"
                 : "var(--border-subtle)",
               opacity: accent ? 0.25 : 1,
             }}

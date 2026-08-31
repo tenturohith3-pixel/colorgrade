@@ -100,7 +100,7 @@ export default function AuthModal({ isOpen, onClose }: AuthModalProps) {
       <div className="absolute inset-0 bg-black/60 backdrop-blur-sm" onClick={onClose} />
 
       {/* Modal */}
-      <div className="relative w-full max-w-md bg-[var(--bg-elevated)] border border-[var(--border-medium)] rounded-sm p-6 shadow-2xl">
+      <div className="relative w-full max-w-md bg-[var(--bg-elevated)] border border-[var(--border-medium)] rounded-xl p-6 shadow-2xl">
         {/* Close */}
         <button
           onClick={onClose}
@@ -111,7 +111,7 @@ export default function AuthModal({ isOpen, onClose }: AuthModalProps) {
 
         {/* Header */}
         <div className="text-center mb-6">
-          <div className="w-12 h-12 rounded-sm bg-[var(--accent-bronze)] flex items-center justify-center mx-auto mb-3">
+          <div className="w-12 h-12 rounded-xl bg-[var(--accent-teal)] flex items-center justify-center mx-auto mb-3">
             <span
               className="text-lg text-[var(--bg-deep)]"
               style={{ fontFamily: "var(--font-space), Georgia, serif" }}
@@ -144,7 +144,7 @@ export default function AuthModal({ isOpen, onClose }: AuthModalProps) {
 
         {/* Error */}
         {error && (
-          <div className="mb-4 p-3 rounded-sm bg-red-500/10 border border-red-500/20 text-sm text-red-400">
+          <div className="mb-4 p-3 rounded-xl bg-red-500/10 border border-red-500/20 text-sm text-red-400">
             {error}
           </div>
         )}
@@ -160,7 +160,7 @@ export default function AuthModal({ isOpen, onClose }: AuthModalProps) {
                 type="date"
                 value={birthDate}
                 onChange={(e) => setBirthDate(e.target.value)}
-                className="w-full px-3 py-2.5 rounded-sm bg-[var(--bg-elevated)] border border-[var(--border-medium)] text-[var(--text-primary)] text-sm focus:outline-none focus:border-[var(--accent-bronze)] transition-colors"
+                className="w-full px-3 py-2.5 rounded-xl bg-[var(--bg-elevated)] border border-[var(--border-medium)] text-[var(--text-primary)] text-sm focus:outline-none focus:border-[var(--accent-teal)] transition-colors"
               />
             </div>
             <p className="text-[11px] text-[var(--text-muted)] leading-relaxed">
@@ -168,7 +168,7 @@ export default function AuthModal({ isOpen, onClose }: AuthModalProps) {
             </p>
             <button
               onClick={handleAgeCheck}
-              className="w-full py-2.5 rounded-sm bg-[var(--accent-bronze)] text-[var(--bg-deep)] text-sm font-medium hover:bg-[var(--accent-umber)] transition-all"
+              className="w-full py-2.5 rounded-xl bg-[var(--accent-teal)] text-[var(--bg-deep)] text-sm font-medium hover:bg-[var(--accent-teal-dark)] transition-all"
             >
               Verify Age
             </button>
@@ -187,7 +187,7 @@ export default function AuthModal({ isOpen, onClose }: AuthModalProps) {
                 placeholder="parent@example.com"
                 value={parentEmail}
                 onChange={(e) => setParentEmail(e.target.value)}
-                className="w-full px-3 py-2.5 rounded-sm bg-[var(--bg-deep)] border border-[var(--border-medium)] text-[var(--text-primary)] text-sm placeholder-[var(--text-ghost)] focus:outline-none focus:border-[var(--accent-bronze)] transition-colors"
+                className="w-full px-3 py-2.5 rounded-xl bg-[var(--bg-deep)] border border-[var(--border-medium)] text-[var(--text-primary)] text-sm placeholder-[var(--text-ghost)] focus:outline-none focus:border-[var(--accent-teal)] transition-colors"
               />
             </div>
             <p className="text-[11px] text-[var(--text-muted)] leading-relaxed">
@@ -195,7 +195,7 @@ export default function AuthModal({ isOpen, onClose }: AuthModalProps) {
             </p>
             <button
               onClick={handleParentalConsent}
-              className="w-full py-2.5 rounded-sm bg-[var(--accent-bronze)] text-[var(--bg-deep)] text-sm font-medium hover:bg-[var(--accent-umber)] transition-all"
+              className="w-full py-2.5 rounded-xl bg-[var(--accent-teal)] text-[var(--bg-deep)] text-sm font-medium hover:bg-[var(--accent-teal-dark)] transition-all"
             >
               Send Consent Request
             </button>
@@ -220,7 +220,7 @@ export default function AuthModal({ isOpen, onClose }: AuthModalProps) {
                   placeholder="Full name"
                   value={name}
                   onChange={(e) => setName(e.target.value)}
-                  className="w-full pl-10 pr-3 py-2.5 rounded-sm bg-[var(--bg-deep)] border border-[var(--border-medium)] text-[var(--text-primary)] text-sm placeholder-[var(--text-ghost)] focus:outline-none focus:border-[var(--accent-bronze)] transition-colors"
+                  className="w-full pl-10 pr-3 py-2.5 rounded-xl bg-[var(--bg-deep)] border border-[var(--border-medium)] text-[var(--text-primary)] text-sm placeholder-[var(--text-ghost)] focus:outline-none focus:border-[var(--accent-teal)] transition-colors"
                 />
               </div>
             )}
@@ -234,7 +234,7 @@ export default function AuthModal({ isOpen, onClose }: AuthModalProps) {
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}
                 required
-                className="w-full pl-10 pr-3 py-2.5 rounded-sm bg-[var(--bg-deep)] border border-[var(--border-medium)] text-[var(--text-primary)] text-sm placeholder-[var(--text-ghost)] focus:outline-none focus:border-[var(--accent-bronze)] transition-colors"
+                className="w-full pl-10 pr-3 py-2.5 rounded-xl bg-[var(--bg-deep)] border border-[var(--border-medium)] text-[var(--text-primary)] text-sm placeholder-[var(--text-ghost)] focus:outline-none focus:border-[var(--accent-teal)] transition-colors"
               />
             </div>
 
@@ -247,7 +247,7 @@ export default function AuthModal({ isOpen, onClose }: AuthModalProps) {
                 value={password}
                 onChange={(e) => setPassword(e.target.value)}
                 required
-                className="w-full pl-10 pr-10 py-2.5 rounded-sm bg-[var(--bg-deep)] border border-[var(--border-medium)] text-[var(--text-primary)] text-sm placeholder-[var(--text-ghost)] focus:outline-none focus:border-[var(--accent-bronze)] transition-colors"
+                className="w-full pl-10 pr-10 py-2.5 rounded-xl bg-[var(--bg-deep)] border border-[var(--border-medium)] text-[var(--text-primary)] text-sm placeholder-[var(--text-ghost)] focus:outline-none focus:border-[var(--accent-teal)] transition-colors"
               />
               <button
                 type="button"
@@ -262,7 +262,7 @@ export default function AuthModal({ isOpen, onClose }: AuthModalProps) {
             <button
               type="submit"
               disabled={loading}
-              className="w-full py-2.5 rounded-sm bg-[var(--accent-bronze)] text-[var(--bg-deep)] text-sm font-medium hover:bg-[var(--accent-umber)] transition-all disabled:opacity-50 flex items-center justify-center gap-2"
+              className="w-full py-2.5 rounded-xl bg-[var(--accent-teal)] text-[var(--bg-deep)] text-sm font-medium hover:bg-[var(--accent-teal-dark)] transition-all disabled:opacity-50 flex items-center justify-center gap-2"
             >
               {loading ? (
                 <>
@@ -282,7 +282,7 @@ export default function AuthModal({ isOpen, onClose }: AuthModalProps) {
               <button
                 type="button"
                 onClick={() => { setMode(mode === "signin" ? "signup" : "signin"); setError(""); }}
-                className="text-[var(--accent-bronze)] hover:underline"
+                className="text-[var(--accent-teal)] hover:underline"
               >
                 {mode === "signin" ? "Sign up" : "Sign in"}
               </button>

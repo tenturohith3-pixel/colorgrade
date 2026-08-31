@@ -30,14 +30,14 @@ export default function GSAPAnimations({ children }: Props) {
       if (heroElements.length) {
         gsap.fromTo(
           heroElements,
-          { opacity: 0, y: 50 },
+          { opacity: 0, y: 30 },
           {
             opacity: 1,
             y: 0,
-            duration: 1.6,
-            stagger: 0.15,
+            duration: 0.8,
+            stagger: 0.08,
             ease: "power3.out",
-            delay: 0.4,
+            delay: 0.2,
           }
         );
       }
@@ -47,11 +47,11 @@ export default function GSAPAnimations({ children }: Props) {
       sections.forEach((section) => {
         gsap.fromTo(
           section,
-          { opacity: 0, y: 80 },
+          { opacity: 0, y: 40 },
           {
             opacity: 1,
             y: 0,
-            duration: 1.4,
+            duration: 0.6,
             ease: "power2.out",
             scrollTrigger: {
               trigger: section,
@@ -69,13 +69,13 @@ export default function GSAPAnimations({ children }: Props) {
         const cards = group.querySelectorAll("[data-gsap='card']");
         gsap.fromTo(
           cards,
-          { opacity: 0, y: 40, scale: 0.97 },
+          { opacity: 0, y: 20, scale: 0.98 },
           {
             opacity: 1,
             y: 0,
             scale: 1,
-            duration: 0.9,
-            stagger: 0.1,
+            duration: 0.5,
+            stagger: 0.06,
             ease: "power2.out",
             scrollTrigger: {
               trigger: group,
@@ -107,15 +107,15 @@ export default function GSAPAnimations({ children }: Props) {
         const el = card as HTMLElement;
         el.addEventListener("mouseenter", () => {
           gsap.to(el, {
-            y: -6,
-            duration: 0.5,
+            y: -4,
+            duration: 0.25,
             ease: "power2.out",
           });
         });
         el.addEventListener("mouseleave", () => {
           gsap.to(el, {
             y: 0,
-            duration: 0.5,
+            duration: 0.25,
             ease: "power2.out",
           });
         });
@@ -133,8 +133,7 @@ export default function GSAPAnimations({ children }: Props) {
         const proxy = { val: 0 };
 
         gsap.to(proxy, {
-          val: num,
-          duration: 2.5,
+          val: num,            duration: 1.2,
           ease: "power2.out",
           scrollTrigger: {
             trigger: el,
@@ -177,8 +176,8 @@ export default function GSAPAnimations({ children }: Props) {
           {
             opacity: 1,
             y: 0,
-            duration: 0.6,
-            stagger: 0.04,
+            duration: 0.35,
+            stagger: 0.02,
             ease: "power2.out",
             scrollTrigger: {
               trigger: container,
