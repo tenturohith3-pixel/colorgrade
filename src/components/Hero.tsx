@@ -149,7 +149,7 @@ export default function Hero() {
                 <div>
                   <p
                     className="text-[clamp(1rem,2.5vw,1.8rem)] text-[var(--text-primary)] leading-snug mb-4 md:mb-5"
-                    style={{ fontFamily: "var(--font-playfair), Georgia, serif" }}
+                    style={{ fontFamily: "var(--font-space), Georgia, serif" }}
                   >
                     &ldquo;Color is the keyboard, the eyes are the harmonies, the soul is the piano with many strings.&rdquo;
                   </p>
@@ -182,7 +182,7 @@ export default function Hero() {
                 <div key={stat.label} className="p-4 md:p-5 text-center" style={{ background: "var(--bg-card)" }}>
                   <div
                     className="text-lg md:text-2xl text-[var(--text-primary)] mb-1"
-                    style={{ fontFamily: "var(--font-playfair), Georgia, serif" }}
+                    style={{ fontFamily: "var(--font-space), Georgia, serif" }}
                   >
                     {stat.value}
                   </div>

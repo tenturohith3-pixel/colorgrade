@@ -62,7 +62,7 @@ export default function LoadingScreen() {
             />
             <span
               className="relative text-4xl md:text-5xl tracking-tight text-[var(--text-primary)]"
-              style={{ fontFamily: "var(--font-playfair), Georgia, serif" }}
+              style={{ fontFamily: "var(--font-space), Georgia, serif" }}
             >
               Color<span className="text-[var(--accent-teal)]">Grade</span>
             </span>

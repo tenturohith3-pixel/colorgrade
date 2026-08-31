@@ -29,7 +29,7 @@ export default function PrivacyPolicy() {
         {/* Content */}
         <div className="space-y-10 editorial-body text-[var(--text-secondary)]">
           <section>
-            <h2 className="text-lg text-[var(--text-primary)] mb-3" style={{ fontFamily: "var(--font-playfair), Georgia, serif" }}>
+            <h2 className="text-lg text-[var(--text-primary)] mb-3" style={{ fontFamily: "var(--font-space), Georgia, serif" }}>
               1. Introduction
             </h2>
             <p className="mb-3">
@@ -41,7 +41,7 @@ export default function PrivacyPolicy() {
           </section>
 
           <section>
-            <h2 className="text-lg text-[var(--text-primary)] mb-3" style={{ fontFamily: "var(--font-playfair), Georgia, serif" }}>
+            <h2 className="text-lg text-[var(--text-primary)] mb-3" style={{ fontFamily: "var(--font-space), Georgia, serif" }}>
               2. Data We Collect
             </h2>
             <p className="mb-3">We collect the following types of data:</p>
@@ -56,7 +56,7 @@ export default function PrivacyPolicy() {
           </section>
 
           <section>
-            <h2 className="text-lg text-[var(--text-primary)] mb-3" style={{ fontFamily: "var(--font-playfair), Georgia, serif" }}>
+            <h2 className="text-lg text-[var(--text-primary)] mb-3" style={{ fontFamily: "var(--font-space), Georgia, serif" }}>
               3. How We Use Your Data
             </h2>
             <ul className="space-y-2 ml-5 list-disc">
@@ -71,7 +71,7 @@ export default function PrivacyPolicy() {
           </section>
 
           <section>
-            <h2 className="text-lg text-[var(--text-primary)] mb-3" style={{ fontFamily: "var(--font-playfair), Georgia, serif" }}>
+            <h2 className="text-lg text-[var(--text-primary)] mb-3" style={{ fontFamily: "var(--font-space), Georgia, serif" }}>
               4. Image Processing & Storage
             </h2>
             <p className="mb-3">
@@ -86,7 +86,7 @@ export default function PrivacyPolicy() {
           </section>
 
           <section>
-            <h2 className="text-lg text-[var(--text-primary)] mb-3" style={{ fontFamily: "var(--font-playfair), Georgia, serif" }}>
+            <h2 className="text-lg text-[var(--text-primary)] mb-3" style={{ fontFamily: "var(--font-space), Georgia, serif" }}>
               5. Cookies & Tracking
             </h2>
             <p className="mb-3">We use the following types of cookies:</p>
@@ -101,7 +101,7 @@ export default function PrivacyPolicy() {
           </section>
 
           <section>
-            <h2 className="text-lg text-[var(--text-primary)] mb-3" style={{ fontFamily: "var(--font-playfair), Georgia, serif" }}>
+            <h2 className="text-lg text-[var(--text-primary)] mb-3" style={{ fontFamily: "var(--font-space), Georgia, serif" }}>
               6. Data Sharing
             </h2>
             <p className="mb-3">We may share your data with:</p>
@@ -116,7 +116,7 @@ export default function PrivacyPolicy() {
           </section>
 
           <section>
-            <h2 className="text-lg text-[var(--text-primary)] mb-3" style={{ fontFamily: "var(--font-playfair), Georgia, serif" }}>
+            <h2 className="text-lg text-[var(--text-primary)] mb-3" style={{ fontFamily: "var(--font-space), Georgia, serif" }}>
               7. Data Retention
             </h2>
             <ul className="space-y-2 ml-5 list-disc">
@@ -128,7 +128,7 @@ export default function PrivacyPolicy() {
           </section>
 
           <section>
-            <h2 className="text-lg text-[var(--text-primary)] mb-3" style={{ fontFamily: "var(--font-playfair), Georgia, serif" }}>
+            <h2 className="text-lg text-[var(--text-primary)] mb-3" style={{ fontFamily: "var(--font-space), Georgia, serif" }}>
               8. Your Rights
             </h2>
             <p className="mb-3">Depending on your jurisdiction, you have the right to:</p>
@@ -146,7 +146,7 @@ export default function PrivacyPolicy() {
           </section>
 
           <section>
-            <h2 className="text-lg text-[var(--text-primary)] mb-3" style={{ fontFamily: "var(--font-playfair), Georgia, serif" }}>
+            <h2 className="text-lg text-[var(--text-primary)] mb-3" style={{ fontFamily: "var(--font-space), Georgia, serif" }}>
               9. Age Compliance
             </h2>
             <p className="mb-3">
@@ -160,7 +160,7 @@ export default function PrivacyPolicy() {
           </section>
 
           <section>
-            <h2 className="text-lg text-[var(--text-primary)] mb-3" style={{ fontFamily: "var(--font-playfair), Georgia, serif" }}>
+            <h2 className="text-lg text-[var(--text-primary)] mb-3" style={{ fontFamily: "var(--font-space), Georgia, serif" }}>
               10. Security
             </h2>
             <p className="mb-3">
@@ -179,7 +179,7 @@ export default function PrivacyPolicy() {
           </section>
 
           <section>
-            <h2 className="text-lg text-[var(--text-primary)] mb-3" style={{ fontFamily: "var(--font-playfair), Georgia, serif" }}>
+            <h2 className="text-lg text-[var(--text-primary)] mb-3" style={{ fontFamily: "var(--font-space), Georgia, serif" }}>
               11. International Data Transfers
             </h2>
             <p>
@@ -188,7 +188,7 @@ export default function PrivacyPolicy() {
           </section>
 
           <section>
-            <h2 className="text-lg text-[var(--text-primary)] mb-3" style={{ fontFamily: "var(--font-playfair), Georgia, serif" }}>
+            <h2 className="text-lg text-[var(--text-primary)] mb-3" style={{ fontFamily: "var(--font-space), Georgia, serif" }}>
               12. Changes to This Policy
             </h2>
             <p>
@@ -197,7 +197,7 @@ export default function PrivacyPolicy() {
           </section>
 
           <section>
-            <h2 className="text-lg text-[var(--text-primary)] mb-3" style={{ fontFamily: "var(--font-playfair), Georgia, serif" }}>
+            <h2 className="text-lg text-[var(--text-primary)] mb-3" style={{ fontFamily: "var(--font-space), Georgia, serif" }}>
               13. Contact Us
             </h2>
             <p>

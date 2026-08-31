@@ -24,11 +24,14 @@ import {
   Key,
   AlertTriangle,
   Wand2,
+  Lock,
+  Crown,
 } from "lucide-react";
 import { applyColorGrading, autoColorCorrect, type GradeSettings } from "@/lib/colorGrading";
 import { getCurrentTier, hasTierAccess, TIER_LABELS, getExpirationLevel, getTimeRemaining, type KeyTier, type ExpirationLevel } from "@/lib/keys";
 import KeyEntry from "@/components/KeyEntry";
 import KeyBadge from "@/components/KeyBadge";
+import ExportUpsell from "@/components/ExportUpsell";
 
 // ── Constants ────────────────────────────────────────
 
@@ -66,13 +69,15 @@ const LUT_PRESETS = [
 
 type ToolTab = "basic" | "3way" | "hsl" | "effects";
 
-/** Which tier unlocks each tab (null = always free) */
 const TAB_TIER: Record<ToolTab, KeyTier | null> = {
   basic: null,
   "3way": "pro",
   hsl: "pro",
   effects: "studio",
 };
+
+/** Sliders in basic tab that require pro key */
+const BASIC_LOCKED_SLIDERS = ["exposure", "contrast", "saturation", "brightness", "temperature"] as const;
 
 // ── Main Component ───────────────────────────────────
 
@@ -86,6 +91,7 @@ export default function ColorToolPage() {
   const [rightPanelOpen, setRightPanelOpen] = useState(false);
   const [isMobile, setIsMobile] = useState(false);
   const [keyEntryOpen, setKeyEntryOpen] = useState(false);
+  const [exportUpsellOpen, setExportUpsellOpen] = useState(false);
   const [expiryLevel, setExpiryLevel] = useState<ExpirationLevel>(() => getExpirationLevel());
   const [timeLeft, setTimeLeft] = useState<string | null>(() => getTimeRemaining());
   const [currentTier, setCurrentTier] = useState<KeyTier | null>(() => getCurrentTier());
@@ -94,9 +100,8 @@ export default function ColorToolPage() {
   const canvasRef = useRef<HTMLCanvasElement>(null);
   const imageRef = useRef<HTMLImageElement | null>(null);
 
-  // ── Effects ──────────────────────────────────────────
+  const isPro = currentTier !== null;
 
-  // Poll expiry every 60s
   useEffect(() => {
     const id = setInterval(() => {
       setExpiryLevel(getExpirationLevel());
@@ -117,8 +122,6 @@ export default function ColorToolPage() {
     else { setSidebarOpen(true); }
   }, [isMobile]);
 
-  // ── Canvas Rendering ─────────────────────────────────
-
   const renderCanvas = useCallback(() => {
     const canvas = canvasRef.current;
     const img = imageRef.current;
@@ -136,8 +139,6 @@ export default function ColorToolPage() {
   }, [settings, showPreview]);
 
   useEffect(() => { if (uploadedImage) renderCanvas(); }, [settings, uploadedImage, renderCanvas, showPreview]);
-
-  // ── Handlers ─────────────────────────────────────────
 
   const update = useCallback(
     <K extends keyof GradeSettings>(key: K, value: GradeSettings[K]) =>
@@ -165,6 +166,10 @@ export default function ColorToolPage() {
   };
 
   const handleDownload = () => {
+    if (!isPro) {
+      setExportUpsellOpen(true);
+      return;
+    }
     const canvas = canvasRef.current;
     if (!canvas) return;
     const link = document.createElement("a");
@@ -173,20 +178,15 @@ export default function ColorToolPage() {
     link.click();
   };
 
-  // Auto Color Correction — analyzes image and applies optimal settings
   const handleAutoCC = () => {
     const canvas = canvasRef.current;
     const img = imageRef.current;
     if (!canvas || !img) return;
     const ctx = canvas.getContext("2d");
     if (!ctx) return;
-
-    // Render original image to canvas for analysis
     canvas.width = img.naturalWidth || img.width;
     canvas.height = img.naturalHeight || img.height;
     ctx.drawImage(img, 0, 0, canvas.width, canvas.height);
-
-    // Analyze and get optimal settings
     const autoSettings = autoColorCorrect(ctx, canvas.width, canvas.height);
     setSettings(autoSettings);
   };
@@ -197,8 +197,7 @@ export default function ColorToolPage() {
     const req = TAB_TIER[tab];
     return req !== null && !hasTierAccess(req);
   };
-
-  // ── Tab Config ───────────────────────────────────────
+  const isSliderLocked = (key: string) => !isPro && BASIC_LOCKED_SLIDERS.includes(key as typeof BASIC_LOCKED_SLIDERS[number]);
 
   const tabs: { id: ToolTab; label: string; icon: React.ElementType; locked: boolean }[] = [
     { id: "basic", label: "Basic", icon: SlidersHorizontal, locked: false },
@@ -207,62 +206,83 @@ export default function ColorToolPage() {
     { id: "effects", label: "Effects", icon: Sparkles, locked: isTabLocked("effects") },
   ];
 
-  // ── Sidebar Content ──────────────────────────────────
-
   const sidebarContent = (
     <div className="p-4">
       {/* Tab bar */}
-      <div className="flex gap-1 p-1 rounded-sm border border-[var(--border-subtle)] mb-4">
+      <div className="flex gap-1 p-1 rounded-xl mb-4" style={{ background: "var(--bg-deep)", boxShadow: "var(--neo-inset)" }}>
         {tabs.map((tab) => (
           <button
             key={tab.id}
             onClick={() => !tab.locked && setActiveTab(tab.id)}
-            className={`flex-1 flex items-center justify-center gap-1.5 py-2.5 md:py-2 rounded-lg text-xs font-medium transition-all ${
+            className={`flex-1 flex items-center justify-center gap-1.5 py-2.5 md:py-2 rounded-lg text-xs font-medium transition-all duration-150 ${
               activeTab === tab.id
-                ? "bg-[var(--bg-elevated)] text-[var(--text-primary)]"
+                ? "text-[var(--text-primary)]"
                 : tab.locked
-                ? "text-[var(--text-ghost)] cursor-not-allowed opacity-50"
+                ? "text-[var(--text-ghost)] cursor-not-allowed opacity-40"
                 : "text-[var(--text-muted)] hover:text-[var(--text-secondary)]"
             }`}
+            style={activeTab === tab.id ? { background: "var(--bg-elevated)", boxShadow: "var(--neo-soft)" } : undefined}
           >
             <tab.icon className="w-3.5 h-3.5" />
             <span className="hidden sm:inline">{tab.label}</span>
-            {tab.locked && <span className="text-[10px]">🔒</span>}
+            {tab.locked && <Lock className="w-2.5 h-2.5 opacity-50" />}
           </button>
         ))}
       </div>
 
-      {/* Basic Tab */}
-      {activeTab === "basic" && <BasicTab settings={settings} update={update} />}
+      {activeTab === "basic" && <BasicTab settings={settings} update={update} isPro={isPro} onUnlock={() => setKeyEntryOpen(true)} />}
 
-      {/* 3-Way Tab */}
       {activeTab === "3way" && (
         isTabLocked("3way")
           ? <LockedPanel feature="3-Way Color Wheels" tier="pro" onUnlock={() => setKeyEntryOpen(true)} />
           : <ThreeWayTab settings={settings} update={update} />
       )}
 
-      {/* HSL Tab */}
       {activeTab === "hsl" && (
         isTabLocked("hsl")
           ? <LockedPanel feature="HSL Target Isolation" tier="pro" onUnlock={() => setKeyEntryOpen(true)} />
           : <HSLTab />
       )}
 
-      {/* Effects Tab */}
       {activeTab === "effects" && (
         isTabLocked("effects")
           ? <LockedPanel feature="Film Grain & Effects" tier="studio" onUnlock={() => setKeyEntryOpen(true)} />
           : <EffectsTab settings={settings} update={update} />
       )}
+
+      {/* Persistent premium nudge at bottom of sidebar */}
+      {!isPro && (
+        <div
+          className="mt-6 p-4 rounded-xl text-center"
+          style={{
+            background: "linear-gradient(135deg, rgba(6,148,148,0.08) 0%, rgba(6,148,148,0.02) 100%)",
+            border: "1px solid rgba(6,148,148,0.15)",
+            boxShadow: "var(--neo-soft)",
+          }}
+        >
+          <Crown className="w-5 h-5 text-[var(--accent-teal)] mx-auto mb-2 opacity-70" />
+          <p className="text-[10px] font-semibold text-[var(--text-primary)] mb-1">Go Pro</p>
+          <p className="text-[9px] text-[var(--text-muted)] mb-3 leading-relaxed">Unlock all sliders, 4K export, and premium effects</p>
+          <button
+            onClick={() => setKeyEntryOpen(true)}
+            className="w-full py-2 rounded-lg text-[10px] font-semibold transition-all duration-150"
+            style={{
+              background: "linear-gradient(135deg, #069494, #047A7A)",
+              color: "#EDE8D0",
+              boxShadow: "var(--neo-soft)",
+            }}
+          >
+            Enter Key
+          </button>
+        </div>
+      )}
     </div>
   );
-
-  // ── Render ───────────────────────────────────────────
 
   return (
     <div className="min-h-screen bg-[var(--bg-deep)]">
       <KeyEntry isOpen={keyEntryOpen} onClose={() => setKeyEntryOpen(false)} onKeyValidated={handleKeyValidated} />
+      <ExportUpsell isOpen={exportUpsellOpen} onClose={() => setExportUpsellOpen(false)} onUnlock={() => { setExportUpsellOpen(false); setKeyEntryOpen(true); }} />
 
       {/* Expiry Warning Banner */}
       {currentTier && (expiryLevel === "warning" || expiryLevel === "urgent") && (
@@ -280,56 +300,88 @@ export default function ColorToolPage() {
           ) : (
             <span>Your key expires soon. {timeLeft} remaining — get a new key to maintain access.</span>
           )}
-          <button
-            onClick={() => setKeyEntryOpen(true)}
-            className="ml-2 underline underline-offset-2 hover:opacity-80 transition-opacity"
-          >
+          <button onClick={() => setKeyEntryOpen(true)} className="ml-2 underline underline-offset-2 hover:opacity-80 transition-opacity">
             Enter new key
           </button>
         </div>
       )}
 
       {/* Header */}
-      <header className="h-12 md:h-14 bg-[var(--bg-deep)]/90 backdrop-blur-xl border-b border-[var(--border-subtle)] flex items-center justify-between px-3 md:px-4 sticky top-0 z-50">
+      <header
+        className="h-12 md:h-14 backdrop-blur-xl flex items-center justify-between px-3 md:px-4 sticky top-0 z-50"
+        style={{
+          background: "rgba(24,24,24,0.85)",
+          borderBottom: "1px solid var(--border-subtle)",
+          boxShadow: "0 1px 0 rgba(0,0,0,0.2)",
+        }}
+      >
         <div className="flex items-center gap-2 md:gap-4 min-w-0">
           <Link href="/" className="flex items-center gap-1.5 text-[var(--text-muted)] hover:text-[var(--text-primary)] transition-colors shrink-0">
             <ArrowLeft className="w-4 h-4" />
             <span className="text-sm hidden sm:inline">Back</span>
           </Link>
-          <div className="w-px h-5 bg-white/10 hidden sm:block" />
+          <div className="w-px h-5" style={{ background: "var(--border-medium)" }} />
           <span className="text-sm font-medium text-[var(--text-secondary)] truncate hidden sm:inline">Color Grading Tool</span>
         </div>
         <div className="flex items-center gap-2 md:gap-3">
           {processingTime > 0 && <span className="text-[10px] text-[var(--text-ghost)] font-mono hidden md:inline">{processingTime}ms</span>}
           <KeyBadge currentTier={currentTier} onKeyRemoved={handleKeyRemoved} onChangeKey={() => setKeyEntryOpen(true)} />
           {!currentTier && (
-            <button onClick={() => setKeyEntryOpen(true)} className="flex items-center gap-1.5 px-2.5 py-1.5 rounded-lg text-[10px] font-medium transition-all duration-300 border" style={{ borderColor: "var(--border-accent)", color: "var(--accent-teal)" }}>
+            <button
+              onClick={() => setKeyEntryOpen(true)}
+              className="flex items-center gap-1.5 px-3 py-1.5 rounded-xl text-[10px] font-semibold transition-all duration-150"
+              style={{
+                background: "linear-gradient(135deg, rgba(6,148,148,0.15) 0%, rgba(6,148,148,0.05) 100%)",
+                border: "1px solid rgba(6,148,148,0.25)",
+                color: "var(--accent-teal-light)",
+                boxShadow: "var(--neo-soft)",
+              }}
+            >
               <Key className="w-3 h-3" />
               <span className="hidden sm:inline">Enter Key</span>
             </button>
           )}
           {isMobile && (
-            <button onClick={() => setSidebarOpen(!sidebarOpen)} className="p-2 rounded-lg text-[var(--text-muted)] hover:text-[var(--text-primary)] hover:bg-white/5 transition-all" title="Toggle tools">
+            <button onClick={() => setSidebarOpen(!sidebarOpen)} className="p-2 rounded-xl text-[var(--text-muted)] hover:text-[var(--text-primary)] transition-all" style={{ background: "var(--bg-elevated)", boxShadow: "var(--neo-soft)" }}>
               {sidebarOpen ? <PanelLeftClose className="w-4 h-4" /> : <SlidersHorizontal className="w-4 h-4" />}
             </button>
           )}
-          <button onClick={reset} className="p-2 rounded-lg text-[var(--text-muted)] hover:text-[var(--text-primary)] hover:bg-white/5 transition-all" title="Reset">
+          <button onClick={reset} className="p-2 rounded-xl text-[var(--text-muted)] hover:text-[var(--text-primary)] transition-all" style={{ background: "var(--bg-elevated)", boxShadow: "var(--neo-soft)" }} title="Reset">
             <RotateCcw className="w-4 h-4" />
           </button>
-          <button onClick={handleAutoCC} disabled={!uploadedImage} className="flex items-center gap-1.5 px-3 md:px-4 py-2 rounded-lg text-sm transition-all disabled:opacity-30 disabled:cursor-not-allowed" style={{ background: uploadedImage ? "rgba(6,148,148,0.1)" : "transparent", border: uploadedImage ? "1px solid rgba(6,148,148,0.2)" : "1px solid var(--border-medium)", color: uploadedImage ? "var(--accent-teal)" : "var(--text-muted)" }} title="Auto Color Correct">
+          <button
+            onClick={handleAutoCC}
+            disabled={!uploadedImage}
+            className="flex items-center gap-1.5 px-3 md:px-4 py-2 rounded-xl text-sm transition-all disabled:opacity-30 disabled:cursor-not-allowed"
+            style={{
+              background: uploadedImage ? "rgba(6,148,148,0.1)" : "var(--bg-elevated)",
+              border: uploadedImage ? "1px solid rgba(6,148,148,0.2)" : "1px solid var(--border-subtle)",
+              color: uploadedImage ? "var(--accent-teal)" : "var(--text-muted)",
+              boxShadow: "var(--neo-soft)",
+            }}
+          >
             <Wand2 className="w-4 h-4" />
             <span className="hidden sm:inline">Auto CC</span>
           </button>
-          <button onClick={() => fileInputRef.current?.click()} className="flex items-center gap-1.5 px-3 md:px-4 py-2 rounded-lg border border-[var(--border-medium)] text-sm text-[var(--text-secondary)] hover:text-[var(--text-primary)] transition-all">
+          <button onClick={() => fileInputRef.current?.click()} className="flex items-center gap-1.5 px-3 md:px-4 py-2 rounded-xl text-sm transition-all" style={{ background: "var(--bg-elevated)", border: "1px solid var(--border-subtle)", color: "var(--text-secondary)", boxShadow: "var(--neo-soft)" }}>
             <Upload className="w-4 h-4" />
             <span className="hidden sm:inline">Upload</span>
           </button>
-          <button onClick={handleDownload} className="flex items-center gap-1.5 px-3 md:px-4 py-2 rounded-lg bg-[var(--accent-teal)] text-[#181818] text-sm font-medium hover:bg-[var(--accent-teal-light)] transition-all">
+          <button
+            onClick={handleDownload}
+            className="flex items-center gap-1.5 px-3 md:px-4 py-2 rounded-xl text-sm font-semibold transition-all duration-150"
+            style={{
+              background: "linear-gradient(135deg, #069494, #047A7A)",
+              color: "#EDE8D0",
+              boxShadow: "var(--neo-raised), 0 0 16px rgba(6,148,148,0.2)",
+            }}
+          >
             <Download className="w-4 h-4" />
             <span className="hidden sm:inline">Export</span>
+            {!isPro && <Lock className="w-3 h-3 opacity-60" />}
           </button>
           {isMobile && (
-            <button onClick={() => setRightPanelOpen(!rightPanelOpen)} className="p-2 rounded-lg text-[var(--text-muted)] hover:text-[var(--text-primary)] hover:bg-white/5 transition-all" title="Adjustments">
+            <button onClick={() => setRightPanelOpen(!rightPanelOpen)} className="p-2 rounded-xl text-[var(--text-muted)] hover:text-[var(--text-primary)] transition-all" style={{ background: "var(--bg-elevated)", boxShadow: "var(--neo-soft)" }}>
               {rightPanelOpen ? <PanelRightClose className="w-4 h-4" /> : <Eye className="w-4 h-4" />}
             </button>
           )}
@@ -342,27 +394,27 @@ export default function ColorToolPage() {
         {isMobile ? (
           sidebarOpen && (
             <div className="fixed inset-0 z-40 md:hidden">
-              <div className="absolute inset-0 bg-black/50" onClick={() => setSidebarOpen(false)} />
-              <div className="absolute left-0 top-0 bottom-0 w-72 bg-[var(--bg-primary)] border-r border-[var(--border-subtle)] overflow-y-auto">
-                <div className="flex items-center justify-between p-4 border-b border-[var(--border-subtle)]">
+              <div className="absolute inset-0 bg-black/50 backdrop-blur-sm" onClick={() => setSidebarOpen(false)} />
+              <div className="absolute left-0 top-0 bottom-0 w-72 overflow-y-auto" style={{ background: "var(--bg-primary)", borderRight: "1px solid var(--border-subtle)" }}>
+                <div className="flex items-center justify-between p-4" style={{ borderBottom: "1px solid var(--border-subtle)" }}>
                   <span className="text-sm font-medium text-[var(--text-secondary)]">Tools</span>
-                  <button onClick={() => setSidebarOpen(false)} className="p-1.5 rounded-lg text-[var(--text-muted)] hover:text-[var(--text-primary)] hover:bg-white/5"><X className="w-4 h-4" /></button>
+                  <button onClick={() => setSidebarOpen(false)} className="p-1.5 rounded-xl text-[var(--text-muted)] hover:text-[var(--text-primary)]" style={{ background: "var(--bg-elevated)" }}><X className="w-4 h-4" /></button>
                 </div>
                 {sidebarContent}
               </div>
             </div>
           )
         ) : (
-          sidebarOpen && <aside className="w-72 border-r border-[var(--border-subtle)] overflow-y-auto flex-shrink-0 bg-[var(--bg-primary)]">{sidebarContent}</aside>
+          sidebarOpen && <aside className="w-72 overflow-y-auto flex-shrink-0" style={{ background: "var(--bg-primary)", borderRight: "1px solid var(--border-subtle)" }}>{sidebarContent}</aside>
         )}
 
         {/* Main canvas */}
         <main className="flex-1 flex flex-col min-w-0">
-          <div className="h-9 md:h-10 border-b border-white/5 flex items-center justify-between px-3 md:px-4">
+          <div className="h-9 md:h-10 flex items-center justify-between px-3 md:px-4" style={{ borderBottom: "1px solid var(--border-subtle)" }}>
             <div className="flex items-center gap-3 text-xs text-[var(--text-muted)]">
               <span className="hidden sm:inline">Preview</span>
-              <button onClick={() => setShowPreview(!showPreview)} className="p-1 rounded hover:bg-white/5 transition-colors">
-                {showPreview ? <Eye className="w-3.5 h-3.5" /> : <EyeOff className="w-3.5 h-3.5" />}
+              <button onClick={() => setShowPreview(!showPreview)} className="p-1 rounded-lg transition-colors" style={{ background: showPreview ? "rgba(6,148,148,0.1)" : "transparent" }}>
+                {showPreview ? <Eye className="w-3.5 h-3.5 text-[var(--accent-teal)]" /> : <EyeOff className="w-3.5 h-3.5" />}
               </button>
               {uploadedImage && <span className="text-[var(--text-ghost)] hidden md:inline">{processingTime > 0 && `Processed in ${processingTime}ms`}</span>}
             </div>
@@ -373,17 +425,19 @@ export default function ColorToolPage() {
             </div>
           </div>
 
-          <div className="flex-1 flex items-center justify-center p-4 md:p-8 bg-[#08080a] relative overflow-hidden">
+          <div className="flex-1 flex items-center justify-center p-4 md:p-8 relative overflow-hidden" style={{ background: "#0F0F0F" }}>
             <div className="absolute inset-0 opacity-[0.03]" style={{ backgroundImage: "linear-gradient(rgba(255,255,255,0.1) 1px, transparent 1px), linear-gradient(90deg, rgba(255,255,255,0.1) 1px, transparent 1px)", backgroundSize: "40px 40px" }} />
-            <div className="relative w-full max-w-3xl aspect-video rounded-xl overflow-hidden shadow-2xl shadow-black/50">
+            <div className="relative w-full max-w-3xl aspect-video rounded-2xl overflow-hidden" style={{ boxShadow: "0 20px 60px rgba(0,0,0,0.5), 0 0 0 1px var(--border-subtle)" }}>
               {uploadedImage ? (
                 <canvas ref={canvasRef} className="w-full h-full object-contain" />
               ) : (
-                <div className="w-full h-full flex items-center justify-center" style={{ background: "radial-gradient(ellipse at 30% 40%, rgba(100,60,120,0.4) 0%, transparent 50%), radial-gradient(ellipse at 70% 60%, rgba(40,80,120,0.3) 0%, transparent 50%), linear-gradient(135deg, #1a1020 0%, #101828 50%, #0d1520 100%)" }}>
+                <div className="w-full h-full flex items-center justify-center" style={{ background: "radial-gradient(ellipse at 30% 40%, rgba(6,148,148,0.08) 0%, transparent 50%), radial-gradient(ellipse at 70% 60%, rgba(10,181,181,0.05) 0%, transparent 50%), linear-gradient(135deg, #1a1a1a 0%, #181818 50%, #1a1a1a 100%)" }}>
                   <div className="text-center px-4">
-                    <Upload className="w-10 h-10 md:w-12 md:h-12 text-[var(--text-ghost)] mx-auto mb-3" />
-                    <p className="text-sm text-[var(--text-muted)]">Drop an image here or click Upload</p>
-                    <p className="text-xs text-[var(--text-ghost)] mt-1">Real-time Canvas color grading</p>
+                    <div className="w-16 h-16 rounded-2xl flex items-center justify-center mx-auto mb-4" style={{ background: "var(--bg-elevated)", boxShadow: "var(--neo-inset)" }}>
+                      <Upload className="w-7 h-7 text-[var(--text-ghost)]" />
+                    </div>
+                    <p className="text-sm text-[var(--text-muted)] mb-1">Drop an image here or click Upload</p>
+                    <p className="text-xs text-[var(--text-ghost)]">Real-time Canvas color grading</p>
                   </div>
                 </div>
               )}
@@ -391,11 +445,11 @@ export default function ColorToolPage() {
           </div>
 
           {/* Histogram */}
-          <div className="h-16 md:h-24 border-t border-white/5 px-4 md:px-6 flex items-center gap-4 md:gap-6">
+          <div className="h-16 md:h-24 px-4 md:px-6 flex items-center gap-4 md:gap-6" style={{ borderTop: "1px solid var(--border-subtle)" }}>
             <div className="flex-1 h-10 md:h-14 flex items-end gap-px opacity-60">
               {Array.from({ length: isMobile ? 32 : 64 }, (_, i) => {
                 const h = Math.sin(i * 0.15 + settings.contrast * 0.01) * 0.3 + Math.sin(i * 0.08) * 0.2 + 0.4;
-                return <div key={i} className="flex-1 rounded-t-sm transition-all duration-300" style={{ height: `${Math.max(5, h * 100)}%`, background: "linear-gradient(to top, rgba(6,148,148,0.3), rgba(6,148,148,0.1))" }} />;
+                return <div key={i} className="flex-1 rounded-t-sm transition-all duration-150" style={{ height: `${Math.max(5, h * 100)}%`, background: "linear-gradient(to top, rgba(6,148,148,0.3), rgba(6,148,148,0.1))" }} />;
               })}
             </div>
             <div className="text-xs text-[var(--text-ghost)] hidden sm:block">
@@ -409,18 +463,18 @@ export default function ColorToolPage() {
         {isMobile ? (
           rightPanelOpen && (
             <div className="fixed inset-0 z-40 md:hidden">
-              <div className="absolute inset-0 bg-black/50" onClick={() => setRightPanelOpen(false)} />
-              <div className="absolute right-0 top-0 bottom-0 w-64 bg-[var(--bg-primary)] border-l border-[var(--border-subtle)] overflow-y-auto">
-                <div className="flex items-center justify-between p-4 border-b border-[var(--border-subtle)]">
+              <div className="absolute inset-0 bg-black/50 backdrop-blur-sm" onClick={() => setRightPanelOpen(false)} />
+              <div className="absolute right-0 top-0 bottom-0 w-64 overflow-y-auto" style={{ background: "var(--bg-primary)", borderLeft: "1px solid var(--border-subtle)" }}>
+                <div className="flex items-center justify-between p-4" style={{ borderBottom: "1px solid var(--border-subtle)" }}>
                   <span className="text-xs font-medium text-[var(--text-muted)] uppercase tracking-wider">Adjustments</span>
-                  <button onClick={() => setRightPanelOpen(false)} className="p-1.5 rounded-lg text-[var(--text-muted)] hover:text-[var(--text-primary)] hover:bg-white/5"><X className="w-4 h-4" /></button>
+                  <button onClick={() => setRightPanelOpen(false)} className="p-1.5 rounded-xl text-[var(--text-muted)] hover:text-[var(--text-primary)]" style={{ background: "var(--bg-elevated)" }}><X className="w-4 h-4" /></button>
                 </div>
                 <div className="p-4"><AdjustmentsPanel settings={settings} currentTier={currentTier} onUnlock={() => setKeyEntryOpen(true)} /></div>
               </div>
             </div>
           )
         ) : (
-          <aside className="w-60 border-l border-[var(--border-subtle)] overflow-y-auto flex-shrink-0 p-4 bg-[var(--bg-primary)]">
+          <aside className="w-60 overflow-y-auto flex-shrink-0 p-4" style={{ background: "var(--bg-primary)", borderLeft: "1px solid var(--border-subtle)" }}>
             <AdjustmentsPanel settings={settings} currentTier={currentTier} onUnlock={() => setKeyEntryOpen(true)} />
           </aside>
         )}
@@ -431,7 +485,16 @@ export default function ColorToolPage() {
 
 // ── Tab Panels ────────────────────────────────────────
 
-function BasicTab({ settings, update }: { settings: GradeSettings; update: <K extends keyof GradeSettings>(k: K, v: GradeSettings[K]) => void }) {
+function BasicTab({ settings, update, isPro, onUnlock }: { settings: GradeSettings; update: <K extends keyof GradeSettings>(k: K, v: GradeSettings[K]) => void; isPro: boolean; onUnlock: () => void }) {
+  const sliders = [
+    { key: "whiteBalance" as const, label: "White Balance", icon: SunMedium, locked: false },
+    { key: "exposure" as const, label: "Exposure", icon: SunMedium, locked: !isPro },
+    { key: "contrast" as const, label: "Contrast", icon: Contrast, locked: !isPro },
+    { key: "saturation" as const, label: "Saturation", icon: Droplets, locked: !isPro },
+    { key: "brightness" as const, label: "Brightness", icon: SunMedium, locked: !isPro },
+    { key: "temperature" as const, label: "Temperature", icon: Palette, locked: !isPro },
+  ];
+
   return (
     <div className="space-y-5">
       <div>
@@ -441,7 +504,8 @@ function BasicTab({ settings, update }: { settings: GradeSettings; update: <K ex
             <button
               key={lut.id}
               onClick={() => update("lutPreset", lut.id as GradeSettings["lutPreset"])}
-              className={`aspect-square rounded-lg overflow-hidden border-2 transition-all ${settings.lutPreset === lut.id ? "border-[var(--accent-teal)] shadow-lg shadow-[var(--accent-teal)]/20" : "border-transparent hover:border-[var(--border-medium)]"}`}
+              className={`aspect-square rounded-xl overflow-hidden border-2 transition-all duration-150 ${settings.lutPreset === lut.id ? "border-[var(--accent-teal)]" : "border-transparent hover:border-[var(--border-medium)]"}`}
+              style={settings.lutPreset === lut.id ? { boxShadow: "0 0 12px rgba(6,148,148,0.3)" } : undefined}
               title={lut.name}
             >
               <div className="w-full h-full" style={{ background: `linear-gradient(135deg, ${lut.colors[0]}, ${lut.colors[1]}, ${lut.colors[2]})` }} />
@@ -449,21 +513,46 @@ function BasicTab({ settings, update }: { settings: GradeSettings; update: <K ex
           ))}
         </div>
       </div>
-      <div className="h-px bg-[var(--border-subtle)]" />
-      {[
-        { key: "whiteBalance" as const, label: "White Balance", icon: SunMedium },
-        { key: "exposure" as const, label: "Exposure", icon: SunMedium },
-        { key: "contrast" as const, label: "Contrast", icon: Contrast },
-        { key: "saturation" as const, label: "Saturation", icon: Droplets },
-        { key: "brightness" as const, label: "Brightness", icon: SunMedium },
-        { key: "temperature" as const, label: "Temperature", icon: Palette },
-      ].map((s) => (
-        <div key={s.key}>
+      <div className="h-px" style={{ background: "var(--border-subtle)" }} />
+
+      {!isPro && (
+        <div className="flex items-center gap-2 p-2.5 rounded-xl" style={{ background: "rgba(6,148,148,0.06)", border: "1px solid rgba(6,148,148,0.12)" }}>
+          <Crown className="w-3.5 h-3.5 text-[var(--accent-teal)] flex-shrink-0" />
+          <span className="text-[10px] text-[var(--accent-teal-light)]">Below sliders require Pro key</span>
+        </div>
+      )}
+
+      {sliders.map((s) => (
+        <div key={s.key} className={`relative ${s.locked ? "opacity-50" : ""}`}>
           <div className="flex items-center justify-between mb-2">
-            <div className="flex items-center gap-2"><s.icon className="w-3.5 h-3.5 text-[var(--text-muted)]" /><span className="text-xs text-[var(--text-secondary)]">{s.label}</span></div>
+            <div className="flex items-center gap-2">
+              <s.icon className="w-3.5 h-3.5 text-[var(--text-muted)]" />
+              <span className="text-xs text-[var(--text-secondary)]">{s.label}</span>
+              {s.locked && <Lock className="w-2.5 h-2.5 text-[var(--accent-teal)] opacity-50" />}
+            </div>
             <span className="text-xs text-[var(--text-ghost)] font-mono">{settings[s.key] > 0 ? "+" : ""}{settings[s.key]}</span>
           </div>
-          <input type="range" min={-100} max={100} value={settings[s.key]} onChange={(e) => update(s.key, Number(e.target.value))} className="w-full touch-manipulation" />
+          <input
+            type="range"
+            min={-100}
+            max={100}
+            value={settings[s.key]}
+            onChange={(e) => update(s.key, Number(e.target.value))}
+            disabled={s.locked}
+            className="w-full touch-manipulation"
+          />
+          {s.locked && (
+            <button
+              onClick={onUnlock}
+              className="absolute inset-0 flex items-center justify-center cursor-pointer z-10 rounded-xl"
+              style={{ background: "rgba(24,24,24,0.4)" }}
+              title="Unlock with Pro key"
+            >
+              <span className="text-[9px] font-semibold px-2 py-0.5 rounded-md" style={{ background: "rgba(6,148,148,0.2)", color: "var(--accent-teal-light)", border: "1px solid rgba(6,148,148,0.25)" }}>
+                🔒 Pro
+              </span>
+            </button>
+          )}
         </div>
       ))}
     </div>
@@ -482,10 +571,10 @@ function ThreeWayTab({ settings, update }: { settings: GradeSettings; update: <K
       {wheels.map((w) => (
         <div key={w.label}>
           <label className="text-xs font-medium text-[var(--text-muted)] uppercase tracking-wider mb-3 block">{w.label}</label>
-          <div className="rounded-xl p-4" style={{ background: "var(--glass-bg)", border: "1px solid var(--glass-border)", backdropFilter: "blur(var(--glass-blur))" }}>
-            <div className="w-full aspect-square rounded-full bg-[var(--bg-deep)] mb-3 relative overflow-hidden">
+          <div className="rounded-2xl p-4" style={{ background: "var(--glass-bg)", border: "1px solid var(--glass-border)", backdropFilter: "blur(var(--glass-blur))", boxShadow: "var(--neo-soft)" }}>
+            <div className="w-full aspect-square rounded-full mb-3 relative overflow-hidden" style={{ background: "var(--bg-deep)", boxShadow: "var(--neo-inset)" }}>
               <div className="absolute inset-0 rounded-full" style={{ background: "conic-gradient(from 0deg, hsl(0,80%,50%), hsl(60,80%,50%), hsl(120,80%,50%), hsl(180,80%,50%), hsl(240,80%,50%), hsl(300,80%,50%), hsl(360,80%,50%))", opacity: 0.3 }} />
-              <div className="absolute w-4 h-4 rounded-full border-2 border-white shadow-lg" style={{ background: w.color, top: "50%", left: "50%", transform: `translate(-50%, -50%) rotate(${settings[w.hueKey]}deg) translateY(-${settings[w.satKey] / 5}px)` }} />
+              <div className="absolute w-4 h-4 rounded-full border-2 border-white" style={{ background: w.color, top: "50%", left: "50%", transform: `translate(-50%, -50%) rotate(${settings[w.hueKey]}deg) translateY(-${settings[w.satKey] / 5}px)`, boxShadow: `0 0 8px ${w.color}` }} />
             </div>
             <div className="space-y-2">
               <div className="flex items-center justify-between"><span className="text-xs text-[var(--text-muted)]">Hue</span><span className="text-xs text-[var(--text-ghost)] font-mono">{settings[w.hueKey]}°</span></div>
@@ -507,7 +596,7 @@ function HSLTab() {
         <label className="text-xs font-medium text-[var(--text-muted)] uppercase tracking-wider mb-3 block">HSL Target Isolation</label>
         <p className="text-[11px] text-[var(--text-muted)] mb-3">Adjust hue, saturation, and luminance for specific color ranges.</p>
         {[{ label: "Reds", color: "#ef4444" }, { label: "Greens", color: "#22c55e" }, { label: "Blues", color: "#3b82f6" }].map((c) => (
-          <div key={c.label} className="rounded-lg p-3 mb-3" style={{ background: "var(--glass-bg)", border: "1px solid var(--glass-border)" }}>
+          <div key={c.label} className="rounded-xl p-3 mb-3" style={{ background: "var(--glass-bg)", border: "1px solid var(--glass-border)", boxShadow: "var(--neo-soft)" }}>
             <div className="flex items-center gap-2 mb-2"><div className="w-3 h-3 rounded-full" style={{ background: c.color }} /><span className="text-xs font-medium text-[var(--text-secondary)]">{c.label}</span></div>
             <div className="space-y-1.5">
               <span className="text-[10px] text-[var(--text-muted)]">Hue</span>
@@ -551,10 +640,23 @@ function EffectsTab({ settings, update }: { settings: GradeSettings; update: <K 
 function LockedPanel({ feature, tier, onUnlock }: { feature: string; tier: KeyTier; onUnlock: () => void }) {
   return (
     <div className="flex flex-col items-center justify-center h-64 text-center px-4">
-      <div className="text-3xl mb-3">🔒</div>
+      <div
+        className="w-14 h-14 rounded-2xl flex items-center justify-center mb-4"
+        style={{ background: "var(--bg-deep)", boxShadow: "var(--neo-inset)" }}
+      >
+        <Lock className="w-6 h-6 text-[var(--accent-teal)] opacity-60" />
+      </div>
       <p className="text-sm text-[var(--text-muted)] mb-1">{feature}</p>
       <p className="text-[10px] text-[var(--text-ghost)] mb-4">Requires {TIER_LABELS[tier]} access key</p>
-      <button onClick={onUnlock} className="flex items-center gap-2 px-4 py-2.5 rounded-lg text-xs font-medium transition-all duration-200" style={{ background: "var(--accent-teal)", color: "#181818" }}>
+      <button
+        onClick={onUnlock}
+        className="flex items-center gap-2 px-5 py-2.5 rounded-xl text-xs font-semibold transition-all duration-150"
+        style={{
+          background: "linear-gradient(135deg, #069494, #047A7A)",
+          color: "#EDE8D0",
+          boxShadow: "var(--neo-raised), 0 0 16px rgba(6,148,148,0.2)",
+        }}
+      >
         <Key className="w-3.5 h-3.5" />
         Enter Access Key
       </button>
@@ -572,7 +674,7 @@ function AdjustmentsPanel({ settings, currentTier, onUnlock }: { settings: Grade
       <h3 className="text-xs font-medium text-[var(--text-muted)] uppercase tracking-wider mb-4">Active Adjustments</h3>
       <div className="space-y-3">
         {active.length > 0 ? active.map(([key, value]) => (
-          <div key={key} className="rounded-lg px-3 py-2" style={{ background: "var(--glass-bg)", border: "1px solid var(--glass-border)" }}>
+          <div key={key} className="rounded-xl px-3 py-2" style={{ background: "var(--glass-bg)", border: "1px solid var(--glass-border)", boxShadow: "var(--neo-soft)" }}>
             <div className="text-[10px] text-[var(--text-muted)] uppercase tracking-wider">{key.replace(/([A-Z])/g, " $1").trim()}</div>
             <div className="text-sm text-[var(--text-primary)] font-mono">{typeof value === "number" ? (value > 0 ? `+${value}` : value) : String(value)}</div>
           </div>
@@ -582,11 +684,19 @@ function AdjustmentsPanel({ settings, currentTier, onUnlock }: { settings: Grade
       </div>
 
       {!currentTier && (
-        <div className="mt-8 p-4 rounded-lg" style={{ border: "1px solid var(--border-accent)" }}>
-          <div className="text-2xl mb-2">🔒</div>
+        <div className="mt-8 p-4 rounded-xl" style={{ background: "linear-gradient(135deg, rgba(6,148,148,0.08) 0%, rgba(6,148,148,0.02) 100%)", border: "1px solid rgba(6,148,148,0.15)", boxShadow: "var(--neo-soft)" }}>
+          <Crown className="w-5 h-5 text-[var(--accent-teal)] mb-2 opacity-70" />
           <h4 className="text-xs font-semibold text-[var(--text-primary)] mb-1">Unlock Pro Tools</h4>
-          <p className="text-[10px] text-[var(--text-secondary)] mb-3">3-Way wheels, HSL, HDR, grain & more</p>
-          <button onClick={onUnlock} className="w-full py-2.5 rounded-lg text-xs font-medium flex items-center justify-center gap-2 transition-all" style={{ background: "var(--accent-teal)", color: "#181818" }}>
+          <p className="text-[10px] text-[var(--text-secondary)] mb-3">3-Way wheels, HSL, HDR, grain & 4K export</p>
+          <button
+            onClick={onUnlock}
+            className="w-full py-2.5 rounded-xl text-xs font-semibold flex items-center justify-center gap-2 transition-all duration-150"
+            style={{
+              background: "linear-gradient(135deg, #069494, #047A7A)",
+              color: "#EDE8D0",
+              boxShadow: "var(--neo-raised), 0 0 16px rgba(6,148,148,0.15)",
+            }}
+          >
             <Key className="w-3 h-3" />
             Enter Access Key
           </button>

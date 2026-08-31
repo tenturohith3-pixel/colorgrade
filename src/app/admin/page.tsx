@@ -231,7 +231,7 @@ export default function AdminPage() {
         <div className="w-full max-w-sm p-8" style={{ background: "var(--bg-elevated)", border: "1px solid var(--border-medium)", borderRadius: "var(--radius-md)", boxShadow: "var(--shadow-elevated)" }}>
           <div className="text-center mb-6">
             <Shield className="w-8 h-8 text-[var(--accent-teal)] mx-auto mb-3" />
-            <h1 className="text-xl text-[var(--text-primary)]" style={{ fontFamily: "var(--font-playfair), Georgia, serif" }}>Admin Access</h1>
+            <h1 className="text-xl text-[var(--text-primary)]" style={{ fontFamily: "var(--font-space), Georgia, serif" }}>Admin Access</h1>
             <p className="text-xs text-[var(--text-muted)] mt-1">Enter your admin secret to continue</p>
           </div>
           {authError && <div className="mb-4 p-3 rounded-lg bg-red-500/10 border border-red-500/20 text-xs text-red-400">{authError}</div>}
@@ -254,7 +254,7 @@ export default function AdminPage() {
         <div className="flex items-center justify-between mb-6">
           <div>
             <Link href="/" className="flex items-center gap-1.5 text-xs text-[var(--text-muted)] hover:text-[var(--text-secondary)] transition-colors mb-2"><ArrowLeft className="w-3 h-3" />Back to site</Link>
-            <h1 className="text-2xl md:text-3xl text-[var(--text-primary)]" style={{ fontFamily: "var(--font-playfair), Georgia, serif" }}>Key Management</h1>
+            <h1 className="text-2xl md:text-3xl text-[var(--text-primary)]" style={{ fontFamily: "var(--font-space), Georgia, serif" }}>Key Management</h1>
           </div>
           <Key className="w-6 h-6 text-[var(--accent-teal)] opacity-40" />
         </div>

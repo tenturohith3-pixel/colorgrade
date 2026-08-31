@@ -64,7 +64,7 @@ export default function Navbar() {
             <Link href="/" className="flex items-center gap-3 group" aria-label="ColorGrade home">
               <span
                 className="text-xl md:text-2xl tracking-tight text-[var(--text-primary)] transition-all duration-300 group-hover:tracking-normal"
-                style={{ fontFamily: "var(--font-playfair), Georgia, serif" }}
+                style={{ fontFamily: "var(--font-space), Georgia, serif" }}
               >
                 Color<span className="text-[var(--accent-teal)]">Grade</span>
               </span>
@@ -167,7 +167,7 @@ export default function Navbar() {
                     : "translate-y-4 opacity-0"
                 }`}
                 style={{
-                  fontFamily: "var(--font-playfair), Georgia, serif",
+                  fontFamily: "var(--font-space), Georgia, serif",
                   transitionDelay: mounted && mobileOpen ? `${i * 60 + 80}ms` : "0ms",
                 }}
               >

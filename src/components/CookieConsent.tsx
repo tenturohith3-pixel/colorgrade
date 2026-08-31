@@ -106,7 +106,7 @@ export default function CookieConsent() {
             <div className="flex-1">
               <h3
                 className="text-sm md:text-base text-[var(--text-primary)] mb-1"
-                style={{ fontFamily: "var(--font-playfair), Georgia, serif" }}
+                style={{ fontFamily: "var(--font-space), Georgia, serif" }}
               >
                 Your Privacy Matters
               </h3>

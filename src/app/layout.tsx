@@ -1,17 +1,17 @@
 import type { Metadata, Viewport } from "next";
-import { Geist, Playfair_Display, JetBrains_Mono } from "next/font/google";
+import { Space_Grotesk, Inter, JetBrains_Mono } from "next/font/google";
 import LoadingScreen from "@/components/LoadingScreen";
 import CookieConsent from "@/components/CookieConsent";
 import "./globals.css";
 
-const geist = Geist({
-  variable: "--font-geist",
+const inter = Inter({
+  variable: "--font-inter",
   subsets: ["latin"],
   display: "swap",
 });
 
-const playfair = Playfair_Display({
-  variable: "--font-playfair",
+const spaceGrotesk = Space_Grotesk({
+  variable: "--font-space",
   subsets: ["latin"],
   display: "swap",
   weight: ["400", "500", "600", "700"],
@@ -62,7 +62,7 @@ export default function RootLayout({
   children: React.ReactNode;
 }) {
   return (
-    <html lang="en" className={`${geist.variable} ${playfair.variable} ${jetbrains.variable}`}>
+    <html lang="en" className={`${inter.variable} ${spaceGrotesk.variable} ${jetbrains.variable}`}>
       <body className="min-h-screen bg-background text-foreground antialiased noise grain">
         <LoadingScreen />
         {children}

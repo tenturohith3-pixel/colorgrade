@@ -136,7 +136,7 @@ export default function Pricing() {
                 </div>
                 <h3
                   className="text-xl md:text-2xl text-[var(--text-primary)] mb-1"
-                  style={{ fontFamily: "var(--font-playfair), Georgia, serif" }}
+                  style={{ fontFamily: "var(--font-space), Georgia, serif" }}
                 >
                   {tier.name}
                 </h3>
@@ -177,7 +177,7 @@ export default function Pricing() {
         <div className="mt-16 md:mt-20 max-w-2xl mx-auto text-center">
           <h3
             className="text-lg md:text-xl text-[var(--text-primary)] mb-4"
-            style={{ fontFamily: "var(--font-playfair), Georgia, serif" }}
+            style={{ fontFamily: "var(--font-space), Georgia, serif" }}
           >
             How Key Access Works
           </h3>
@@ -190,7 +190,7 @@ export default function Pricing() {
               <div key={item.step} className="text-center">
                 <div
                   className="text-2xl text-[var(--accent-teal)] mb-2"
-                  style={{ fontFamily: "var(--font-playfair), Georgia, serif" }}
+                  style={{ fontFamily: "var(--font-space), Georgia, serif" }}
                 >
                   {item.step}
                 </div>

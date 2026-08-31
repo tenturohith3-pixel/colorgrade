@@ -23,7 +23,7 @@ export default function Footer() {
               <Link href="/" className="inline-block mb-6 md:mb-8">
                 <span
                   className="text-2xl text-[var(--text-primary)] tracking-tight"
-                  style={{ fontFamily: "var(--font-playfair), Georgia, serif" }}
+                  style={{ fontFamily: "var(--font-space), Georgia, serif" }}
                 >
                   Color<span className="text-[var(--accent-teal)]">Grade</span>
                 </span>

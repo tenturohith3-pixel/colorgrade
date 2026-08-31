@@ -114,14 +114,14 @@ export default function AuthModal({ isOpen, onClose }: AuthModalProps) {
           <div className="w-12 h-12 rounded-sm bg-[var(--accent-bronze)] flex items-center justify-center mx-auto mb-3">
             <span
               className="text-lg text-[var(--bg-deep)]"
-              style={{ fontFamily: "var(--font-playfair), Georgia, serif" }}
+              style={{ fontFamily: "var(--font-space), Georgia, serif" }}
             >
               CG
             </span>
           </div>
           <h2
             className="text-xl text-[var(--text-primary)]"
-            style={{ fontFamily: "var(--font-playfair), Georgia, serif" }}
+            style={{ fontFamily: "var(--font-space), Georgia, serif" }}
           >
             {step === "age"
               ? "Age Verification"

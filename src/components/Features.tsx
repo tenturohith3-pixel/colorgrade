@@ -154,7 +154,7 @@ export default function Features() {
 
                   <h4
                     className={`${f.featured ? "text-lg md:text-xl lg:text-2xl" : "text-base md:text-lg"} text-[var(--text-primary)] mb-3 md:mb-4`}
-                    style={{ fontFamily: "var(--font-playfair), Georgia, serif" }}
+                    style={{ fontFamily: "var(--font-space), Georgia, serif" }}
                   >
                     {f.title}
                   </h4>
@@ -223,7 +223,7 @@ export default function Features() {
 
                   <h4
                     className={`${f.featured ? "text-lg md:text-xl lg:text-2xl" : "text-sm md:text-base"} text-[var(--text-primary)] mb-3 md:mb-4`}
-                    style={{ fontFamily: "var(--font-playfair), Georgia, serif" }}
+                    style={{ fontFamily: "var(--font-space), Georgia, serif" }}
                   >
                     {f.title}
                   </h4>

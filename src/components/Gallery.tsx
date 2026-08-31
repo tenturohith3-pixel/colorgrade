@@ -282,7 +282,7 @@ function GalleryCard({ item, index }: { item: typeof galleryItems[0]; index: num
         <div>
           <h4
             className="text-sm text-[var(--text-primary)] mb-0.5"
-            style={{ fontFamily: "var(--font-playfair), Georgia, serif" }}
+            style={{ fontFamily: "var(--font-space), Georgia, serif" }}
           >
             {item.title}
           </h4>

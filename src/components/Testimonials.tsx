@@ -186,7 +186,7 @@ export default function Testimonials() {
               <div key={stat.label} className="text-center">
                 <div
                   className="text-lg md:text-xl text-[var(--text-primary)] mb-1"
-                  style={{ fontFamily: "var(--font-playfair), Georgia, serif" }}
+                  style={{ fontFamily: "var(--font-space), Georgia, serif" }}
                 >
                   {stat.value}
                 </div>

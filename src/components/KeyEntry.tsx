@@ -119,7 +119,7 @@ export default function KeyEntry({ isOpen, onClose, onKeyValidated }: KeyEntryPr
             >
               <Key className="w-5 h-5 text-[var(--accent-teal)]" />
             </div>
-            <h2 className="text-xl text-[var(--text-primary)] mb-1" style={{ fontFamily: "var(--font-playfair), Georgia, serif" }}>
+            <h2 className="text-xl text-[var(--text-primary)] mb-1" style={{ fontFamily: "var(--font-space), Georgia, serif" }}>
               Enter Access Key
             </h2>
             <p className="text-xs text-[var(--text-muted)]">Unlock pro features with your access key</p>
