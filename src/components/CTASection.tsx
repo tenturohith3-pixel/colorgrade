@@ -13,14 +13,14 @@ export default function CTASection() {
       <div
         className="absolute top-0 left-1/4 w-[350px] h-[350px] md:w-[500px] md:h-[500px] rounded-full pointer-events-none"
         style={{
-          background: "radial-gradient(circle, rgba(212,165,116,0.06) 0%, transparent 70%)",
+          background: "radial-gradient(circle, rgba(6,148,148,0.07) 0%, transparent 70%)",
           filter: "blur(80px) md:blur(100px)",
         }}
       />
       <div
         className="absolute bottom-0 right-1/4 w-[300px] h-[300px] md:w-[400px] md:h-[400px] rounded-full pointer-events-none"
         style={{
-          background: "radial-gradient(circle, rgba(122,155,126,0.04) 0%, transparent 70%)",
+          background: "radial-gradient(circle, rgba(10,181,181,0.05) 0%, transparent 70%)",
           filter: "blur(60px) md:blur(80px)",
         }}
       />
@@ -41,7 +41,7 @@ export default function CTASection() {
           <div
             className="absolute inset-0 pointer-events-none"
             style={{
-              background: "radial-gradient(ellipse at 50% 0%, rgba(212,165,116,0.06) 0%, transparent 60%)",
+              background: "radial-gradient(ellipse at 50% 0%, rgba(6,148,148,0.07) 0%, transparent 60%)",
             }}
           />
 
@@ -56,7 +56,7 @@ export default function CTASection() {
             {/* Headline */}
             <h2 className="text-[clamp(1.8rem,5vw,4rem)] editorial-heading text-[var(--text-primary)] leading-[1.0] mb-5 md:mb-6 max-w-2xl mx-auto">
               Your Vision Deserves{" "}
-              <span className="text-[var(--accent-bronze)] italic">Cinematic Color</span>
+              <span className="text-[var(--accent-teal)] italic">Cinematic Color</span>
             </h2>
 
             {/* Subtext */}

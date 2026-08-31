@@ -9,7 +9,7 @@ export default function Footer() {
       <div
         className="absolute top-0 left-0 right-0 h-px"
         style={{
-          background: "linear-gradient(90deg, transparent 0%, var(--accent-bronze) 50%, transparent 100%)",
+          background: "linear-gradient(90deg, transparent 0%, var(--accent-teal) 50%, transparent 100%)",
           opacity: 0.15,
         }}
       />
@@ -25,7 +25,7 @@ export default function Footer() {
                   className="text-2xl text-[var(--text-primary)] tracking-tight"
                   style={{ fontFamily: "var(--font-playfair), Georgia, serif" }}
                 >
-                  Color<span className="text-[var(--accent-bronze)]">Grade</span>
+                  Color<span className="text-[var(--accent-teal)]">Grade</span>
                 </span>
               </Link>
               <p className="text-sm text-[var(--text-secondary)] leading-relaxed max-w-xs mb-6 md:mb-8">
@@ -36,7 +36,7 @@ export default function Footer() {
                   <a
                     key={social}
                     href="#"
-                    className="text-[10px] text-[var(--text-muted)] hover:text-[var(--accent-bronze)] transition-colors duration-500 tracking-[0.12em] uppercase py-2"
+                    className="text-[10px] text-[var(--text-muted)] hover:text-[var(--accent-teal)] transition-colors duration-500 tracking-[0.12em] uppercase py-2"
                   >
                     {social}
                   </a>

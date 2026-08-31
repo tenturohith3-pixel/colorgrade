@@ -4,8 +4,6 @@ import { useState, useRef, useEffect } from "react";
 import { Key, X, Loader2, Check, AlertCircle } from "lucide-react";
 import { validateKey, type KeyTier, TIER_LABELS, TIER_DURATIONS } from "@/lib/keys";
 
-// ── Constants ────────────────────────────────────────
-
 const SEGMENTS = 3;
 const SEGMENT_LEN = 4;
 const FULL_KEY_LEN = SEGMENTS * SEGMENT_LEN;
@@ -18,8 +16,6 @@ interface KeyEntryProps {
 
 const ALL_TIERS: KeyTier[] = ["basic", "pro", "studio", "lifetime"];
 
-// ── Component ────────────────────────────────────────
-
 export default function KeyEntry({ isOpen, onClose, onKeyValidated }: KeyEntryProps) {
   const [segments, setSegments] = useState<string[]>(Array(SEGMENTS).fill(""));
   const [loading, setLoading] = useState(false);
@@ -27,12 +23,10 @@ export default function KeyEntry({ isOpen, onClose, onKeyValidated }: KeyEntryPr
   const [success, setSuccess] = useState(false);
   const inputs = useRef<(HTMLInputElement | null)[]>([]);
 
-  // Focus first input on open
   useEffect(() => {
     if (isOpen) setTimeout(() => inputs.current[0]?.focus(), 100);
   }, [isOpen]);
 
-  // Reset on close
   useEffect(() => {
     if (!isOpen) {
       setSegments(Array(SEGMENTS).fill(""));
@@ -44,8 +38,6 @@ export default function KeyEntry({ isOpen, onClose, onKeyValidated }: KeyEntryPr
 
   const isComplete = segments.every((s) => s.length === SEGMENT_LEN);
   const fullKey = "CG-" + segments.join("-");
-
-  // ── Handlers ────────────────────────────────────────
 
   const handleChange = (index: number, raw: string) => {
     const cleaned = raw.toUpperCase().replace(/[^A-Z0-9]/g, "").slice(0, SEGMENT_LEN);
@@ -89,7 +81,7 @@ export default function KeyEntry({ isOpen, onClose, onKeyValidated }: KeyEntryPr
 
     if (result.success && result.key) {
       setSuccess(true);
-      setTimeout(() => { onKeyValidated(result.key!.tier); onClose(); }, 1200);
+      setTimeout(() => { onKeyValidated(result.key!.tier); onClose(); }, 800);
     } else {
       setError(result.error || "Invalid key");
     }
@@ -97,8 +89,6 @@ export default function KeyEntry({ isOpen, onClose, onKeyValidated }: KeyEntryPr
   };
 
   if (!isOpen) return null;
-
-  // ── Render ──────────────────────────────────────────
 
   return (
     <div className="fixed inset-0 z-[120] flex items-center justify-center p-4">
@@ -125,9 +115,9 @@ export default function KeyEntry({ isOpen, onClose, onKeyValidated }: KeyEntryPr
           <div className="text-center mb-6">
             <div
               className="w-12 h-12 rounded-xl flex items-center justify-center mx-auto mb-4"
-              style={{ background: "rgba(212,165,116,0.08)", border: "1px solid rgba(212,165,116,0.12)" }}
+              style={{ background: "rgba(6,148,148,0.08)", border: "1px solid rgba(6,148,148,0.12)" }}
             >
-              <Key className="w-5 h-5 text-[var(--accent-bronze)]" />
+              <Key className="w-5 h-5 text-[var(--accent-teal)]" />
             </div>
             <h2 className="text-xl text-[var(--text-primary)] mb-1" style={{ fontFamily: "var(--font-playfair), Georgia, serif" }}>
               Enter Access Key
@@ -180,8 +170,8 @@ export default function KeyEntry({ isOpen, onClose, onKeyValidated }: KeyEntryPr
           <button
             onClick={handleSubmit}
             disabled={loading || success || !isComplete}
-            className="w-full mt-5 py-3 rounded-lg text-sm font-medium transition-all duration-300 flex items-center justify-center gap-2 disabled:opacity-40 disabled:cursor-not-allowed"
-            style={{ background: success ? "var(--accent-sage)" : "var(--accent-bronze)", color: "var(--bg-deep)" }}
+            className="w-full mt-5 py-3 rounded-lg text-sm font-medium transition-all duration-200 flex items-center justify-center gap-2 disabled:opacity-40 disabled:cursor-not-allowed"
+            style={{ background: success ? "var(--accent-sage)" : "var(--accent-teal)", color: "#181818" }}
           >
             {loading ? <><Loader2 className="w-4 h-4 animate-spin" />Validating...</>
               : success ? <><Check className="w-4 h-4" />Activated!</>

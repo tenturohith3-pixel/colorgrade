@@ -18,16 +18,15 @@ interface KeyBadgeProps {
 }
 
 const TIER_COLORS: Record<KeyTier, string> = {
-  basic: "#6B7B8D",
-  pro: "#D4A574",
-  studio: "#A67C52",
-  lifetime: "#7A9B7E",
+  basic: "#4A8A8A",
+  pro: "#069494",
+  studio: "#047A7A",
+  lifetime: "#3DAAAA",
 };
 
-/** Colors for expiration urgency levels */
 const EXPIRY_STYLES: Record<ExpirationLevel, { border: string; text: string; bg: string; glow: string }> = {
   safe:     { border: "", text: "", bg: "", glow: "" },
-  warning:  { border: "#D4A57433", text: "#D4A574", bg: "rgba(212,165,116,0.08)", glow: "0 0 12px rgba(212,165,116,0.15)" },
+  warning:  { border: "#06949433", text: "#0AB5B5", bg: "rgba(6,148,148,0.08)", glow: "0 0 12px rgba(6,148,148,0.15)" },
   urgent:   { border: "#EF444433", text: "#EF4444", bg: "rgba(239,68,68,0.08)", glow: "0 0 12px rgba(239,68,68,0.15)" },
   expired:  { border: "#EF444433", text: "#EF4444", bg: "rgba(239,68,68,0.08)", glow: "" },
   lifetime: { border: "", text: "", bg: "", glow: "" },
@@ -57,10 +56,9 @@ export default function KeyBadge({ currentTier, onKeyRemoved, onChangeKey }: Key
 
   return (
     <div className="relative">
-      {/* Trigger button */}
       <button
         onClick={() => setOpen(!open)}
-        className="flex items-center gap-2 px-2.5 py-1.5 rounded-lg text-[10px] font-medium transition-all duration-300 hover:bg-white/5"
+        className="flex items-center gap-2 px-2.5 py-1.5 rounded-lg text-[10px] font-medium transition-all duration-200 hover:bg-white/5"
         style={{
           border: `1px solid ${isWarning ? expiry.border : `${tierColor}33`}`,
           color: badgeColor,
@@ -84,7 +82,6 @@ export default function KeyBadge({ currentTier, onKeyRemoved, onChangeKey }: Key
         <ChevronDown className={`w-2.5 h-2.5 transition-transform duration-200 ${open ? "rotate-180" : ""}`} />
       </button>
 
-      {/* Dropdown */}
       {open && (
         <>
           <div className="fixed inset-0 z-40" onClick={() => setOpen(false)} />
@@ -97,7 +94,6 @@ export default function KeyBadge({ currentTier, onKeyRemoved, onChangeKey }: Key
               boxShadow: "var(--shadow-elevated)",
             }}
           >
-            {/* Current key info */}
             <div className="mb-3 pb-3 border-b border-[var(--border-subtle)]">
               <div className="text-[10px] text-[var(--text-muted)] uppercase tracking-wider mb-1">
                 Current Key
@@ -122,9 +118,8 @@ export default function KeyBadge({ currentTier, onKeyRemoved, onChangeKey }: Key
               )}
             </div>
 
-            {/* Expiry warning in dropdown */}
             {expiryLevel === "warning" && (
-              <div className="mb-3 p-2 rounded-md text-[10px] leading-relaxed" style={{ background: "rgba(212,165,116,0.06)", border: "1px solid rgba(212,165,116,0.12)", color: "#D4A574" }}>
+              <div className="mb-3 p-2 rounded-md text-[10px] leading-relaxed" style={{ background: "rgba(6,148,148,0.06)", border: "1px solid rgba(6,148,148,0.12)", color: "#0AB5B5" }}>
                 Your key expires soon. Upgrade or get a new key to keep access.
               </div>
             )}
@@ -134,7 +129,6 @@ export default function KeyBadge({ currentTier, onKeyRemoved, onChangeKey }: Key
               </div>
             )}
 
-            {/* Actions */}
             <button
               onClick={() => { setOpen(false); onChangeKey(); }}
               className="w-full flex items-center gap-2 px-2 py-2 rounded-md text-xs text-[var(--text-secondary)] hover:text-[var(--text-primary)] hover:bg-white/5 transition-colors"

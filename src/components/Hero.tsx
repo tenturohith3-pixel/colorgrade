@@ -32,15 +32,15 @@ export default function Hero() {
       {/* Cinematic gradient orbs */}
       <div
         className="absolute top-[10%] right-[5%] w-[400px] h-[400px] md:w-[600px] md:h-[600px] rounded-full blur-[120px] md:blur-[180px]"
-        style={{ background: "radial-gradient(circle, rgba(212,165,116,0.06) 0%, transparent 70%)" }}
+        style={{ background: "radial-gradient(circle, rgba(6,148,148,0.08) 0%, transparent 70%)" }}
       />
       <div
         className="absolute bottom-[5%] left-[0%] w-[350px] h-[350px] md:w-[500px] md:h-[500px] rounded-full blur-[100px] md:blur-[160px]"
-        style={{ background: "radial-gradient(circle, rgba(122,155,126,0.05) 0%, transparent 70%)" }}
+        style={{ background: "radial-gradient(circle, rgba(10,181,181,0.06) 0%, transparent 70%)" }}
       />
       <div
         className="absolute top-[50%] left-[40%] w-[300px] h-[300px] md:w-[400px] md:h-[400px] rounded-full blur-[140px] md:blur-[200px]"
-        style={{ background: "radial-gradient(circle, rgba(166,124,82,0.04) 0%, transparent 70%)" }}
+        style={{ background: "radial-gradient(circle, rgba(4,122,122,0.05) 0%, transparent 70%)" }}
       />
 
       {/* Subtle vertical accent line — desktop only */}
@@ -65,7 +65,7 @@ export default function Hero() {
               </span>
               <span className="block text-[clamp(2.5rem,8vw,7.5rem)] editorial-display leading-[0.88]">
                 <span className="text-[var(--text-primary)]">Frame</span>{" "}
-                <span className="text-[var(--accent-bronze)] italic">Cinematic</span>
+                <span className="text-[var(--accent-teal)] italic">Cinematic</span>
               </span>
             </h1>
 
@@ -100,7 +100,7 @@ export default function Hero() {
             <div className="flex flex-wrap items-center gap-4 md:gap-6 mt-8 md:mt-10" data-parallax="0.12">
               <div className="flex items-center gap-2">
                 <div className="flex -space-x-1.5">
-                  {["bg-[var(--accent-bronze)]", "bg-[var(--accent-sage)]", "bg-[var(--accent-umber)]"].map(
+                  {["bg-[var(--accent-teal)]", "bg-[var(--accent-sage)]", "bg-[var(--accent-teal-dark)]"].map(
                     (bg, i) => (
                       <div
                         key={i}
@@ -132,9 +132,9 @@ export default function Hero() {
                 className="absolute inset-0"
                 style={{
                   background: `
-                    radial-gradient(ellipse at 30% 20%, rgba(212,165,116,0.10) 0%, transparent 50%),
-                    radial-gradient(ellipse at 70% 80%, rgba(122,155,126,0.07) 0%, transparent 50%),
-                    linear-gradient(160deg, #161618 0%, #08080A 40%, #111113 100%)
+                    radial-gradient(ellipse at 30% 20%, rgba(6,148,148,0.12) 0%, transparent 50%),
+                    radial-gradient(ellipse at 70% 80%, rgba(10,181,181,0.08) 0%, transparent 50%),
+                    linear-gradient(160deg, #222222 0%, #181818 40%, #1E1E1E 100%)
                   `,
                 }}
               />
@@ -154,7 +154,7 @@ export default function Hero() {
                     &ldquo;Color is the keyboard, the eyes are the harmonies, the soul is the piano with many strings.&rdquo;
                   </p>
                   <div className="flex items-center gap-3">
-                    <div className="h-px w-8 bg-[var(--accent-bronze)] opacity-40" />
+                    <div className="h-px w-8 bg-[var(--accent-teal)] opacity-40" />
                     <span className="text-[10px] text-[var(--text-muted)] tracking-[0.15em] uppercase">
                       Wassily Kandinsky
                     </span>

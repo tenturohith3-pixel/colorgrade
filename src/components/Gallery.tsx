@@ -86,23 +86,23 @@ function BeforeAfterCard({ title, preset, beforeImage, afterImage, size = "norma
         </div>
       </div>
 
-      {/* Divider line — bronze glow */}
+      {/* Divider line — teal glow */}
       <div
         className="absolute top-0 bottom-0 w-[2px] z-10"
         style={{
           left: `${position}%`,
           transform: "translateX(-50%)",
-          background: "var(--accent-bronze)",
-          boxShadow: "0 0 12px rgba(212,165,116,0.4), 0 0 24px rgba(212,165,116,0.15)",
+          background: "var(--accent-teal)",
+          boxShadow: "0 0 12px rgba(6,148,148,0.5), 0 0 24px rgba(6,148,148,0.2)",
         }}
       >
         {/* Touch-friendly handle — 44px minimum */}
         <div
           className="absolute top-1/2 -translate-y-1/2 -translate-x-1/2 w-11 h-11 rounded-full backdrop-blur-sm flex items-center justify-center"
           style={{
-            background: "rgba(212, 165, 116, 0.85)",
+            background: "rgba(6, 148, 148, 0.9)",
             border: "2px solid rgba(255,255,255,0.25)",
-            boxShadow: "0 0 16px rgba(212,165,116,0.3)",
+            boxShadow: "0 0 16px rgba(6,148,148,0.4)",
           }}
         >
           <div className="flex gap-1">
@@ -182,12 +182,12 @@ const galleryItems = [
 ];
 
 const presetOverlays: Record<string, string> = {
-  "Moody Cinematic": "linear-gradient(135deg, rgba(26,74,90,0.4) 0%, rgba(212,132,90,0.3) 50%, rgba(13,48,64,0.4) 100%)",
-  "Warm Tone": "linear-gradient(135deg, rgba(212,165,74,0.35) 0%, rgba(232,192,112,0.25) 50%, rgba(192,128,48,0.35) 100%)",
-  "Clean Minimal": "linear-gradient(135deg, rgba(220,220,220,0.3) 0%, rgba(200,200,200,0.2) 50%, rgba(190,190,190,0.3) 100%)",
-  "Film Emulation": "linear-gradient(135deg, rgba(200,168,112,0.35) 0%, rgba(224,200,152,0.25) 50%, rgba(160,128,80,0.35) 100%)",
-  "Soft Pastel": "linear-gradient(135deg, rgba(200,160,184,0.3) 0%, rgba(160,200,208,0.25) 50%, rgba(184,200,160,0.3) 100%)",
-  "Noir Grade": "linear-gradient(135deg, rgba(74,90,106,0.4) 0%, rgba(106,122,138,0.3) 50%, rgba(58,74,90,0.4) 100%)",
+  "Moody Cinematic": "linear-gradient(135deg, rgba(6,148,148,0.4) 0%, rgba(10,181,181,0.3) 50%, rgba(4,122,122,0.4) 100%)",
+  "Warm Tone": "linear-gradient(135deg, rgba(6,148,148,0.35) 0%, rgba(61,170,170,0.25) 50%, rgba(4,122,122,0.35) 100%)",
+  "Clean Minimal": "linear-gradient(135deg, rgba(74,138,138,0.3) 0%, rgba(61,170,170,0.2) 50%, rgba(4,122,122,0.3) 100%)",
+  "Film Emulation": "linear-gradient(135deg, rgba(6,148,148,0.35) 0%, rgba(10,181,181,0.25) 50%, rgba(4,122,122,0.35) 100%)",
+  "Soft Pastel": "linear-gradient(135deg, rgba(61,170,170,0.3) 0%, rgba(10,181,181,0.25) 50%, rgba(6,148,148,0.3) 100%)",
+  "Noir Grade": "linear-gradient(135deg, rgba(4,122,122,0.4) 0%, rgba(74,138,138,0.3) 50%, rgba(3,92,92,0.4) 100%)",
 };
 
 export default function Gallery() {
@@ -197,7 +197,7 @@ export default function Gallery() {
       <div
         className="absolute top-1/3 right-0 w-[350px] h-[350px] md:w-[500px] md:h-[500px] rounded-full pointer-events-none"
         style={{
-          background: "radial-gradient(circle, rgba(122,155,126,0.03) 0%, transparent 70%)",
+          background: "radial-gradient(circle, rgba(6,148,148,0.04) 0%, transparent 70%)",
           filter: "blur(80px)",
         }}
       />
@@ -211,7 +211,7 @@ export default function Gallery() {
           <div className="lg:col-span-5">
             <h2 className="text-[clamp(1.8rem,4vw,3.5rem)] editorial-heading text-[var(--text-primary)] leading-[1.05]">
               See the{" "}
-              <span className="text-[var(--accent-bronze)] italic">Transformation</span>
+              <span className="text-[var(--accent-teal)] italic">Transformation</span>
             </h2>
           </div>
           <div className="lg:col-span-4 lg:col-start-8 flex items-end">
@@ -223,9 +223,8 @@ export default function Gallery() {
 
         <div className="h-px bg-[var(--border-subtle)] mb-12 md:mb-16" />
 
-        {/* Gallery — asymmetric masonry (stacks on mobile) */}
+        {/* Gallery — asymmetric masonry */}
         <div className="grid grid-cols-1 md:grid-cols-12 gap-5" data-gsap="cards">
-          {/* Row 1 */}
           <div className="md:col-span-7 reveal reveal-delay-1" data-gsap="card">
             <GalleryCard item={galleryItems[0]} index={0} />
           </div>
@@ -238,7 +237,6 @@ export default function Gallery() {
             </div>
           </div>
 
-          {/* Row 2 */}
           <div className="md:col-span-5 flex flex-col gap-5">
             <div className="reveal reveal-delay-1" data-gsap="card">
               <GalleryCard item={galleryItems[4]} index={4} />

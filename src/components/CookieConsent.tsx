@@ -37,10 +37,8 @@ export default function CookieConsent() {
   });
 
   useEffect(() => {
-    // Only show if no consent recorded
     const existing = getCookiePreferences();
     if (!existing) {
-      // Small delay to not compete with loading screen
       const timer = setTimeout(() => setVisible(true), 2800);
       return () => clearTimeout(timer);
     }
@@ -49,7 +47,7 @@ export default function CookieConsent() {
   const savePreferences = useCallback((prefs: typeof preferences) => {
     const data: CookiePreferences = {
       ...prefs,
-      necessary: true, // always on
+      necessary: true,
       timestamp: Date.now(),
     };
     localStorage.setItem(STORAGE_KEY, JSON.stringify(data));
@@ -81,14 +79,14 @@ export default function CookieConsent() {
           boxShadow: "0 -8px 40px rgba(0,0,0,0.4), 0 0 60px rgba(0,0,0,0.2)",
           backdropFilter: "blur(24px)",
           WebkitBackdropFilter: "blur(24px)",
-          animation: "slideUp 0.6s cubic-bezier(0.25, 0.46, 0.45, 0.94) forwards",
+          animation: "slideUp 0.4s cubic-bezier(0.25, 0.46, 0.45, 0.94) forwards",
         }}
       >
         {/* Top accent line */}
         <div
           className="absolute top-0 left-6 right-6 h-px"
           style={{
-            background: "linear-gradient(90deg, transparent, var(--accent-bronze), transparent)",
+            background: "linear-gradient(90deg, transparent, var(--accent-teal), transparent)",
             opacity: 0.3,
           }}
         />
@@ -99,11 +97,11 @@ export default function CookieConsent() {
             <div
               className="w-8 h-8 rounded-lg flex items-center justify-center flex-shrink-0 mt-0.5"
               style={{
-                background: "rgba(212, 165, 116, 0.08)",
-                border: "1px solid rgba(212, 165, 116, 0.12)",
+                background: "rgba(6, 148, 148, 0.08)",
+                border: "1px solid rgba(6, 148, 148, 0.12)",
               }}
             >
-              <Shield className="w-4 h-4 text-[var(--accent-bronze)]" />
+              <Shield className="w-4 h-4 text-[var(--accent-teal)]" />
             </div>
             <div className="flex-1">
               <h3
@@ -124,7 +122,7 @@ export default function CookieConsent() {
             onClick={() => setExpanded(!expanded)}
             className="flex items-center gap-2 text-xs text-[var(--text-secondary)] hover:text-[var(--text-primary)] transition-colors mb-4 group"
           >
-            <Cookie className="w-3 h-3 text-[var(--accent-bronze)] opacity-60 group-hover:opacity-100 transition-opacity" />
+            <Cookie className="w-3 h-3 text-[var(--accent-teal)] opacity-60 group-hover:opacity-100 transition-opacity" />
             <span className="tracking-wide">
               {expanded ? "Hide" : "Customize"} cookie preferences
             </span>
@@ -137,7 +135,7 @@ export default function CookieConsent() {
 
           {/* Expanded preferences panel */}
           <div
-            className="overflow-hidden transition-all duration-500 ease-[var(--ease-smooth)]"
+            className="overflow-hidden transition-all duration-300 ease-[var(--ease-smooth)]"
             style={{
               maxHeight: expanded ? "300px" : "0",
               opacity: expanded ? 1 : 0,
@@ -163,7 +161,7 @@ export default function CookieConsent() {
                 </div>
                 <div
                   className="w-9 h-5 rounded-full flex items-center justify-end px-0.5 flex-shrink-0"
-                  style={{ background: "var(--accent-bronze)", opacity: 0.5 }}
+                  style={{ background: "var(--accent-teal)", opacity: 0.5 }}
                 >
                   <div className="w-4 h-4 rounded-full bg-[var(--bg-deep)] shadow-sm" />
                 </div>
@@ -183,15 +181,15 @@ export default function CookieConsent() {
                   onClick={() =>
                     setPreferences((p) => ({ ...p, analytics: !p.analytics }))
                   }
-                  className="w-9 h-5 rounded-full flex items-center flex-shrink-0 px-0.5 transition-all duration-300"
+                  className="w-9 h-5 rounded-full flex items-center flex-shrink-0 px-0.5 transition-all duration-200"
                   style={{
                     background: preferences.analytics
-                      ? "var(--accent-bronze)"
+                      ? "var(--accent-teal)"
                       : "var(--border-medium)",
                     justifyContent: preferences.analytics ? "flex-end" : "flex-start",
                   }}
                 >
-                  <div className="w-4 h-4 rounded-full bg-[var(--bg-deep)] shadow-sm transition-transform duration-300" />
+                  <div className="w-4 h-4 rounded-full bg-[var(--bg-deep)] shadow-sm transition-transform duration-200" />
                 </button>
               </div>
 
@@ -209,15 +207,15 @@ export default function CookieConsent() {
                   onClick={() =>
                     setPreferences((p) => ({ ...p, marketing: !p.marketing }))
                   }
-                  className="w-9 h-5 rounded-full flex items-center flex-shrink-0 px-0.5 transition-all duration-300"
+                  className="w-9 h-5 rounded-full flex items-center flex-shrink-0 px-0.5 transition-all duration-200"
                   style={{
                     background: preferences.marketing
-                      ? "var(--accent-bronze)"
+                      ? "var(--accent-teal)"
                       : "var(--border-medium)",
                     justifyContent: preferences.marketing ? "flex-end" : "flex-start",
                   }}
                 >
-                  <div className="w-4 h-4 rounded-full bg-[var(--bg-deep)] shadow-sm transition-transform duration-300" />
+                  <div className="w-4 h-4 rounded-full bg-[var(--bg-deep)] shadow-sm transition-transform duration-200" />
                 </button>
               </div>
             </div>

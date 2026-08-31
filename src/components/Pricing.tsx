@@ -34,7 +34,7 @@ const tiers = [
       "Priority processing",
     ],
     popular: true,
-    accent: "var(--accent-bronze)",
+    accent: "var(--accent-teal)",
     cta: "Get Pro Key",
     keyRequired: true,
   },
@@ -52,7 +52,7 @@ const tiers = [
       "Priority support",
     ],
     popular: false,
-    accent: "var(--accent-umber)",
+    accent: "var(--accent-teal-dark)",
     cta: "Get Studio Key",
     keyRequired: true,
   },
@@ -87,7 +87,7 @@ export default function Pricing() {
           <div className="lg:col-span-5">
             <h2 className="text-[clamp(1.8rem,4vw,3.5rem)] editorial-heading text-[var(--text-primary)] leading-[1.05]">
               Start Free.{" "}
-              <span className="text-[var(--accent-bronze)] italic">Unlock with a Key.</span>
+              <span className="text-[var(--accent-teal)] italic">Unlock with a Key.</span>
             </h2>
           </div>
           <div className="lg:col-span-4 lg:col-start-8 flex items-end">
@@ -99,7 +99,7 @@ export default function Pricing() {
 
         <div className="h-px bg-[var(--border-subtle)] mb-12 md:mb-16" />
 
-        {/* Cards — responsive grid */}
+        {/* Cards */}
         <div
           className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4 md:gap-px md:overflow-hidden"
           style={{
@@ -119,13 +119,12 @@ export default function Pricing() {
               }}
               data-gsap="card"
             >
-              {/* Popular glow bar */}
               {tier.popular && (
                 <>
-                  <div className="absolute top-0 left-0 right-0 h-px bg-[var(--accent-bronze)] opacity-60" />
+                  <div className="absolute top-0 left-0 right-0 h-px bg-[var(--accent-teal)] opacity-60" />
                   <div
                     className="absolute top-0 left-1/2 -translate-x-1/2 w-24 h-1 rounded-b-full opacity-40"
-                    style={{ background: "var(--accent-bronze)" }}
+                    style={{ background: "var(--accent-teal)" }}
                   />
                 </>
               )}
@@ -190,7 +189,7 @@ export default function Pricing() {
             ].map((item) => (
               <div key={item.step} className="text-center">
                 <div
-                  className="text-2xl text-[var(--accent-bronze)] mb-2"
+                  className="text-2xl text-[var(--accent-teal)] mb-2"
                   style={{ fontFamily: "var(--font-playfair), Georgia, serif" }}
                 >
                   {item.step}

@@ -80,7 +80,7 @@ export default function Features() {
       <div
         className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[400px] h-[400px] md:w-[600px] md:h-[600px] rounded-full pointer-events-none"
         style={{
-          background: "radial-gradient(circle, rgba(212,165,116,0.03) 0%, transparent 70%)",
+          background: "radial-gradient(circle, rgba(6,148,148,0.04) 0%, transparent 70%)",
           filter: "blur(80px)",
         }}
       />
@@ -95,7 +95,7 @@ export default function Features() {
             <h2 className="text-[clamp(1.8rem,4vw,3.5rem)] editorial-heading text-[var(--text-primary)] leading-[1.05]">
               Everything You Need to
               <br />
-              <span className="text-[var(--accent-bronze)] italic">Grade Like a Pro</span>
+              <span className="text-[var(--accent-teal)] italic">Grade Like a Pro</span>
             </h2>
           </div>
           <div className="lg:col-span-4 lg:col-start-8 flex items-end">
@@ -132,23 +132,22 @@ export default function Features() {
               >
                 {/* Hover glow */}
                 <div
-                  className="absolute inset-0 opacity-0 group-hover:opacity-100 transition-opacity duration-700 pointer-events-none"
+                  className="absolute inset-0 opacity-0 group-hover:opacity-100 transition-opacity duration-500 pointer-events-none"
                   style={{
-                    background: "radial-gradient(ellipse at 30% 20%, rgba(122,155,126,0.06) 0%, transparent 60%)",
+                    background: "radial-gradient(ellipse at 30% 20%, rgba(61,170,170,0.07) 0%, transparent 60%)",
                   }}
                 />
 
                 <div className={`relative p-8 md:p-10 ${f.featured ? "md:pb-14" : ""} h-full flex flex-col`}>
-                  {/* Icon + number */}
                   <div className="flex items-center gap-3 mb-6 md:mb-7">
                     <div
                       className="w-9 h-9 md:w-10 md:h-10 rounded-xl flex items-center justify-center transition-all duration-500 group-hover:scale-110"
                       style={{
-                        background: "rgba(122, 155, 126, 0.08)",
-                        border: "1px solid rgba(122, 155, 126, 0.12)",
+                        background: "rgba(6, 148, 148, 0.08)",
+                        border: "1px solid rgba(6, 148, 148, 0.12)",
                       }}
                     >
-                      <f.icon className="w-4 h-4 md:w-[18px] md:h-[18px] text-[var(--accent-sage)] opacity-70" />
+                      <f.icon className="w-4 h-4 md:w-[18px] md:h-[18px] text-[var(--accent-sage)] opacity-80" />
                     </div>
                     <span className="section-number">{`0${i + 1}`}</span>
                   </div>
@@ -168,7 +167,7 @@ export default function Features() {
                   <div
                     className="absolute bottom-0 right-0 w-10 h-10 md:w-12 md:h-12 opacity-0 group-hover:opacity-100 transition-opacity duration-500"
                     style={{
-                      background: "linear-gradient(135deg, transparent 50%, rgba(122,155,126,0.08) 50%)",
+                      background: "linear-gradient(135deg, transparent 50%, rgba(6,148,148,0.08) 50%)",
                       borderRadius: "0 0 var(--radius-md) 0",
                     }}
                   />
@@ -181,8 +180,8 @@ export default function Features() {
         {/* Pro Tier — Bento Grid */}
         <div>
           <div className="flex items-center gap-4 mb-8 md:mb-10">
-            <div className="h-px w-8 bg-[var(--accent-bronze)] opacity-40" />
-            <span className="editorial-caption text-[var(--accent-bronze)]">Pro Tier — Full Suite</span>
+            <div className="h-px w-8 bg-[var(--accent-teal)] opacity-40" />
+            <span className="editorial-caption text-[var(--accent-teal)]">Pro Tier — Full Suite</span>
           </div>
 
           <div className="grid grid-cols-1 md:grid-cols-3 gap-4" data-gsap="cards">
@@ -202,9 +201,9 @@ export default function Features() {
               >
                 {/* Hover glow */}
                 <div
-                  className="absolute inset-0 opacity-0 group-hover:opacity-100 transition-opacity duration-700 pointer-events-none"
+                  className="absolute inset-0 opacity-0 group-hover:opacity-100 transition-opacity duration-500 pointer-events-none"
                   style={{
-                    background: "radial-gradient(ellipse at 30% 20%, rgba(212,165,116,0.06) 0%, transparent 60%)",
+                    background: "radial-gradient(ellipse at 30% 20%, rgba(6,148,148,0.07) 0%, transparent 60%)",
                   }}
                 />
 
@@ -213,11 +212,11 @@ export default function Features() {
                     <div
                       className="w-9 h-9 md:w-10 md:h-10 rounded-xl flex items-center justify-center transition-all duration-500 group-hover:scale-110"
                       style={{
-                        background: "rgba(212, 165, 116, 0.08)",
-                        border: "1px solid rgba(212, 165, 116, 0.12)",
+                        background: "rgba(6, 148, 148, 0.10)",
+                        border: "1px solid rgba(6, 148, 148, 0.15)",
                       }}
                     >
-                      <f.icon className="w-4 h-4 md:w-[18px] md:h-[18px] text-[var(--accent-bronze)] opacity-70" />
+                      <f.icon className="w-4 h-4 md:w-[18px] md:h-[18px] text-[var(--accent-teal)] opacity-80" />
                     </div>
                     <span className="section-number">{`0${i + 4}`}</span>
                   </div>
@@ -233,7 +232,6 @@ export default function Features() {
                     {f.description}
                   </p>
 
-                  {/* Featured card decorative element */}
                   {f.featured && (
                     <div className="mt-6 md:mt-8 flex items-center gap-3">
                       <div className="h-px flex-1 bg-[var(--border-subtle)]" />
@@ -246,7 +244,7 @@ export default function Features() {
                   <div
                     className="absolute bottom-0 right-0 w-10 h-10 md:w-12 md:h-12 opacity-0 group-hover:opacity-100 transition-opacity duration-500"
                     style={{
-                      background: "linear-gradient(135deg, transparent 50%, rgba(212,165,116,0.08) 50%)",
+                      background: "linear-gradient(135deg, transparent 50%, rgba(6,148,148,0.08) 50%)",
                       borderRadius: "0 0 var(--radius-md) 0",
                     }}
                   />

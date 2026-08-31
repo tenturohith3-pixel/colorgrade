@@ -47,15 +47,15 @@ interface KeyListResponse {
 // ── Constants ────────────────────────────────────────
 
 const TIER_INFO: Record<KeyTier, { label: string; duration: string; color: string }> = {
-  basic: { label: "Basic", duration: "7 days", color: "#6B7B8D" },
-  pro: { label: "Pro", duration: "30 days", color: "#D4A574" },
-  studio: { label: "Studio", duration: "1 year", color: "#A67C52" },
-  lifetime: { label: "Lifetime", duration: "Never expires", color: "#7A9B7E" },
+  basic: { label: "Basic", duration: "7 days", color: "#4A8A8A" },
+  pro: { label: "Pro", duration: "30 days", color: "#069494" },
+  studio: { label: "Studio", duration: "1 year", color: "#047A7A" },
+  lifetime: { label: "Lifetime", duration: "Never expires", color: "#3DAAAA" },
 };
 
 const STATUS_STYLES: Record<KeyStatus, { label: string; color: string; bg: string }> = {
-  available: { label: "Available", color: "#7A9B7E", bg: "rgba(122,155,126,0.1)" },
-  consumed: { label: "Used", color: "#9A9490", bg: "rgba(154,148,144,0.1)" },
+  available: { label: "Available", color: "#3DAAAA", bg: "rgba(61,170,170,0.1)" },
+  consumed: { label: "Used", color: "#B5B0A0", bg: "rgba(181,176,160,0.1)" },
   expired: { label: "Expired", color: "#8B5E5E", bg: "rgba(139,94,94,0.1)" },
 };
 
@@ -230,14 +230,14 @@ export default function AdminPage() {
       <div className="min-h-screen bg-[var(--bg-deep)] flex items-center justify-center p-4">
         <div className="w-full max-w-sm p-8" style={{ background: "var(--bg-elevated)", border: "1px solid var(--border-medium)", borderRadius: "var(--radius-md)", boxShadow: "var(--shadow-elevated)" }}>
           <div className="text-center mb-6">
-            <Shield className="w-8 h-8 text-[var(--accent-bronze)] mx-auto mb-3" />
+            <Shield className="w-8 h-8 text-[var(--accent-teal)] mx-auto mb-3" />
             <h1 className="text-xl text-[var(--text-primary)]" style={{ fontFamily: "var(--font-playfair), Georgia, serif" }}>Admin Access</h1>
             <p className="text-xs text-[var(--text-muted)] mt-1">Enter your admin secret to continue</p>
           </div>
           {authError && <div className="mb-4 p-3 rounded-lg bg-red-500/10 border border-red-500/20 text-xs text-red-400">{authError}</div>}
           <form onSubmit={handleAuth}>
-            <input type="password" value={adminSecret} onChange={(e) => setAdminSecret(e.target.value)} placeholder="Admin secret" className="w-full px-4 py-3 rounded-lg text-sm mb-4 focus:outline-none focus:border-[var(--accent-bronze)] transition-colors" style={{ background: "var(--bg-deep)", border: "1px solid var(--border-medium)", color: "var(--text-primary)" }} />
-            <button type="submit" className="w-full py-3 rounded-lg text-sm font-medium transition-all" style={{ background: "var(--accent-bronze)", color: "var(--bg-deep)" }}>Authenticate</button>
+            <input type="password" value={adminSecret} onChange={(e) => setAdminSecret(e.target.value)} placeholder="Admin secret" className="w-full px-4 py-3 rounded-lg text-sm mb-4 focus:outline-none focus:border-[var(--accent-teal)] transition-colors" style={{ background: "var(--bg-deep)", border: "1px solid var(--border-medium)", color: "var(--text-primary)" }} />
+            <button type="submit" className="w-full py-3 rounded-lg text-sm font-medium transition-all" style={{ background: "var(--accent-teal)", color: "#181818" }}>Authenticate</button>
           </form>
           <Link href="/" className="flex items-center justify-center gap-1.5 mt-4 text-xs text-[var(--text-muted)] hover:text-[var(--text-secondary)] transition-colors"><ArrowLeft className="w-3 h-3" />Back to site</Link>
         </div>
@@ -256,7 +256,7 @@ export default function AdminPage() {
             <Link href="/" className="flex items-center gap-1.5 text-xs text-[var(--text-muted)] hover:text-[var(--text-secondary)] transition-colors mb-2"><ArrowLeft className="w-3 h-3" />Back to site</Link>
             <h1 className="text-2xl md:text-3xl text-[var(--text-primary)]" style={{ fontFamily: "var(--font-playfair), Georgia, serif" }}>Key Management</h1>
           </div>
-          <Key className="w-6 h-6 text-[var(--accent-bronze)] opacity-40" />
+          <Key className="w-6 h-6 text-[var(--accent-teal)] opacity-40" />
         </div>
 
         {/* View Toggle */}
@@ -290,11 +290,11 @@ export default function AdminPage() {
               </div>
               <div className="mb-5">
                 <label className="text-[10px] text-[var(--text-muted)] uppercase tracking-wider mb-2 block">Number of Keys</label>
-                <input type="number" min={1} max={100} value={keyCount} onChange={(e) => setKeyCount(Math.min(100, Math.max(1, Number(e.target.value))))} className="w-32 px-4 py-2.5 rounded-lg text-sm focus:outline-none focus:border-[var(--accent-bronze)] transition-colors" style={{ background: "var(--bg-deep)", border: "1px solid var(--border-medium)", color: "var(--text-primary)" }} />
+                <input type="number" min={1} max={100} value={keyCount} onChange={(e) => setKeyCount(Math.min(100, Math.max(1, Number(e.target.value))))} className="w-32 px-4 py-2.5 rounded-lg text-sm focus:outline-none focus:border-[var(--accent-teal)] transition-colors" style={{ background: "var(--bg-deep)", border: "1px solid var(--border-medium)", color: "var(--text-primary)" }} />
                 <span className="text-[10px] text-[var(--text-ghost)] ml-2">max 100</span>
               </div>
               {error && <div className="mb-4 p-3 rounded-lg bg-red-500/10 border border-red-500/20 text-xs text-red-400">{error}</div>}
-              <button onClick={handleGenerate} disabled={loading} className="flex items-center gap-2 px-6 py-3 rounded-lg text-sm font-medium transition-all disabled:opacity-50" style={{ background: "var(--accent-bronze)", color: "var(--bg-deep)" }}>
+              <button onClick={handleGenerate} disabled={loading} className="flex items-center gap-2 px-6 py-3 rounded-lg text-sm font-medium transition-all disabled:opacity-50" style={{ background: "var(--accent-teal)", color: "#181818" }}>
                 {loading ? <><Loader2 className="w-4 h-4 animate-spin" />Generating...</> : <><Key className="w-4 h-4" />Generate {keyCount} {TIER_INFO[selectedTier].label} Key{keyCount > 1 ? "s" : ""}</>}
               </button>
             </div>
@@ -342,7 +342,7 @@ export default function AdminPage() {
 
             {/* Bulk Actions Bar */}
             {selectedIds.size > 0 && (
-              <div className="flex items-center gap-3 p-3 rounded-lg" style={{ background: "rgba(212,165,116,0.06)", border: "1px solid var(--border-accent)" }}>
+              <div className="flex items-center gap-3 p-3 rounded-lg" style={{ background: "rgba(6,148,148,0.06)", border: "1px solid var(--border-accent)" }}>
                 <span className="text-xs text-[var(--text-secondary)]">{selectedIds.size} selected</span>
                 <div className="flex-1" />
                 <button onClick={handleRevokeSelected} disabled={revoking} className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-[10px] font-medium transition-all" style={{ background: "rgba(139,94,94,0.15)", color: "#8B5E5E", border: "1px solid rgba(139,94,94,0.2)" }}>
@@ -358,7 +358,7 @@ export default function AdminPage() {
                 <thead>
                   <tr className="border-b border-[var(--border-subtle)]">
                     <th className="w-10 px-4 py-3">
-                      <input type="checkbox" onChange={toggleSelectAll} checked={keys.length > 0 && keys.filter((k) => k.status === "available").length === selectedIds.size} className="w-3.5 h-3.5 rounded accent-[var(--accent-bronze)]" />
+                      <input type="checkbox" onChange={toggleSelectAll} checked={keys.length > 0 && keys.filter((k) => k.status === "available").length === selectedIds.size} className="w-3.5 h-3.5 rounded accent-[var(--accent-teal)]" />
                     </th>
                     <th className="text-left text-[10px] text-[var(--text-muted)] uppercase tracking-wider px-4 py-3 font-medium">Key</th>
                     <th className="text-left text-[10px] text-[var(--text-muted)] uppercase tracking-wider px-4 py-3 font-medium">Tier</th>
@@ -382,7 +382,7 @@ export default function AdminPage() {
                       return (
                         <tr key={k.id} className={`border-b border-[var(--border-subtle)] last:border-0 transition-colors ${isSelected ? "bg-white/[0.03]" : "hover:bg-white/[0.02]"}`}>
                           <td className="px-4 py-3">
-                            {isAvailable && <input type="checkbox" checked={isSelected} onChange={() => toggleSelect(k.id)} className="w-3.5 h-3.5 rounded accent-[var(--accent-bronze)]" />}
+                            {isAvailable && <input type="checkbox" checked={isSelected} onChange={() => toggleSelect(k.id)} className="w-3.5 h-3.5 rounded accent-[var(--accent-teal)]" />}
                           </td>
                           <td className="px-4 py-3">
                             <span className="font-mono text-xs text-[var(--text-primary)] tracking-wider">{k.key_code}</span>

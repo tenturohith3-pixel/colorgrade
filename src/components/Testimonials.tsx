@@ -8,10 +8,10 @@ const testimonials = [
       "ColorGrade completely transformed my workflow. The 3-way color wheels give me DaVinci-level control right in the browser — I haven't opened my desktop editor in months.",
     name: "Priya Menon",
     role: "Freelance Cinematographer",
-    accent: "var(--accent-bronze)",
-    glowColor: "rgba(212,165,116,0.06)",
-    borderGlow: "rgba(212,165,116,0.12)",
-    fillBg: "rgba(212,165,116,0.08)",
+    accent: "var(--accent-teal)",
+    glowColor: "rgba(6,148,148,0.06)",
+    borderGlow: "rgba(6,148,148,0.12)",
+    fillBg: "rgba(6,148,148,0.08)",
   },
   {
     quote:
@@ -19,29 +19,29 @@ const testimonials = [
     name: "Arjun Kapoor",
     role: "Independent Filmmaker",
     accent: "var(--accent-sage)",
-    glowColor: "rgba(122,155,126,0.06)",
-    borderGlow: "rgba(122,155,126,0.12)",
-    fillBg: "rgba(122,155,126,0.08)",
+    glowColor: "rgba(61,170,170,0.06)",
+    borderGlow: "rgba(61,170,170,0.12)",
+    fillBg: "rgba(61,170,170,0.08)",
   },
   {
     quote:
       "As a wedding videographer, turnaround time is everything. ColorGrade cut my post-production in half without sacrificing quality. My clients love the results.",
     name: "Meera Iyer",
     role: "Wedding Videography Studio",
-    accent: "var(--accent-umber)",
-    glowColor: "rgba(166,124,82,0.06)",
-    borderGlow: "rgba(166,124,82,0.12)",
-    fillBg: "rgba(166,124,82,0.08)",
+    accent: "var(--accent-teal-dark)",
+    glowColor: "rgba(4,122,122,0.06)",
+    borderGlow: "rgba(4,122,122,0.12)",
+    fillBg: "rgba(4,122,122,0.08)",
   },
   {
     quote:
       "The film grain and halation effects are what sold me. They add that organic, analog texture that makes digital footage feel alive. Absolutely stunning tool.",
     name: "Dev Sharma",
     role: "Music Video Director",
-    accent: "var(--accent-wine)",
-    glowColor: "rgba(139,94,94,0.06)",
-    borderGlow: "rgba(139,94,94,0.12)",
-    fillBg: "rgba(139,94,94,0.08)",
+    accent: "var(--accent-clay)",
+    glowColor: "rgba(7,175,175,0.06)",
+    borderGlow: "rgba(7,175,175,0.12)",
+    fillBg: "rgba(7,175,175,0.08)",
   },
 ];
 
@@ -52,7 +52,7 @@ export default function Testimonials() {
       <div
         className="absolute top-0 left-1/2 -translate-x-1/2 w-[500px] h-[500px] rounded-full pointer-events-none"
         style={{
-          background: "radial-gradient(circle, rgba(212,165,116,0.04) 0%, transparent 70%)",
+          background: "radial-gradient(circle, rgba(6,148,148,0.05) 0%, transparent 70%)",
           filter: "blur(100px)",
         }}
       />
@@ -66,7 +66,7 @@ export default function Testimonials() {
           <div className="lg:col-span-5">
             <h2 className="text-[clamp(1.8rem,4vw,3.5rem)] editorial-heading text-[var(--text-primary)] leading-[1.05]">
               Trusted by{" "}
-              <span className="text-[var(--accent-bronze)] italic">Creators</span>
+              <span className="text-[var(--accent-teal)] italic">Creators</span>
             </h2>
           </div>
           <div className="lg:col-span-4 lg:col-start-8 flex items-end">
@@ -78,7 +78,7 @@ export default function Testimonials() {
 
         <div className="h-px bg-[var(--border-subtle)] mb-12 md:mb-16" />
 
-        {/* Testimonials grid — editorial layout */}
+        {/* Testimonials grid */}
         <div className="grid grid-cols-1 md:grid-cols-2 gap-5" data-gsap="cards">
           {testimonials.map((t, i) => (
             <div
@@ -99,9 +99,9 @@ export default function Testimonials() {
               >
                 {/* Hover glow */}
                 <div
-                  className="absolute inset-0 opacity-0 group-hover:opacity-100 transition-opacity duration-700 pointer-events-none rounded-[var(--radius-md)]"
+                  className="absolute inset-0 opacity-0 group-hover:opacity-100 transition-opacity duration-500 pointer-events-none rounded-[var(--radius-md)]"
                   style={{
-                    background: "radial-gradient(ellipse at 30% 20%, " + t.glowColor + " 0%, transparent 60%)",
+                    background: `radial-gradient(ellipse at 30% 20%, ${t.glowColor} 0%, transparent 60%)`,
                   }}
                 />
 
@@ -139,17 +139,11 @@ export default function Testimonials() {
                     className="w-9 h-9 rounded-full flex items-center justify-center"
                     style={{
                       background: t.fillBg,
-                      border: "1px solid " + t.borderGlow,
+                      border: `1px solid ${t.borderGlow}`,
                     }}
                   >
-                    <span
-                      className="text-xs font-medium"
-                      style={{ color: t.accent }}
-                    >
-                      {t.name
-                        .split(" ")
-                        .map((w) => w[0])
-                        .join("")}
+                    <span className="text-xs font-medium" style={{ color: t.accent }}>
+                      {t.name.split(" ").map((w) => w[0]).join("")}
                     </span>
                   </div>
                   <div>
@@ -166,7 +160,7 @@ export default function Testimonials() {
                 <div
                   className="absolute bottom-0 right-0 w-10 h-10 md:w-12 md:h-12 opacity-0 group-hover:opacity-100 transition-opacity duration-500"
                   style={{
-                    background: "linear-gradient(135deg, transparent 50%, " + t.fillBg + " 50%)",
+                    background: `linear-gradient(135deg, transparent 50%, ${t.fillBg} 50%)`,
                     borderRadius: "0 0 var(--radius-md) 0",
                   }}
                 />

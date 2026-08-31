@@ -48,7 +48,7 @@ export default function PrivacyPolicy() {
             <ul className="space-y-2 ml-5 list-disc">
               <li><strong className="text-[var(--text-primary)]">Account Data:</strong> Email address, name, and date of birth (for age verification) when you create an account.</li>
               <li><strong className="text-[var(--text-primary)]">Usage Data:</strong> Browser type, device information, pages visited, time spent, and interaction patterns.</li>
-              <li><strong className="text-[var(--text-primary)]">Image Data:</strong> Photos and videos you upload for color grading. These are processed entirely in your browser and are <strong className="text-[var(--accent-bronze)]">never uploaded to our servers</strong>.</li>
+              <li><strong className="text-[var(--text-primary)]">Image Data:</strong> Photos and videos you upload for color grading. These are processed entirely in your browser and are <strong className="text-[var(--accent-teal)]">never uploaded to our servers</strong>.</li>
               <li><strong className="text-[var(--text-primary)]">Payment Data:</strong> Payment information is processed by Stripe. We do not store credit card numbers or payment credentials on our servers.</li>
               <li><strong className="text-[var(--text-primary)]">Cookie Data:</strong> We use cookies and similar technologies to maintain your session, remember preferences, and analyze site traffic.</li>
               <li><strong className="text-[var(--text-primary)]">Access Keys:</strong> When you redeem an access key, we record the key code, tier, and timestamp for validation purposes.</li>
@@ -78,7 +78,7 @@ export default function PrivacyPolicy() {
               ColorGrade uses <strong className="text-[var(--text-primary)]">client-side Canvas 2D rendering</strong>. All image processing happens directly in your browser using the HTML5 Canvas API. Your images and videos:
             </p>
             <ul className="space-y-2 ml-5 list-disc">
-              <li>Are <strong className="text-[var(--accent-bronze)]">never uploaded to our servers</strong>.</li>
+              <li>Are <strong className="text-[var(--accent-teal)]">never uploaded to our servers</strong>.</li>
               <li>Are stored temporarily in your browser&rsquo;s memory only.</li>
               <li>Are automatically cleared when you close the tab or refresh the page.</li>
               <li>Cannot be accessed by us or any third party.</li>
@@ -141,7 +141,7 @@ export default function PrivacyPolicy() {
               <li><strong className="text-[var(--text-primary)]">Withdraw Consent:</strong> Withdraw previously given consent at any time.</li>
             </ul>
             <p className="mt-3">
-              To exercise these rights, contact us at <strong className="text-[var(--accent-bronze)]">privacy@colorgrade.app</strong>.
+              To exercise these rights, contact us at <strong className="text-[var(--accent-teal)]">privacy@colorgrade.app</strong>.
             </p>
           </section>
 
@@ -204,7 +204,7 @@ export default function PrivacyPolicy() {
               If you have questions about this Privacy Policy or your data, contact us at:
             </p>
             <p className="mt-2">
-              <strong className="text-[var(--accent-bronze)]">privacy@colorgrade.app</strong>
+              <strong className="text-[var(--accent-teal)]">privacy@colorgrade.app</strong>
             </p>
           </section>
         </div>

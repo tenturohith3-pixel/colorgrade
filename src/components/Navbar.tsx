@@ -16,7 +16,6 @@ export default function Navbar() {
     return () => window.removeEventListener("scroll", onScroll);
   }, []);
 
-  // Lock body scroll when mobile menu is open
   useEffect(() => {
     if (mobileOpen) {
       document.body.style.overflow = "hidden";
@@ -26,7 +25,6 @@ export default function Navbar() {
     return () => { document.body.style.overflow = ""; };
   }, [mobileOpen]);
 
-  // Close on Escape key
   useEffect(() => {
     const handleEscape = (e: KeyboardEvent) => {
       if (e.key === "Escape") setMobileOpen(false);
@@ -48,7 +46,7 @@ export default function Navbar() {
   return (
     <>
       <nav
-        className={`fixed top-0 left-0 right-0 z-50 transition-all duration-700 ${
+        className={`fixed top-0 left-0 right-0 z-50 transition-all duration-300 ${
           scrolled ? "py-3" : "py-5"
         }`}
         style={{
@@ -65,10 +63,10 @@ export default function Navbar() {
             {/* Logo */}
             <Link href="/" className="flex items-center gap-3 group" aria-label="ColorGrade home">
               <span
-                className="text-xl md:text-2xl tracking-tight text-[var(--text-primary)] transition-all duration-500 group-hover:tracking-normal"
+                className="text-xl md:text-2xl tracking-tight text-[var(--text-primary)] transition-all duration-300 group-hover:tracking-normal"
                 style={{ fontFamily: "var(--font-playfair), Georgia, serif" }}
               >
-                Color<span className="text-[var(--accent-bronze)]">Grade</span>
+                Color<span className="text-[var(--accent-teal)]">Grade</span>
               </span>
             </Link>
 
@@ -78,10 +76,10 @@ export default function Navbar() {
                 <a
                   key={link.href}
                   href={link.href}
-                  className="relative text-[11px] font-medium text-[var(--text-muted)] hover:text-[var(--text-primary)] transition-colors duration-500 tracking-[0.15em] uppercase group py-2"
+                  className="relative text-[11px] font-medium text-[var(--text-muted)] hover:text-[var(--text-primary)] transition-colors duration-300 tracking-[0.15em] uppercase group py-2"
                 >
                   {link.label}
-                  <span className="absolute -bottom-1 left-0 w-0 h-px bg-[var(--accent-bronze)] transition-all duration-500 group-hover:w-full opacity-40" />
+                  <span className="absolute -bottom-1 left-0 w-0 h-px bg-[var(--accent-teal)] transition-all duration-300 group-hover:w-full opacity-40" />
                 </a>
               ))}
               <div className="w-px h-4 bg-[var(--border-medium)]" />
@@ -94,24 +92,24 @@ export default function Navbar() {
               </Link>
             </div>
 
-            {/* Mobile menu button — 44px touch target */}
+            {/* Mobile menu button */}
             <button
               onClick={() => setMobileOpen(!mobileOpen)}
-              className="md:hidden flex items-center justify-center w-11 h-11 text-[var(--text-muted)] hover:text-[var(--text-primary)] transition-colors duration-300 rounded-xl hover:bg-[rgba(255,255,255,0.04)]"
+              className="md:hidden flex items-center justify-center w-11 h-11 text-[var(--text-muted)] hover:text-[var(--text-primary)] transition-colors duration-200 rounded-xl hover:bg-[rgba(255,255,255,0.04)]"
               aria-label={mobileOpen ? "Close menu" : "Open menu"}
               aria-expanded={mobileOpen}
               aria-controls="mobile-menu"
             >
               <div className="relative w-5 h-5">
                 <span
-                  className={`absolute inset-0 transition-all duration-300 ${
+                  className={`absolute inset-0 transition-all duration-200 ${
                     mobileOpen ? "rotate-45 opacity-0" : "rotate-0 opacity-100"
                   }`}
                 >
                   <Menu className="w-5 h-5" />
                 </span>
                 <span
-                  className={`absolute inset-0 transition-all duration-300 ${
+                  className={`absolute inset-0 transition-all duration-200 ${
                     mobileOpen ? "rotate-0 opacity-100" : "-rotate-45 opacity-0"
                   }`}
                 >
@@ -123,13 +121,13 @@ export default function Navbar() {
         </div>
       </nav>
 
-      {/* Mobile menu — full-screen glass overlay with animation */}
+      {/* Mobile menu */}
       <div
         id="mobile-menu"
         role="dialog"
         aria-modal="true"
         aria-label="Mobile navigation"
-        className={`fixed inset-0 z-40 md:hidden transition-all duration-500 ${
+        className={`fixed inset-0 z-40 md:hidden transition-all duration-300 ${
           mounted && mobileOpen
             ? "opacity-100 pointer-events-auto"
             : "opacity-0 pointer-events-none"
@@ -137,7 +135,7 @@ export default function Navbar() {
       >
         {/* Backdrop */}
         <div
-          className="absolute inset-0 transition-all duration-500"
+          className="absolute inset-0 transition-all duration-300"
           style={{
             background: "var(--glass-bg-heavy)",
             backdropFilter: "blur(24px)",
@@ -149,64 +147,58 @@ export default function Navbar() {
 
         {/* Menu content — slide up */}
         <div
-          className={`relative z-10 flex flex-col justify-center items-center h-full px-8 transition-all duration-500 ease-[var(--ease-smooth)] ${
+          className={`relative z-10 flex flex-col justify-center items-center h-full px-8 transition-all duration-300 ease-[var(--ease-smooth)] ${
             mounted && mobileOpen
               ? "translate-y-0 opacity-100"
-              : "translate-y-8 opacity-0"
+              : "translate-y-6 opacity-0"
           }`}
         >
-          {/* Decorative top line */}
           <div className="absolute top-24 left-8 right-8 h-px bg-[var(--border-subtle)]" />
 
-          {/* Links */}
-          <nav className="flex flex-col items-center gap-10">
+          <nav className="flex flex-col items-center gap-8">
             {navLinks.map((link, i) => (
               <a
                 key={link.href}
                 href={link.href}
                 onClick={closeMobile}
-                className={`text-2xl text-[var(--text-muted)] hover:text-[var(--text-primary)] transition-all duration-500 tracking-[0.08em] uppercase ${
+                className={`text-2xl text-[var(--text-muted)] hover:text-[var(--text-primary)] transition-all duration-300 tracking-[0.08em] uppercase ${
                   mounted && mobileOpen
                     ? "translate-y-0 opacity-100"
                     : "translate-y-4 opacity-0"
                 }`}
                 style={{
                   fontFamily: "var(--font-playfair), Georgia, serif",
-                  transitionDelay: mounted && mobileOpen ? `${i * 80 + 100}ms` : "0ms",
+                  transitionDelay: mounted && mobileOpen ? `${i * 60 + 80}ms` : "0ms",
                 }}
               >
                 {link.label}
               </a>
             ))}
 
-            {/* Divider */}
             <div
-              className={`w-12 h-px bg-[var(--accent-bronze)] transition-all duration-500 ${
+              className={`w-12 h-px bg-[var(--accent-teal)] transition-all duration-300 ${
                 mounted && mobileOpen ? "opacity-30 scale-x-100" : "opacity-0 scale-x-0"
               }`}
-              style={{ transitionDelay: mounted && mobileOpen ? "300ms" : "0ms" }}
+              style={{ transitionDelay: mounted && mobileOpen ? "200ms" : "0ms" }}
             />
 
-            {/* CTA */}
             <Link
               href="/tool"
               onClick={closeMobile}
-              className={`editorial-btn editorial-btn-primary !px-10 !py-4 !text-xs transition-all duration-500 ${
+              className={`editorial-btn editorial-btn-primary !px-10 !py-4 !text-xs transition-all duration-300 ${
                 mounted && mobileOpen
                   ? "translate-y-0 opacity-100"
                   : "translate-y-4 opacity-0"
               }`}
-              style={{ transitionDelay: mounted && mobileOpen ? "400ms" : "0ms" }}
+              style={{ transitionDelay: mounted && mobileOpen ? "280ms" : "0ms" }}
             >
               Open Tool
               <ArrowUpRight className="w-4 h-4" />
             </Link>
           </nav>
 
-          {/* Decorative bottom line */}
           <div className="absolute bottom-24 left-8 right-8 h-px bg-[var(--border-subtle)]" />
 
-          {/* Footer tagline */}
           <p className="absolute bottom-12 text-[10px] text-[var(--text-ghost)] tracking-[0.15em] uppercase">
             Editorial Color Grading
           </p>
