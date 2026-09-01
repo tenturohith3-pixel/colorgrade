@@ -2,7 +2,7 @@
 
 import { useEffect, useRef } from "react";
 import Link from "next/link";
-import { ArrowRight, ArrowUpRight, Play } from "lucide-react";
+import { ArrowRight } from "lucide-react";
 
 export default function Hero() {
   const sectionRef = useRef<HTMLElement>(null);
@@ -25,179 +25,118 @@ export default function Hero() {
   }, []);
 
   return (
-    <section ref={sectionRef} className="relative min-h-screen flex items-center overflow-hidden">
-      {/* Deep atmospheric background */}
-      <div className="absolute inset-0 bg-[var(--bg-deep)]" />
+    <header
+      ref={sectionRef}
+      className="relative pt-32 pb-24 md:pt-48 md:pb-32 px-5 md:px-12 lg:px-16 max-w-screen-2xl mx-auto overflow-hidden min-h-screen flex items-center"
+    >
+      {/* Abstract Background Blurs */}
+      <div className="absolute inset-0 z-0 opacity-40 pointer-events-none">
+        <div className="absolute top-1/4 left-1/4 w-[300px] h-[300px] md:w-[500px] md:h-[500px] bg-primary-container rounded-full mix-blend-screen blur-[120px] md:blur-[150px] opacity-40 animate-pulse" />
+        <div className="absolute bottom-1/4 right-1/4 w-[350px] h-[350px] md:w-[600px] md:h-[600px] bg-secondary-container rounded-full mix-blend-screen blur-[140px] md:blur-[180px] opacity-30" />
+      </div>
 
-      {/* Cinematic gradient orbs */}
-      <div
-        className="absolute top-[10%] right-[5%] w-[400px] h-[400px] md:w-[600px] md:h-[600px] rounded-full blur-[120px] md:blur-[180px]"
-        style={{ background: "radial-gradient(circle, rgba(6,148,148,0.08) 0%, transparent 70%)" }}
-      />
-      <div
-        className="absolute bottom-[5%] left-[0%] w-[350px] h-[350px] md:w-[500px] md:h-[500px] rounded-full blur-[100px] md:blur-[160px]"
-        style={{ background: "radial-gradient(circle, rgba(10,181,181,0.06) 0%, transparent 70%)" }}
-      />
-      <div
-        className="absolute top-[50%] left-[40%] w-[300px] h-[300px] md:w-[400px] md:h-[400px] rounded-full blur-[140px] md:blur-[200px]"
-        style={{ background: "radial-gradient(circle, rgba(4,122,122,0.05) 0%, transparent 70%)" }}
-      />
-
-      {/* Subtle vertical accent line — desktop only */}
-      <div className="absolute left-8 md:left-16 top-28 bottom-28 w-px bg-[var(--border-subtle)] hidden lg:block" />
-
-      {/* Main content */}
-      <div className="relative z-10 mx-auto max-w-[1400px] w-full px-6 md:px-12 pt-28 pb-16 md:pt-36 md:pb-24">
-        <div className="grid grid-cols-1 lg:grid-cols-12 gap-12 lg:gap-8 items-center">
-          {/* Left column — Headline */}
-          <div className="lg:col-span-7">
-            {/* Editorial tag */}
-            <div className="flex items-center gap-4 mb-8 md:mb-12" data-parallax="0.1">
-              <div className="editorial-dot" />
-              <span className="editorial-caption">Vol. 01 — Cinematic Color</span>
-              <div className="h-px flex-1 bg-[var(--border-subtle)] max-w-[100px]" />
-            </div>
-
-            {/* Main headline — responsive scale */}
-            <h1 className="mb-8 md:mb-10" data-parallax="0.05">
-              <span className="block text-[clamp(2.5rem,8vw,7.5rem)] editorial-display text-[var(--text-primary)] leading-[0.88] mb-2 md:mb-3">
-                Make Every
-              </span>
-              <span className="block text-[clamp(2.5rem,8vw,7.5rem)] editorial-display leading-[0.88]">
-                <span className="text-[var(--text-primary)]">Frame</span>{" "}
-                <span className="text-[var(--accent-teal)] italic">Cinematic</span>
-              </span>
-            </h1>
-
-            {/* Subheadline */}
-            <div className="max-w-lg mb-10 md:mb-14" data-parallax="0.08">
-              <p className="editorial-body text-[var(--text-secondary)] text-base md:text-lg">
-                Professional color grading for the modern creator.
-                LUT presets, 3-way color wheels, and AI-powered corrections —
-                all in your browser.
-              </p>
-            </div>
-
-            {/* CTA row */}
-            <div className="flex flex-wrap items-center gap-4 md:gap-5" data-parallax="0.1">
-              <Link
-                href="/tool"
-                className="editorial-btn editorial-btn-primary !px-8 md:!px-10 !py-4 !text-xs group"
-              >
-                Start Free Trial
-                <ArrowRight className="w-4 h-4 group-hover:translate-x-1 transition-transform duration-300" />
-              </Link>
-              <a
-                href="#gallery"
-                className="editorial-btn editorial-btn-secondary !py-4 group"
-              >
-                <Play className="w-3.5 h-3.5 opacity-60" />
-                View Gallery
-              </a>
-            </div>
-
-            {/* Trust signals */}
-            <div className="flex flex-wrap items-center gap-4 md:gap-6 mt-8 md:mt-10" data-parallax="0.12">
-              <div className="flex items-center gap-2">
-                <div className="flex -space-x-1.5">
-                  {["bg-[var(--accent-teal)]", "bg-[var(--accent-sage)]", "bg-[var(--accent-teal-dark)]"].map(
-                    (bg, i) => (
-                      <div
-                        key={i}
-                        className={`w-5 h-5 rounded-full ${bg} border border-[var(--bg-deep)] opacity-70`}
-                      />
-                    )
-                  )}
-                </div>
-                <span className="text-[10px] text-[var(--text-muted)] tracking-wide">
-                  2,400+ creators
-                </span>
-              </div>
-              <div className="w-px h-3 bg-[var(--border-medium)]" />
-              <span className="text-[10px] text-[var(--text-muted)] tracking-wide">
-                No credit card required
-              </span>
-            </div>
+      <div className="relative z-10 grid md:grid-cols-2 gap-12 md:gap-16 items-center w-full">
+        {/* Left — Headline */}
+        <div className="flex flex-col gap-6" data-parallax="0.1">
+          {/* Tag */}
+          <div className="inline-flex items-center gap-2 text-[var(--accent-teal)] text-sm font-medium glass-panel px-4 py-2 rounded-full w-fit">
+            <span className="w-2 h-2 rounded-full bg-[var(--accent-teal)] animate-pulse shadow-[0_0_8px_#7dd3fc]" />
+            Vol. 01 — Cinematic Color
           </div>
 
-          {/* Right column — Cinematic visual */}
-          <div className="lg:col-span-5 relative" data-parallax="0.15">
-            {/* Main cinematic frame */}
-            <div
-              className="relative aspect-[4/5] overflow-hidden rounded-[var(--radius-md)]"
-              style={{ boxShadow: "var(--shadow-elevated)" }}
+          {/* Headline */}
+          <h1 className="text-[clamp(2.5rem,6vw,4.5rem)] md:text-[clamp(3rem,6vw,4.5rem)] leading-[1.05] font-extrabold tracking-tight">
+            <span className="text-gradient">Make Every</span>
+            <br />
+            <span className="text-gradient">Frame Cinematic</span>
+          </h1>
+
+          {/* Subheadline */}
+          <p className="text-base md:text-lg text-[var(--text-secondary)] max-w-xl leading-relaxed">
+            Professional color grading for the modern creator.
+            LUT presets, 3-way color wheels, and AI-powered corrections —
+            all in your browser.
+          </p>
+
+          {/* CTAs */}
+          <div className="flex flex-wrap gap-4 pt-4">
+            <Link
+              href="/tool"
+              className="iridescent-btn px-8 py-3.5 rounded-full font-bold text-sm flex items-center gap-2"
             >
-              {/* Gradient background */}
-              <div
-                className="absolute inset-0"
-                style={{
-                  background: `
-                    radial-gradient(ellipse at 30% 20%, rgba(6,148,148,0.12) 0%, transparent 50%),
-                    radial-gradient(ellipse at 70% 80%, rgba(10,181,181,0.08) 0%, transparent 50%),
-                    linear-gradient(160deg, #222222 0%, #181818 40%, #1E1E1E 100%)
-                  `,
-                }}
-              />
-
-              {/* Inner content */}
-              <div className="absolute inset-0 flex flex-col justify-between p-6 md:p-10">
-                <div className="flex items-center justify-between">
-                  <span className="editorial-caption">Featured Work</span>
-                  <span className="section-number">01</span>
-                </div>
-
-                <div>
-                  <p
-                    className="text-[clamp(1rem,2.5vw,1.8rem)] text-[var(--text-primary)] leading-snug mb-4 md:mb-5"
-                    style={{ fontFamily: "var(--font-space), Georgia, serif" }}
-                  >
-                    &ldquo;Color is the keyboard, the eyes are the harmonies, the soul is the piano with many strings.&rdquo;
-                  </p>
-                  <div className="flex items-center gap-3">
-                    <div className="h-px w-8 bg-[var(--accent-teal)] opacity-40" />
-                    <span className="text-[10px] text-[var(--text-muted)] tracking-[0.15em] uppercase">
-                      Wassily Kandinsky
-                    </span>
-                  </div>
-                </div>
-              </div>
-
-              {/* Frame border */}
-              <div
-                className="absolute inset-0 rounded-[var(--radius-md)] pointer-events-none"
-                style={{ border: "1px solid var(--glass-border)" }}
-              />
-            </div>
-
-            {/* Stats bar */}
-            <div
-              className="grid grid-cols-3 gap-px mt-px rounded-b-[var(--radius-md)] overflow-hidden"
-              style={{ background: "var(--glass-border)" }}
+              Start Free Trial
+              <ArrowRight className="w-4 h-4" />
+            </Link>
+            <a
+              href="#gallery"
+              className="glass-panel px-8 py-3.5 rounded-full text-sm text-[var(--accent-teal)] flex items-center gap-2 hover:bg-surface-container-high transition-colors font-medium border-[var(--border-accent)] hover:border-[var(--accent-teal)]"
             >
-              {[
-                { value: "30+", label: "LUT Presets" },
-                { value: "4K", label: "Export Quality" },
-                { value: "<2s", label: "Processing" },
-              ].map((stat) => (
-                <div key={stat.label} className="p-4 md:p-5 text-center" style={{ background: "var(--bg-card)" }}>
-                  <div
-                    className="text-lg md:text-2xl text-[var(--text-primary)] mb-1"
-                    style={{ fontFamily: "var(--font-space), Georgia, serif" }}
-                  >
-                    {stat.value}
-                  </div>
-                  <div className="text-[8px] md:text-[9px] text-[var(--text-muted)] tracking-[0.12em] uppercase">
-                    {stat.label}
-                  </div>
+              View Gallery
+            </a>
+          </div>
+
+          {/* Social Proof */}
+          <div className="flex items-center gap-4 mt-8 pt-8 border-t border-[var(--border-subtle)]">
+            <div className="flex -space-x-3">
+              {["U1", "U2", "+"].map((label, i) => (
+                <div
+                  key={i}
+                  className={`w-10 h-10 rounded-full border-2 border-[var(--bg-deep)] flex items-center justify-center text-xs font-medium shadow-lg ${
+                    i === 2 ? "text-[var(--accent-teal)]" : "text-[var(--text-muted)]"
+                  }`}
+                  style={{ background: "var(--bg-surface-highest)" }}
+                >
+                  {label}
                 </div>
               ))}
             </div>
+            <div className="text-xs text-[var(--text-secondary)]">
+              <span className="font-bold">2,400+ creators</span>
+              <br />
+              No credit card required
+            </div>
+          </div>
+        </div>
+
+        {/* Right — Preview Area */}
+        <div
+          className="relative h-[400px] md:h-[600px] w-full rounded-2xl overflow-hidden glass-panel group hidden md:block border border-[var(--border-subtle)] shadow-[0_0_50px_rgba(125,211,252,0.1)]"
+          data-parallax="0.15"
+        >
+          {/* Gradient background */}
+          <div
+            className="absolute inset-0"
+            style={{
+              background: `
+                radial-gradient(ellipse at 30% 20%, rgba(125,211,252,0.08) 0%, transparent 50%),
+                radial-gradient(ellipse at 70% 80%, rgba(0,240,255,0.05) 0%, transparent 50%),
+                linear-gradient(160deg, #141c2e 0%, #0a0e1a 40%, #0f1524 100%)
+              `,
+            }}
+          />
+
+          {/* Stats overlay */}
+          <div className="absolute bottom-6 right-6 glass-panel p-4 rounded-xl flex gap-4 backdrop-blur-xl border border-[var(--border-accent)]">
+            <div className="text-center">
+              <div className="text-2xl text-[var(--accent-teal)] font-bold">30+</div>
+              <div className="text-[10px] text-[var(--text-muted)]">LUT Presets</div>
+            </div>
+            <div className="w-px bg-[var(--border-accent)]" />
+            <div className="text-center">
+              <div className="text-2xl text-[var(--accent-sage)] font-bold">4K</div>
+              <div className="text-[10px] text-[var(--text-muted)]">Export Quality</div>
+            </div>
+          </div>
+
+          {/* Decorative grid lines */}
+          <div className="absolute inset-0 opacity-5 pointer-events-none">
+            <div className="absolute top-1/3 left-0 right-0 h-px bg-[var(--accent-teal)]" />
+            <div className="absolute top-2/3 left-0 right-0 h-px bg-[var(--accent-teal)]" />
+            <div className="absolute left-1/3 top-0 bottom-0 w-px bg-[var(--accent-teal)]" />
+            <div className="absolute left-2/3 top-0 bottom-0 w-px bg-[var(--accent-teal)]" />
           </div>
         </div>
       </div>
-
-      {/* Bottom editorial rule */}
-      <div className="absolute bottom-0 left-6 md:left-16 right-6 md:right-16 h-px bg-[var(--border-subtle)]" />
-    </section>
+    </header>
   );
 }

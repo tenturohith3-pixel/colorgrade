@@ -24,20 +24,19 @@ const jetbrains = JetBrains_Mono({
 });
 
 export const metadata: Metadata = {
-  title: "ColorGrade — Editorial Color Grading for Cinematic Creators",
+  title: "ColorGrade — Professional Cinematic Precision",
   description:
-    "Professional video color grading in your browser. LUT presets, 3-way color wheels, HSL curves, and AI-powered corrections — crafted for cinematic storytelling.",
+    "Professional color grading for the modern creator. LUT presets, 3-way color wheels, and AI-powered corrections — all in your browser.",
   keywords: [
     "color grading",
     "video editing",
     "LUT",
     "color correction",
     "cinematic",
-    "editorial",
     "film grading",
   ],
   openGraph: {
-    title: "ColorGrade — Editorial Color Grading",
+    title: "ColorGrade — Professional Cinematic Precision",
     description: "Professional color grading for cinematic creators",
     type: "website",
   },
@@ -53,7 +52,7 @@ export const viewport: Viewport = {
   initialScale: 1,
   maximumScale: 5,
   userScalable: true,
-  themeColor: "#181818",
+  themeColor: "#0a0e1a",
 };
 
 export default function RootLayout({
@@ -62,7 +61,7 @@ export default function RootLayout({
   children: React.ReactNode;
 }) {
   return (
-    <html lang="en" className={`${inter.variable} ${spaceGrotesk.variable} ${jetbrains.variable}`}>
+    <html lang="en" className={`dark ${inter.variable} ${spaceGrotesk.variable} ${jetbrains.variable}`}>
       <body className="min-h-screen bg-background text-foreground antialiased noise grain">
         <LoadingScreen />
         {children}
