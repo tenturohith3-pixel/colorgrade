@@ -12,18 +12,19 @@
  *   limit   — results per page, default 50, max 200 (optional)
  *
  * Response: { success, keys, total, page, totalPages }
+ *
+ * ──────────────────────────────────────────────────────
+ * DELETE /api/admin/keys
+ *
+ * Admin-only endpoint to revoke (delete) access keys.
+ * Supports single key or bulk revoke.
+ *
+ * Body: { secret: string, keyIds?: string[], all?: boolean, tier?: string, status?: string }
+ * Response: { success, revoked: number }
  */
 
 import { NextResponse } from "next/server";
-import { createClient } from "@supabase/supabase-js";
-
-/** Helper: create a Supabase admin client */
-function adminClient() {
-  return createClient(
-    process.env.NEXT_PUBLIC_SUPABASE_URL || "",
-    process.env.SUPABASE_SERVICE_ROLE_KEY || ""
-  );
-}
+import { getSupabaseAdmin } from "@/lib/supabase-admin";
 
 type KeyRow = {
   id: string;
@@ -43,6 +44,8 @@ function getKeyStatus(row: KeyRow): KeyStatus {
   return "available";
 }
 
+// ── GET ────────────────────────────────────────────────
+
 export async function GET(request: Request) {
   try {
     const url = new URL(request.url);
@@ -56,7 +59,13 @@ export async function GET(request: Request) {
       );
     }
 
-    const supabase = adminClient();
+    const supabase = getSupabaseAdmin();
+    if (!supabase.ok) {
+      return NextResponse.json(
+        { success: false, error: "Server configuration error: " + supabase.error },
+        { status: 500 }
+      );
+    }
 
     // Parse filters
     const tier = url.searchParams.get("tier");
@@ -66,7 +75,7 @@ export async function GET(request: Request) {
     const offset = (page - 1) * limit;
 
     // Build query
-    let query = supabase
+    let query = supabase.client
       .from("access_keys")
       .select("*", { count: "exact" })
       .order("created_at", { ascending: false });
@@ -77,7 +86,6 @@ export async function GET(request: Request) {
     }
 
     // Status filter — applied in JS since it depends on multiple fields
-    // We fetch extra rows if filtering by status, then trim
     const { data: rows, error } = await query;
 
     if (error) {
@@ -121,15 +129,8 @@ export async function GET(request: Request) {
   }
 }
 
-/**
- * DELETE /api/admin/keys
- *
- * Admin-only endpoint to revoke (delete) access keys.
- * Supports single key or bulk revoke.
- *
- * Body: { secret: string, keyIds?: string[], all?: boolean, tier?: string, status?: string }
- * Response: { success, revoked: number }
- */
+// ── DELETE ─────────────────────────────────────────────
+
 export async function DELETE(request: Request) {
   try {
     const body = await request.json();
@@ -143,10 +144,16 @@ export async function DELETE(request: Request) {
       );
     }
 
-    const supabase = adminClient();
+    const supabase = getSupabaseAdmin();
+    if (!supabase.ok) {
+      return NextResponse.json(
+        { success: false, error: "Server configuration error: " + supabase.error },
+        { status: 500 }
+      );
+    }
 
     // Build delete query
-    let query = supabase.from("access_keys").delete();
+    let query = supabase.client.from("access_keys").delete();
 
     if (all) {
       // Delete all — no additional filters needed
@@ -162,7 +169,7 @@ export async function DELETE(request: Request) {
         query = query.eq("is_consumed", true);
       } else if (status === "expired") {
         // Can't filter by computed status in Supabase, so fetch first
-        const { data: allKeys } = await supabase
+        const { data: allKeys } = await supabase.client
           .from("access_keys")
           .select("id, expires_at")
           .eq("is_consumed", false);
@@ -174,7 +181,7 @@ export async function DELETE(request: Request) {
         if (expiredIds.length === 0) {
           return NextResponse.json({ success: true, revoked: 0 });
         }
-        query = supabase.from("access_keys").delete().in("id", expiredIds);
+        query = supabase.client.from("access_keys").delete().in("id", expiredIds);
       } else if (status === "available") {
         query = query.eq("is_consumed", false);
       }

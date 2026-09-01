@@ -9,7 +9,7 @@
  */
 
 import { NextResponse } from "next/server";
-import { createClient } from "@supabase/supabase-js";
+import { getSupabaseAdmin } from "@/lib/supabase-admin";
 
 // Key generation config
 const CHARS = "ABCDEFGHJKLMNPQRSTUVWXYZ23456789"; // no I/O/0/1
@@ -64,11 +64,14 @@ export async function POST(request: Request) {
       );
     }
 
-    // Connect to Supabase
-    const supabase = createClient(
-      process.env.NEXT_PUBLIC_SUPABASE_URL || "",
-      process.env.SUPABASE_SERVICE_ROLE_KEY || ""
-    );
+    // Connect to Supabase with validation
+    const supabase = getSupabaseAdmin();
+    if (!supabase.ok) {
+      return NextResponse.json(
+        { success: false, error: "Server configuration error: " + supabase.error },
+        { status: 500 }
+      );
+    }
 
     // Generate keys
     const now = new Date();
@@ -90,7 +93,7 @@ export async function POST(request: Request) {
       // Ensure uniqueness (retry on collision, extremely unlikely)
       let attempts = 0;
       while (attempts < 5) {
-        const { data: existing } = await supabase
+        const { data: existing } = await supabase.client
           .from("access_keys")
           .select("id")
           .eq("key_code", keyCode)
@@ -109,7 +112,7 @@ export async function POST(request: Request) {
     }
 
     // Bulk insert
-    const { error: insertError } = await supabase
+    const { error: insertError } = await supabase.client
       .from("access_keys")
       .insert(keysToInsert);
 

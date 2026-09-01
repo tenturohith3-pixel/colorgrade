@@ -9,7 +9,7 @@
  */
 
 import { NextResponse } from "next/server";
-import { createClient } from "@supabase/supabase-js";
+import { getSupabaseAdmin } from "@/lib/supabase-admin";
 
 function generateFingerprint(): string {
   return `fp_${Date.now()}_${Math.random().toString(36).slice(2, 10)}`;
@@ -37,13 +37,16 @@ export async function POST(request: Request) {
       );
     }
 
-    // Lazy-init Supabase inside handler to avoid build-time env var errors
-    const supabase = createClient(
-      process.env.NEXT_PUBLIC_SUPABASE_URL || "",
-      process.env.SUPABASE_SERVICE_ROLE_KEY || ""
-    );
+    // Lazy-init Supabase with validation
+    const supabase = getSupabaseAdmin();
+    if (!supabase.ok) {
+      return NextResponse.json(
+        { success: false, error: "Server configuration error: " + supabase.error },
+        { status: 500 }
+      );
+    }
 
-    const { data: keyRecord, error: lookupError } = await supabase
+    const { data: keyRecord, error: lookupError } = await supabase.client
       .from("access_keys")
       .select("*")
       .eq("key_code", normalizedKey)
@@ -74,7 +77,7 @@ export async function POST(request: Request) {
 
     // Mark as consumed (one-time use)
     const fingerprint = generateFingerprint();
-    const { error: consumeError } = await supabase
+    const { error: consumeError } = await supabase.client
       .from("access_keys")
       .update({
         is_consumed: true,
