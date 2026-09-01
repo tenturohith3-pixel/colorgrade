@@ -1,8 +1,8 @@
 /**
- * Access Key Utilities
+ * Access Key Utilities (Client-Side)
  *
- * Client-side key management: localStorage persistence,
- * tier access checks, expiration tracking, and server validation.
+ * Manages signed access keys in localStorage.
+ * No database queries — keys are self-contained HMAC-signed tokens.
  */
 
 // ── Types ────────────────────────────────────────────
@@ -120,8 +120,8 @@ export function getExpirationLevel(): ExpirationLevel {
   const remaining = getTimeUntilExpiration();
   if (remaining === null) return "lifetime";
   if (remaining <= 0) return "expired";
-  if (remaining <= DAY_MS) return "urgent";       // <1 day
-  if (remaining <= 2 * DAY_MS) return "warning";   // <2 days
+  if (remaining <= DAY_MS) return "urgent";
+  if (remaining <= 2 * DAY_MS) return "warning";
   return "safe";
 }
 
@@ -149,7 +149,7 @@ export function getTimeRemaining(): string | null {
 // ── Server Validation ────────────────────────────────
 
 /**
- * Validate a key against the server.
+ * Validate a signed key against the server.
  * On success, stores it in localStorage and returns the key info.
  */
 export async function validateKey(keyCode: string): Promise<ValidateKeyResult> {

@@ -1,19 +1,15 @@
 /**
  * POST /api/validate-key
  *
- * Validates an access key and marks it as consumed (one-time use).
- * Returns the tier and expiration info if valid.
+ * Validates an HMAC-signed access key.
+ * No database needed — the key itself contains all info and the signature proves authenticity.
  *
  * Body: { keyCode: string }
  * Response: { success, keyCode, tier, expiresAt } or { success: false, error }
  */
 
 import { NextResponse } from "next/server";
-import { getSupabaseAdmin } from "@/lib/supabase-admin";
-
-function generateFingerprint(): string {
-  return `fp_${Date.now()}_${Math.random().toString(36).slice(2, 10)}`;
-}
+import { decodeKey } from "@/lib/token";
 
 export async function POST(request: Request) {
   try {
@@ -29,77 +25,40 @@ export async function POST(request: Request) {
 
     const normalizedKey = keyCode.trim().toUpperCase();
 
-    const keyRegex = /^CG-[A-Z0-9]{4}-[A-Z0-9]{4}-[A-Z0-9]{4}$/;
-    if (!keyRegex.test(normalizedKey)) {
+    // Check that TOKEN_SECRET is configured
+    const tokenSecret = process.env.TOKEN_SECRET;
+    if (!tokenSecret) {
       return NextResponse.json(
-        { success: false, error: "Invalid key format. Expected: CG-XXXX-XXXX-XXXX" },
+        { success: false, error: "Server configuration error: TOKEN_SECRET not set" },
+        { status: 500 }
+      );
+    }
+
+    // Decode and verify the signed token
+    const decoded = decodeKey(normalizedKey, tokenSecret);
+
+    if (!decoded) {
+      return NextResponse.json(
+        { success: false, error: "Invalid key. The signature could not be verified." },
         { status: 400 }
       );
     }
 
-    // Lazy-init Supabase with validation
-    const supabase = getSupabaseAdmin();
-    if (!supabase.ok) {
+    if (decoded.expired) {
       return NextResponse.json(
-        { success: false, error: "Server configuration error: " + supabase.error },
-        { status: 500 }
-      );
-    }
-
-    const { data: keyRecord, error: lookupError } = await supabase.client
-      .from("access_keys")
-      .select("*")
-      .eq("key_code", normalizedKey)
-      .single();
-
-    if (lookupError || !keyRecord) {
-      return NextResponse.json(
-        { success: false, error: "Key not found. Please check and try again." },
-        { status: 404 }
-      );
-    }
-
-    // Check if already consumed
-    if (keyRecord.is_consumed) {
-      return NextResponse.json(
-        { success: false, error: "This key has already been used." },
+        {
+          success: false,
+          error: `This key expired on ${decoded.expiresAt!.toLocaleDateString("en-US", { month: "long", day: "numeric", year: "numeric" })}.`,
+        },
         { status: 410 }
-      );
-    }
-
-    // Check if expired
-    if (keyRecord.expires_at && new Date(keyRecord.expires_at) < new Date()) {
-      return NextResponse.json(
-        { success: false, error: "This key has expired." },
-        { status: 410 }
-      );
-    }
-
-    // Mark as consumed (one-time use)
-    const fingerprint = generateFingerprint();
-    const { error: consumeError } = await supabase.client
-      .from("access_keys")
-      .update({
-        is_consumed: true,
-        used_by: fingerprint,
-        used_at: new Date().toISOString(),
-        consumed_by: `browser_${Date.now()}`,
-      })
-      .eq("id", keyRecord.id);
-
-    if (consumeError) {
-      console.error("Failed to consume key:", consumeError);
-      return NextResponse.json(
-        { success: false, error: "Failed to activate key. Please try again." },
-        { status: 500 }
       );
     }
 
     return NextResponse.json({
       success: true,
-      keyCode: keyRecord.key_code,
-      tier: keyRecord.tier,
-      expiresAt: keyRecord.expires_at,
+      keyCode: normalizedKey,
+      tier: decoded.tier,
+      expiresAt: decoded.expiresAt?.toISOString() ?? null,
     });
   } catch (error) {
     console.error("Key validation error:", error);
