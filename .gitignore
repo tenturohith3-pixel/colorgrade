@@ -1,0 +1,22 @@
+# Local
+.env
+.env.local
+.env.*.local
+.vercel
+.next
+node_modules
+*.tsbuildinfo
+
+# Private plugin binaries are intentionally not committed.
+private/plugins/*.wasm
+!private/plugins/.gitkeep
+
+# Generated catalog media is copied from the source plugin projects.
+public/media/prism/*.png
+public/media/contact/*.png
+!public/media/prism/.gitkeep
+!public/media/contact/.gitkeep
+
+# OS
+.DS_Store
+Thumbs.db

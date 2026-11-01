@@ -1,0 +1,457 @@
+[
+  {
+    "id": "prism-glow",
+    "name": "S_Glow",
+    "category": "Blur & Sharpen",
+    "imagePath": "/media/prism/glow_p3.png",
+    "binaryPath": "private/plugins/prism-glow.wasm"
+  },
+  {
+    "id": "prism-glint",
+    "name": "S_Glint",
+    "category": "Blur & Sharpen",
+    "imagePath": "/media/prism/glint_p3.png",
+    "binaryPath": "private/plugins/prism-glint.wasm"
+  },
+  {
+    "id": "prism-motion-blur",
+    "name": "S_Motion Blur",
+    "category": "Blur & Sharpen",
+    "imagePath": "/media/prism/motion_blur_p3.png",
+    "binaryPath": "private/plugins/prism-motion-blur.wasm"
+  },
+  {
+    "id": "prism-radial-blur",
+    "name": "S_Radial Blur",
+    "category": "Blur & Sharpen",
+    "imagePath": "/media/prism/radial_blur_p3.png",
+    "binaryPath": "private/plugins/prism-radial-blur.wasm"
+  },
+  {
+    "id": "prism-defocus",
+    "name": "S_Defocus",
+    "category": "Blur & Sharpen",
+    "imagePath": "/media/prism/defocus_p3.png",
+    "binaryPath": "private/plugins/prism-defocus.wasm"
+  },
+  {
+    "id": "prism-sharpen",
+    "name": "S_Sharpen",
+    "category": "Blur & Sharpen",
+    "imagePath": "/media/prism/sharpen_p3.png",
+    "binaryPath": "private/plugins/prism-sharpen.wasm"
+  },
+  {
+    "id": "prism-chroma-blur",
+    "name": "S_Chromatic Blur",
+    "category": "Blur & Sharpen",
+    "imagePath": "/media/prism/chroma_blur_p3.png",
+    "binaryPath": "private/plugins/prism-chroma-blur.wasm"
+  },
+  {
+    "id": "prism-light-rays",
+    "name": "S_Light Rays",
+    "category": "Light",
+    "imagePath": "/media/prism/light_rays_p3.png",
+    "binaryPath": "private/plugins/prism-light-rays.wasm"
+  },
+  {
+    "id": "prism-lens-flare",
+    "name": "S_Lens Flare",
+    "category": "Light",
+    "imagePath": "/media/prism/lens_flare_p3.png",
+    "binaryPath": "private/plugins/prism-lens-flare.wasm"
+  },
+  {
+    "id": "prism-light-sweep",
+    "name": "S_Light Sweep",
+    "category": "Light",
+    "imagePath": "/media/prism/light_sweep_p3.png",
+    "binaryPath": "private/plugins/prism-light-sweep.wasm"
+  },
+  {
+    "id": "prism-aurora",
+    "name": "S_Aurora",
+    "category": "Light",
+    "imagePath": "/media/prism/aurora_p3.png",
+    "binaryPath": "private/plugins/prism-aurora.wasm"
+  },
+  {
+    "id": "prism-edge-glow",
+    "name": "S_Edge Glow",
+    "category": "Light",
+    "imagePath": "/media/prism/edge_glow_p3.png",
+    "binaryPath": "private/plugins/prism-edge-glow.wasm"
+  },
+  {
+    "id": "prism-posterize",
+    "name": "S_Posterize",
+    "category": "Stylize",
+    "imagePath": "/media/prism/posterize_p3.png",
+    "binaryPath": "private/plugins/prism-posterize.wasm"
+  },
+  {
+    "id": "prism-halftone",
+    "name": "S_Halftone",
+    "category": "Stylize",
+    "imagePath": "/media/prism/halftone_p3.png",
+    "binaryPath": "private/plugins/prism-halftone.wasm"
+  },
+  {
+    "id": "prism-pixelate",
+    "name": "S_Pixelate",
+    "category": "Stylize",
+    "imagePath": "/media/prism/pixelate_p3.png",
+    "binaryPath": "private/plugins/prism-pixelate.wasm"
+  },
+  {
+    "id": "prism-cartoon",
+    "name": "S_Cartoon",
+    "category": "Stylize",
+    "imagePath": "/media/prism/cartoon_p3.png",
+    "binaryPath": "private/plugins/prism-cartoon.wasm"
+  },
+  {
+    "id": "prism-sketch",
+    "name": "S_Sketch",
+    "category": "Stylize",
+    "imagePath": "/media/prism/sketch_p3.png",
+    "binaryPath": "private/plugins/prism-sketch.wasm"
+  },
+  {
+    "id": "prism-emboss",
+    "name": "S_Emboss",
+    "category": "Stylize",
+    "imagePath": "/media/prism/emboss_p3.png",
+    "binaryPath": "private/plugins/prism-emboss.wasm"
+  },
+  {
+    "id": "prism-oil-paint",
+    "name": "S_Oil Paint",
+    "category": "Stylize",
+    "imagePath": "/media/prism/oil_paint_p3.png",
+    "binaryPath": "private/plugins/prism-oil-paint.wasm"
+  },
+  {
+    "id": "prism-watercolor",
+    "name": "S_Watercolor",
+    "category": "Stylize",
+    "imagePath": "/media/prism/watercolor_p3.png",
+    "binaryPath": "private/plugins/prism-watercolor.wasm"
+  },
+  {
+    "id": "prism-stained-glass",
+    "name": "S_Stained Glass",
+    "category": "Stylize",
+    "imagePath": "/media/prism/stained_glass_p3.png",
+    "binaryPath": "private/plugins/prism-stained-glass.wasm"
+  },
+  {
+    "id": "prism-scanlines",
+    "name": "S_Scanlines",
+    "category": "Stylize",
+    "imagePath": "/media/prism/scanlines_p3.png",
+    "binaryPath": "private/plugins/prism-scanlines.wasm"
+  },
+  {
+    "id": "prism-film-grain",
+    "name": "S_Film Grain",
+    "category": "Stylize",
+    "imagePath": "/media/prism/film_grain_p3.png",
+    "binaryPath": "private/plugins/prism-film-grain.wasm"
+  },
+  {
+    "id": "prism-old-film",
+    "name": "S_Old Film",
+    "category": "Stylize",
+    "imagePath": "/media/prism/old_film_p3.png",
+    "binaryPath": "private/plugins/prism-old-film.wasm"
+  },
+  {
+    "id": "prism-ripple",
+    "name": "S_Ripple",
+    "category": "Distort",
+    "imagePath": "/media/prism/ripple_p3.png",
+    "binaryPath": "private/plugins/prism-ripple.wasm"
+  },
+  {
+    "id": "prism-wave",
+    "name": "S_Wave",
+    "category": "Distort",
+    "imagePath": "/media/prism/wave_p3.png",
+    "binaryPath": "private/plugins/prism-wave.wasm"
+  },
+  {
+    "id": "prism-twirl",
+    "name": "S_Twirl",
+    "category": "Distort",
+    "imagePath": "/media/prism/twirl_p3.png",
+    "binaryPath": "private/plugins/prism-twirl.wasm"
+  },
+  {
+    "id": "prism-bulge",
+    "name": "S_Bulge",
+    "category": "Distort",
+    "imagePath": "/media/prism/bulge_p3.png",
+    "binaryPath": "private/plugins/prism-bulge.wasm"
+  },
+  {
+    "id": "prism-kaleidoscope",
+    "name": "S_Kaleidoscope",
+    "category": "Distort",
+    "imagePath": "/media/prism/kaleidoscope_p3.png",
+    "binaryPath": "private/plugins/prism-kaleidoscope.wasm"
+  },
+  {
+    "id": "prism-displacement",
+    "name": "S_Displacement",
+    "category": "Distort",
+    "imagePath": "/media/prism/displacement_p3.png",
+    "binaryPath": "private/plugins/prism-displacement.wasm"
+  },
+  {
+    "id": "prism-turbulence",
+    "name": "S_Turbulence",
+    "category": "Distort",
+    "imagePath": "/media/prism/turbulence_p3.png",
+    "binaryPath": "private/plugins/prism-turbulence.wasm"
+  },
+  {
+    "id": "prism-polar",
+    "name": "S_Polar",
+    "category": "Distort",
+    "imagePath": "/media/prism/polar_p3.png",
+    "binaryPath": "private/plugins/prism-polar.wasm"
+  },
+  {
+    "id": "prism-block-glitch",
+    "name": "S_Block Glitch",
+    "category": "Distort",
+    "imagePath": "/media/prism/block_glitch_p3.png",
+    "binaryPath": "private/plugins/prism-block-glitch.wasm"
+  },
+  {
+    "id": "prism-chromatic",
+    "name": "S_Chromatic",
+    "category": "Distort",
+    "imagePath": "/media/prism/chromatic_p3.png",
+    "binaryPath": "private/plugins/prism-chromatic.wasm"
+  },
+  {
+    "id": "prism-fractal-noise",
+    "name": "S_Fractal Noise",
+    "category": "Generate",
+    "imagePath": "/media/prism/fractal_noise_p3.png",
+    "binaryPath": "private/plugins/prism-fractal-noise.wasm"
+  },
+  {
+    "id": "prism-plasma",
+    "name": "S_Plasma",
+    "category": "Generate",
+    "imagePath": "/media/prism/plasma_p3.png",
+    "binaryPath": "private/plugins/prism-plasma.wasm"
+  },
+  {
+    "id": "prism-lightning",
+    "name": "S_Lightning",
+    "category": "Generate",
+    "imagePath": "/media/prism/lightning_p3.png",
+    "binaryPath": "private/plugins/prism-lightning.wasm"
+  },
+  {
+    "id": "prism-caustics",
+    "name": "S_Caustics",
+    "category": "Generate",
+    "imagePath": "/media/prism/caustics_p3.png",
+    "binaryPath": "private/plugins/prism-caustics.wasm"
+  },
+  {
+    "id": "prism-color-grade",
+    "name": "S_Color Grade",
+    "category": "Color Correction",
+    "imagePath": "/media/prism/color_grade_p3.png",
+    "binaryPath": "private/plugins/prism-color-grade.wasm"
+  },
+  {
+    "id": "prism-duotone",
+    "name": "S_Duotone",
+    "category": "Color Correction",
+    "imagePath": "/media/prism/duotone_p3.png",
+    "binaryPath": "private/plugins/prism-duotone.wasm"
+  },
+  {
+    "id": "prism-black-white",
+    "name": "S_Black & White",
+    "category": "Color Correction",
+    "imagePath": "/media/prism/black_white_p3.png",
+    "binaryPath": "private/plugins/prism-black-white.wasm"
+  },
+  {
+    "id": "prism-film-look",
+    "name": "S_Film Look",
+    "category": "Color Correction",
+    "imagePath": "/media/prism/film_look_p3.png",
+    "binaryPath": "private/plugins/prism-film-look.wasm"
+  },
+  {
+    "id": "prism-chroma-key",
+    "name": "S_Chroma Key",
+    "category": "Keying",
+    "imagePath": "/media/prism/chroma_key_p3.png",
+    "binaryPath": "private/plugins/prism-chroma-key.wasm"
+  },
+  {
+    "id": "prism-luma-key",
+    "name": "S_Luma Key",
+    "category": "Keying",
+    "imagePath": "/media/prism/luma_key_p3.png",
+    "binaryPath": "private/plugins/prism-luma-key.wasm"
+  },
+  {
+    "id": "prism-matte-choke",
+    "name": "S_Matte Choke",
+    "category": "Keying",
+    "imagePath": "/media/prism/matte_choke_p3.png",
+    "binaryPath": "private/plugins/prism-matte-choke.wasm"
+  },
+  {
+    "id": "prism-blur",
+    "name": "S_Blur",
+    "category": "Blur & Sharpen",
+    "imagePath": "/media/prism/blur_p3.png",
+    "binaryPath": "private/plugins/prism-blur.wasm"
+  },
+  {
+    "id": "prism-sparkles",
+    "name": "S_Sparkles",
+    "category": "Light",
+    "imagePath": "/media/prism/sparkles_p3.png",
+    "binaryPath": "private/plugins/prism-sparkles.wasm"
+  },
+  {
+    "id": "prism-light-wrap",
+    "name": "S_Light Wrap",
+    "category": "Light",
+    "imagePath": "/media/prism/light_wrap_p3.png",
+    "binaryPath": "private/plugins/prism-light-wrap.wasm"
+  },
+  {
+    "id": "prism-dither",
+    "name": "S_Dither",
+    "category": "Stylize",
+    "imagePath": "/media/prism/dither_p3.png",
+    "binaryPath": "private/plugins/prism-dither.wasm"
+  },
+  {
+    "id": "prism-neon",
+    "name": "S_Neon",
+    "category": "Stylize",
+    "imagePath": "/media/prism/neon_p3.png",
+    "binaryPath": "private/plugins/prism-neon.wasm"
+  },
+  {
+    "id": "prism-tiles",
+    "name": "S_Tiles",
+    "category": "Distort",
+    "imagePath": "/media/prism/tiles_p3.png",
+    "binaryPath": "private/plugins/prism-tiles.wasm"
+  },
+  {
+    "id": "prism-perspective",
+    "name": "S_Perspective",
+    "category": "Distort",
+    "imagePath": "/media/prism/perspective_p3.png",
+    "binaryPath": "private/plugins/prism-perspective.wasm"
+  },
+  {
+    "id": "prism-gradient",
+    "name": "S_Gradient",
+    "category": "Generate",
+    "imagePath": "/media/prism/gradient_p3.png",
+    "binaryPath": "private/plugins/prism-gradient.wasm"
+  },
+  {
+    "id": "prism-starfield",
+    "name": "S_Starfield",
+    "category": "Generate",
+    "imagePath": "/media/prism/starfield_p3.png",
+    "binaryPath": "private/plugins/prism-starfield.wasm"
+  },
+  {
+    "id": "prism-particles",
+    "name": "S_Particles",
+    "category": "Generate",
+    "imagePath": "/media/prism/particles_p3.png",
+    "binaryPath": "private/plugins/prism-particles.wasm"
+  },
+  {
+    "id": "prism-hue-saturation",
+    "name": "S_Hue Saturation",
+    "category": "Color Correction",
+    "imagePath": "/media/prism/hue_saturation_p3.png",
+    "binaryPath": "private/plugins/prism-hue-saturation.wasm"
+  },
+  {
+    "id": "prism-levels",
+    "name": "S_Levels",
+    "category": "Color Correction",
+    "imagePath": "/media/prism/levels_p3.png",
+    "binaryPath": "private/plugins/prism-levels.wasm"
+  },
+  {
+    "id": "prism-solarize",
+    "name": "S_Solarize",
+    "category": "Color Correction",
+    "imagePath": "/media/prism/solarize_p3.png",
+    "binaryPath": "private/plugins/prism-solarize.wasm"
+  },
+  {
+    "id": "prism-despill",
+    "name": "S_Despill",
+    "category": "Keying",
+    "imagePath": "/media/prism/despill_p3.png",
+    "binaryPath": "private/plugins/prism-despill.wasm"
+  },
+  {
+    "id": "prism-shake",
+    "name": "S_Shake",
+    "category": "Distort",
+    "imagePath": "/media/prism/shake_p3.png",
+    "binaryPath": "private/plugins/prism-shake.wasm"
+  },
+  {
+    "id": "twixtor-manual",
+    "name": "Twixtor Manual",
+    "category": "Time",
+    "imagePath": "/media/prism/motion_blur_p3.png",
+    "binaryPath": "private/plugins/twixtor-manual.wasm"
+  },
+  {
+    "id": "twixtor-auto",
+    "name": "Twixtor Auto",
+    "category": "Time",
+    "imagePath": "/media/prism/motion_blur_p3.png",
+    "binaryPath": "private/plugins/twixtor-auto.wasm"
+  },
+  {
+    "id": "twixtor-tracking",
+    "name": "Twixtor Tracking",
+    "category": "Time",
+    "imagePath": "/media/prism/motion_blur_p3.png",
+    "binaryPath": "private/plugins/twixtor-tracking.wasm"
+  },
+  {
+    "id": "twixtor-pro",
+    "name": "Twixtor Pro",
+    "category": "Time",
+    "imagePath": "/media/prism/motion_blur_p3.png",
+    "binaryPath": "private/plugins/twixtor-pro.wasm"
+  },
+  {
+    "id": "deep-glow",
+    "name": "Deep Glow",
+    "category": "Stylize",
+    "imagePath": "/media/prism/glow_p3.png",
+    "binaryPath": "private/plugins/deep-glow.wasm"
+  }
+]
