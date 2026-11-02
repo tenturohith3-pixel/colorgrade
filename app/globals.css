@@ -340,3 +340,62 @@ input[type="range"]::-moz-range-thumb {
 .compare-handle[data-grabbing="true"] {
   animation: none;
 }
+
+/* ── Lenis smooth scroll ─────────────────── */
+html.lenis,
+html.lenis body {
+  height: auto;
+}
+.lenis.lenis-smooth {
+  scroll-behavior: auto !important;
+}
+.lenis.lenis-smooth [data-lenis-prevent] {
+  overscroll-behavior: contain;
+}
+.lenis.lenis-stopped {
+  overflow: hidden;
+}
+
+/* ── Display ticker band ─────────────────── */
+@keyframes ticker {
+  from {
+    transform: translate3d(0, 0, 0);
+  }
+  to {
+    transform: translate3d(-50%, 0, 0);
+  }
+}
+.ticker-track {
+  animation: ticker 30s linear infinite;
+}
+.ticker-outline {
+  -webkit-text-stroke: 1.5px rgba(201, 160, 106, 0.38);
+  color: transparent;
+}
+
+/* ── Hero line masks ─────────────────────── */
+.hero-mask {
+  display: inline-block;
+  overflow: hidden;
+  vertical-align: bottom;
+}
+.hero-line {
+  display: inline-block;
+  will-change: transform;
+}
+
+/* ── Reduced-motion: unpin & unwrap ──────── */
+@media (prefers-reduced-motion: reduce) {
+  .marquee-track,
+  .ticker-track {
+    animation: none;
+  }
+  .hl-pin {
+    height: auto !important;
+    padding-block: 6rem;
+  }
+  .hl-viewport {
+    overflow-x: auto;
+    -webkit-overflow-scrolling: touch;
+  }
+}

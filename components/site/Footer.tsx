@@ -1,5 +1,6 @@
 import Link from "next/link";
 import { Clapperboard } from "lucide-react";
+import { FooterWordmark } from "@/components/site/FooterWordmark";
 
 const COLS: { title: string; links: { href: string; label: string }[] }[] = [
   {
@@ -30,8 +31,8 @@ const COLS: { title: string; links: { href: string; label: string }[] }[] = [
 
 export function Footer() {
   return (
-    <footer className="relative border-t border-line mt-40">
-      <div className="mx-auto max-w-7xl px-6 py-20">
+    <footer className="relative border-t border-line mt-40 overflow-hidden">
+      <div className="mx-auto max-w-7xl px-6 pt-20 pb-20">
         <div className="grid grid-cols-1 md:grid-cols-[1.6fr_1fr_1fr_1fr] gap-12">
           <div>
             <div className="flex items-center gap-2.5">
@@ -78,6 +79,7 @@ export function Footer() {
           </p>
         </div>
       </div>
+      <FooterWordmark />
     </footer>
   );
 }

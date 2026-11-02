@@ -1,6 +1,10 @@
-import { HeroStage } from "@/components/landing/HeroStage";
+import { Hero } from "@/components/landing/Hero";
+import { Ticker } from "@/components/landing/Ticker";
 import { CompareShowcase } from "@/components/landing/CompareShowcase";
 import { Capabilities } from "@/components/landing/Capabilities";
+import { HorizontalLooks } from "@/components/landing/HorizontalLooks";
+import { PinnedManifesto } from "@/components/landing/PinnedManifesto";
+import { PinnedGradeReveal } from "@/components/landing/PinnedGradeReveal";
 import { NumberedEditorial } from "@/components/landing/NumberedEditorial";
 import { PluginsTeaser } from "@/components/landing/PluginsTeaser";
 import { PricingPreview } from "@/components/landing/PricingPreview";
@@ -32,61 +36,11 @@ export default function Home() {
         </div>
       </div>
 
-      {/* ── Hero ── */}
-      <section className="relative pt-40 pb-24 px-6 md:px-12">
-        <div className="max-w-5xl mx-auto text-center space-y-8">
-          <Reveal>
-            <span className="pill-badge">
-              <span className="size-1.5 rounded-full bg-bronze-bright pulse-soft" />
-              EFFECTCRAFT — CINEMATIC POST-PRODUCTION
-            </span>
-          </Reveal>
-          <Reveal delay={90}>
-            <h1 className="display text-5xl md:text-7xl lg:text-[5.5rem] leading-[1.04] text-balance">
-              Grade. Effect. <span className="prism-text">Deliver.</span>
-            </h1>
-          </Reveal>
-          <Reveal delay={170}>
-            <p className="text-lg md:text-xl text-ink-muted font-light max-w-2xl mx-auto leading-relaxed text-balance">
-              A studio-grade color grading engine and a premium Prism plugin
-              ecosystem — engineered to run entirely in your browser. No
-              uploads, no queues, no render farm.
-            </p>
-          </Reveal>
-          <Reveal delay={250}>
-            <div className="flex flex-wrap items-center justify-center gap-3 pt-2">
-              <Link href="/studio" className="btn-primary gap-2">
-                Launch the Studio <ArrowRight className="size-4" />
-              </Link>
-              <Link href="/plugins" className="btn-ghost">
-                Explore 65 plugins
-              </Link>
-            </div>
-          </Reveal>
-          <Reveal delay={330}>
-            <dl className="pt-10 grid grid-cols-2 md:grid-cols-4 gap-8 max-w-3xl mx-auto">
-              {[
-                ["10", "Film looks"],
-                ["64+", "Prism modules"],
-                ["4K", "Max export"],
-                ["0", "Uploads required"],
-              ].map(([num, label]) => (
-                <div key={label}>
-                  <dt className="mono-num text-2xl md:text-3xl text-bronze-bright">
-                    {num}
-                  </dt>
-                  <dd className="mono-label !text-[9px] mt-2">{label}</dd>
-                </div>
-              ))}
-            </dl>
-          </Reveal>
-        </div>
+      {/* ── Hero: masked reveals + dual-speed parallax exit ── */}
+      <Hero />
 
-        {/* ── Live engine preview ── */}
-        <Reveal delay={150}>
-          <HeroStage />
-        </Reveal>
-      </section>
+      {/* ── Oversized display ticker ── */}
+      <Ticker />
 
       {/* ── Marquee ── */}
       <section className="relative py-14 overflow-hidden border-y border-line/50">
@@ -123,8 +77,17 @@ export default function Home() {
       {/* ── Capabilities ── */}
       <Capabilities />
 
+      {/* ── Pinned horizontal palette ── */}
+      <HorizontalLooks />
+
+      {/* ── Pinned manifesto: line-wipe scrub ── */}
+      <PinnedManifesto />
+
       {/* ── Numbered craft sections ── */}
       <NumberedEditorial />
+
+      {/* ── Pinned scroll-to-grade frame ── */}
+      <PinnedGradeReveal />
 
       {/* ── Interactive showcase: drag compare ── */}
       <section className="relative py-32 px-6 md:px-12">

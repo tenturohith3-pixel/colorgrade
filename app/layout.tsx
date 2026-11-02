@@ -3,6 +3,8 @@ import { Inter, JetBrains_Mono, Space_Grotesk } from "next/font/google";
 import "./globals.css";
 import { Nav } from "@/components/site/Nav";
 import { Footer } from "@/components/site/Footer";
+import { SmoothScroll } from "@/components/site/SmoothScroll";
+import { ScrollProgress } from "@/components/site/ScrollProgress";
 
 const inter = Inter({
   subsets: ["latin"],
@@ -43,9 +45,12 @@ export default function RootLayout({
   return (
     <html lang="en" className={`dark ${inter.variable} ${grotesk.variable} ${mono.variable}`}>
       <body className="bg-bg text-ink min-h-screen antialiased">
-        <Nav />
-        {children}
-        <Footer />
+        <SmoothScroll>
+          <ScrollProgress />
+          <Nav />
+          {children}
+          <Footer />
+        </SmoothScroll>
       </body>
     </html>
   );
