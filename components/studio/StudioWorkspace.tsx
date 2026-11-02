@@ -30,7 +30,6 @@ import {
 import { defaultParams, type GradeParams } from "@/lib/grade/params";
 import { applyLook, getLook, LOOKS } from "@/lib/grade/looks";
 import { parseCube, type CubeLut } from "@/lib/grade/cube";
-import { paintSampleFrame } from "@/lib/grade/sample";
 import {
   renderExportBlob,
   downloadBlob,
@@ -58,7 +57,6 @@ interface SourceState {
   name: string;
   w: number;
   h: number;
-  isSample: boolean;
 }
 
 type MobileTab = "looks" | "primary" | "wheels" | "hsl" | "fx";
@@ -125,22 +123,14 @@ export function StudioWorkspace() {
 
   const buildStageFor = useCallback(
     (src: SourceState): Stage | null => {
+      if (!src.img) return null;
       const long = Math.max(src.w, src.h) || 1;
       const scale = Math.min(1, PREVIEW_LONG / long);
       const w = Math.max(2, Math.round(src.w * scale));
       const h = Math.max(2, Math.round(src.h * scale));
       const stage = createStage(w, h);
       if (!stage) return null;
-      if (src.img) {
-        paintSource(stage, src.img);
-      } else {
-        // synthetic sample
-        stage.sourceCtx.fillStyle = "#0b0b0e";
-        stage.sourceCtx.fillRect(0, 0, w, h);
-        paintSampleFrame(stage.sourceCtx, w, h);
-        stage.sourceData = stage.sourceCtx.getImageData(0, 0, w, h);
-        stage.outData = stage.gradedCtx.createImageData(w, h);
-      }
+      paintSource(stage, src.img);
       if (baseRef.current) {
         const bctx = baseRef.current.getContext("2d");
         bctx?.clearRect(0, 0, w, h);
@@ -228,7 +218,6 @@ export function StudioWorkspace() {
           name: file.name,
           w: img.naturalWidth || img.width,
           h: img.naturalHeight || img.height,
-          isSample: false,
         };
         setSource(src);
         setParams(defaultParams());
@@ -248,30 +237,6 @@ export function StudioWorkspace() {
     },
     [buildStageFor, schedule],
   );
-
-  const loadSample = useCallback(() => {
-    const src: SourceState = {
-      img: null,
-      name: "Sample — synthetic dusk",
-      w: 1920,
-      h: 1080,
-      isSample: true,
-    };
-    setSource(src);
-    setParams(defaultParams());
-    past.current = [];
-    future.current = [];
-    setHistLen({ p: 0, f: 0 });
-    const stage = buildStageFor(src);
-    if (!stage) return;
-    schedule();
-  }, [buildStageFor, schedule]);
-
-  /* Initial: paint the synthetic frame immediately so Studio is never empty */
-  useEffect(() => {
-    loadSample();
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, []);
 
   /* Demo-paint after source set (cover the graded path once) */
   useEffect(() => {
@@ -339,21 +304,9 @@ export function StudioWorkspace() {
   const runExport = useCallback(
     async (t: { format: "png" | "jpeg"; quality: number; maxLongEdge: number }) => {
       const src = sourceRef.current;
-      if (!src) throw new Error("No source frame loaded.");
-      let renderable: HTMLImageElement | HTMLCanvasElement | null = src.img;
-      if (!renderable) {
-        // synthetic sample → rasterize a full-res sample stage
-        const full = createStage(1920, 1080);
-        if (full) {
-          full.sourceCtx.fillStyle = "#0b0b0e";
-          full.sourceCtx.fillRect(0, 0, 1920, 1080);
-          paintSampleFrame(full.sourceCtx, 1920, 1080);
-          renderable = full.source;
-        }
-      }
-      if (!renderable) throw new Error("No renderable source.");
+      if (!src?.img) throw new Error("Open an image before exporting.");
       const { blob, filename } = await renderExportBlob({
-        img: renderable,
+        img: src.img,
         params: paramsRef.current,
         cube: cubeRef.current,
         format: t.format,
@@ -533,15 +486,11 @@ export function StudioWorkspace() {
           ) : null}
 
           <div className="flex-1 grid place-items-center p-4 md:p-8">
+            {source ? (
             <div
-              className={cn(
-                "relative w-full rounded-2xl border bg-bg-raised overflow-hidden transition-colors",
-                dragOver ? "border-bronze/60" : "border-line",
-                "shadow-[0_30px_90px_-30px_rgba(0,0,0,0.85)]",
-              )}
+              className="relative w-full rounded-2xl border border-line bg-bg-raised overflow-hidden transition-colors shadow-[0_30px_90px_-30px_rgba(0,0,0,0.85)]"
               style={{ aspectRatio: dispW && dispH ? `${dispW} / ${dispH}` : "16 / 9" }}
             >
-              {source ? (
                 <>
                   <canvas
                     ref={baseRef}
@@ -602,32 +551,43 @@ export function StudioWorkspace() {
                     title={mode === "split" ? "Drag to compare" : undefined}
                   />
                 </>
-              ) : (
-                <div className="absolute inset-0 grid place-items-center p-8">
-                  <div className="text-center max-w-sm">
-                    <ImagePlus className="size-8 text-bronze-bright mx-auto" strokeWidth={1.5} />
-                    <p className="display text-xl mt-4">Drop a frame anywhere</p>
-                    <p className="mono-label mt-2 !text-[9px]">
-                      PNG · JPEG · WEBP — OR START WITH THE SAMPLE
-                    </p>
-                    <div className="flex gap-2 justify-center mt-6">
-                      <button onClick={() => fileInputRef.current?.click()} className="btn-primary !py-2.5 !px-5 text-[13px]">
-                        Open image
-                      </button>
-                      <button onClick={loadSample} className="btn-ghost !py-2.5 !px-5 text-[13px]">
-                        Sample frame
-                      </button>
-                    </div>
-                  </div>
-                </div>
-              )}
             </div>
+            ) : (
+              <button
+                onClick={() => fileInputRef.current?.click()}
+                className={cn(
+                  "group relative w-full max-w-2xl rounded-2xl border border-dashed p-14 md:p-20 text-center transition-colors",
+                  dragOver
+                    ? "border-bronze/70 bg-bronze/[0.06]"
+                    : "border-line/80 bg-bg-raised/30 hover:border-bronze/40",
+                )}
+              >
+                {dragOver ? (
+                  <span className="mono-label !text-[9px] absolute top-4 right-4 text-bronze-bright">
+                    DROP TO OPEN
+                  </span>
+                ) : null}
+                <ImagePlus
+                  className={cn(
+                    "size-6 mx-auto transition-colors",
+                    dragOver ? "text-bronze-bright" : "text-ink-faint group-hover:text-bronze-bright",
+                  )}
+                  strokeWidth={1.5}
+                />
+                <p className="display text-xl mt-4">Drop a frame here</p>
+                <p className="mono-label mt-2 !text-[9px] !text-ink-faint">PNG · JPEG · WEBP</p>
+                <span className="btn-primary !py-2.5 !px-5 text-[13px] inline-flex mt-6">
+                  Open image
+                </span>
+              </button>
+            )}
           </div>
 
-          {/* status bar */}
+          {/* status bar — only once a source is loaded */}
+          {source ? (
           <div className="shrink-0 border-t border-line px-4 md:px-6 h-9 flex items-center justify-between">
             <span className="mono-label !text-[9px]">
-              {LOOKS.find((l) => l.id === params.look)?.name ?? "No look"} · SEED 11
+              {LOOKS.find((l) => l.id === params.look)?.name ?? "No look"}
             </span>
             <div className="flex items-center gap-3">
               <span className="mono-label !text-[9px] hidden sm:block">
@@ -641,6 +601,7 @@ export function StudioWorkspace() {
               </button>
             </div>
           </div>
+          ) : null}
         </div>
 
         {/* Right rail (desktop) */}
