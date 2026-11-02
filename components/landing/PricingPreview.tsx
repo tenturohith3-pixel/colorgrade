@@ -14,7 +14,7 @@ const TIERS = [
   },
   {
     name: "Pro",
-    price: "₹499",
+    price: "$9",
     note: "30-day key",
     perks: [
       "All 10 film looks",
@@ -29,13 +29,13 @@ const TIERS = [
   },
   {
     name: "Studio",
-    price: "₹1,499",
+    price: "$19",
     note: "365-day key",
     perks: [
       "Everything in Pro",
       "Film grain & halation",
       "Bloom & HDR curve",
-      "Priority pipeline",
+      "Prism Bundle included",
     ],
     cta: "Get Studio",
     href: "/pricing",
@@ -43,7 +43,7 @@ const TIERS = [
   },
   {
     name: "Lifetime",
-    price: "₹4,999",
+    price: "$59",
     note: "never expires",
     perks: ["Everything in Studio", "All future looks", "Commercial license", "Free updates"],
     cta: "Own it",
@@ -108,6 +108,14 @@ export function PricingPreview() {
               </div>
             </Reveal>
           ))}
+          <Reveal delay={360} className="sm:col-span-2 lg:col-span-4">
+            <p className="text-center mono-label !text-[10px] mt-2">
+              PLUGINS ARE PAID ·{" "}
+              <Link href="/pricing#bundle" className="text-bronze-bright hover:underline underline-offset-2">
+                PRISM BUNDLE — $29 · ALL 65 MODULES · INCLUDED WITH STUDIO &amp; LIFETIME
+              </Link>
+            </p>
+          </Reveal>
         </div>
       </div>
     </section>

@@ -9,6 +9,7 @@
     "start": "next start",
     "lint": "eslint .",
     "typecheck": "tsc --noEmit",
+    "mint": "bun run scripts/mint-key.ts",
     "catalog:sync": "bun run scripts/sync-catalog.ts"
   },
   "dependencies": {

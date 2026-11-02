@@ -30,6 +30,10 @@ export function Nav() {
 
   useEffect(() => setOpen(false), [pathname]);
 
+  // The Studio and Admin have their own full-screen chrome — the global
+  // nav would collide with their fixed toolbars. Option out there.
+  if (pathname === "/studio" || pathname.startsWith("/admin")) return null;
+
   return (
     <header
       className={cn(

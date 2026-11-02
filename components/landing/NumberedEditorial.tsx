@@ -74,8 +74,11 @@ export function NumberedEditorial() {
             </h2>
             <p className="text-lg text-ink-muted font-light leading-relaxed">
               Sixty-five Prism modules — S_Glow, S_Light Rays, S_Twixtor Pro,
-              S_Deep Glow — built as WASM and delivered as binaries you keep.
-              The catalog is the shelf; your vision loads them.
+              S_Deep Glow — built as WASM and delivered as binaries you keep,
+              all under one paid bundle.{" "}
+              <Link href="/pricing#bundle" className="text-bronze-bright hover:underline underline-offset-2">
+                The Prism Bundle — $29.
+              </Link>
             </p>
             <Link href="/plugins" className="text-bronze-bright text-sm inline-flex items-center gap-2 hover:gap-3 transition-all">
               Browse the catalog <span aria-hidden>→</span>

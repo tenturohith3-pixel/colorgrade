@@ -37,13 +37,21 @@ export function ExportPanel({
   const options = useMemo(() => {
     const out: { label: string; long: number; disabled: boolean; note: string }[] = [];
     const push = (label: string, long: number) => {
+      const unlockNote =
+        tier === "basic" || tier === "bundle"
+          ? "Pro unlocks"
+          : tier === "pro"
+            ? "Studio unlocks"
+            : tier === "studio"
+              ? "Lifetime unlocks"
+              : "";
       out.push({
         label,
         long,
         disabled: long > maxLong || (srcLong > 0 && long > srcLong),
         note:
           long > maxLong
-            ? `${tier === "basic" ? "Pro" : tier === "pro" ? "Studio/Lifetime" : "Lifetime"} unlocks`
+            ? unlockNote
             : srcLong > 0 && long > srcLong
               ? "larger than source"
               : "",

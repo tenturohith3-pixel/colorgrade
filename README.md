@@ -40,4 +40,18 @@ public/media/prism/  rendered reference frames
 
 ## Environment
 
-None required. Everything works offline by design.
+None required to run.
+
+Production licensing requires two Vercel environment variables (Project → Settings → Environment Variables):
+
+- `ADMIN_PIN` — the private PIN for `/admin` (min 6 chars). Holders can mint keys at `/admin`.
+- `LICENSE_SECRET` — long random string (min 16 chars, e.g. `openssl rand -hex 24`). Seeds the HMAC that signs every key. Rotate to invalidate all keys at once.
+
+Mint keys from the terminal instead: `LICENSE_SECRET=… bun run mint [bundle|pro|studio|lifetime] "customer name"`.
+
+## Licensing model
+
+- Basic (free) / Bundle / Pro (30d) / Studio (365d) / Lifetime (never)
+- Keys: 19 chars, HMAC-signed server-side, verified via `POST /api/license/validate`
+- Plugin downloads re-verify the key per request (`/api/plugins/[id]/download?key=…`)
+- Prices: Pro $9 · Studio $19 · Lifetime $59 · Prism Bundle $29

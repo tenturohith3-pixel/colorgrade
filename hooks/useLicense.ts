@@ -2,14 +2,14 @@
 
 import { useCallback, useEffect, useState } from "react";
 import {
-  buildLicense,
   clearLicense,
   LICENSE_CHANGE_EVENT,
   loadLicense,
   saveLicense,
-  validateKey,
+  validateKeyRemote,
   type StoredLicense,
   type KeyValidation,
+  type Tier,
 } from "@/lib/license";
 
 export function useLicense() {
@@ -30,11 +30,16 @@ export function useLicense() {
     };
   }, []);
 
-  const activate = useCallback((input: string): KeyValidation => {
-    const result = validateKey(input);
+  const activate = useCallback(async (input: string): Promise<KeyValidation> => {
+    const result = await validateKeyRemote(input);
     if (!result.ok || !result.key) return result;
-    const tier = result.tier as Exclude<StoredLicense["tier"], "basic">;
-    saveLicense(buildLicense(tier, result.key));
+    const tier = result.tier as Exclude<Tier, "basic">;
+    saveLicense({
+      key: result.key,
+      tier,
+      issuedAt: result.issuedAt ?? Date.now(),
+      expiresAt: result.expiresAt ?? null,
+    });
     return result;
   }, []);
 

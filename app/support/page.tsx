@@ -44,7 +44,7 @@ const FAQ = [
   },
   {
     q: "How do Plugin binaries fit into my pipeline?",
-    a: "Prism modules are standard WASM. Download the binary, mount it in your host of choice, or reference its deterministic module id (prism://<id>) from EffectCraft-compatible tooling.",
+    a: "Prism modules are standard WASM, sold together in the Prism Bundle ($29 one-time, included with Studio and Lifetime). Unlock once, download every binary, and mount it in your host of choice or reference its deterministic module id (prism://<id>) from EffectCraft-compatible tooling.",
   },
   {
     q: "Why is the export lighter than my source?",

@@ -1,9 +1,10 @@
 import type { Metadata } from "next";
 import Link from "next/link";
 import { notFound } from "next/navigation";
-import { ArrowLeft, Download, Cpu, Box } from "lucide-react";
+import { ArrowLeft, Cpu, Box } from "lucide-react";
 import { pluginById, plugins } from "@/lib/catalog";
 import { Reveal } from "@/components/site/Reveal";
+import { DownloadButton } from "@/components/plugins/DownloadButton";
 
 export async function generateStaticParams() {
   return plugins.map((p) => ({ id: p.id }));
@@ -78,10 +79,15 @@ export default async function PluginDetailPage({
 
               <p className="text-[15px] text-ink-muted leading-relaxed">
                 A Prism module from the{" "}
-                {plugin.category.toLowerCase()} discipline. Drop the binary in
-                your host&rsquo;s module directory or run it inside
-                EffectCraft-compatible pipelines. Versioned, deterministic and
-                unwatermarked — the file is yours.
+                {plugin.category.toLowerCase()} discipline. Part of the paid{" "}
+                <Link
+                  href="/pricing#bundle"
+                  className="text-bronze-bright hover:underline underline-offset-2"
+                >
+                  Prism Bundle ($29)
+                </Link>{" "}
+                — versioned, deterministic and unwatermarked; the binary is
+                yours once unlocked.
               </p>
 
               <dl className="glass divide-y divide-line overflow-hidden text-sm">
@@ -89,23 +95,16 @@ export default async function PluginDetailPage({
                 <Row label="Binary" value={binaryFile} mono />
                 <Row label="Format" value="WebAssembly (wasm32)" />
                 <Row label="Category" value={plugin.category} />
-                <Row label="License" value="Royalty-free, single instance" />
+                <Row label="Availability" value="Prism Bundle — $29 one-time" />
               </dl>
 
-              <a
-                href={`/api/plugins/${plugin.id}/download`}
-                className="btn-primary w-full justify-center gap-2"
-                download
-              >
-                <Download className="size-4" />
-                Download binary — {binaryFile}
-              </a>
+              <DownloadButton pluginId={plugin.id} />
 
               <div className="grid grid-cols-3 gap-3 text-center">
                 {[
                   { icon: Cpu, label: "WASM32" },
                   { icon: Box, label: "Deterministic" },
-                  { icon: Download, label: "Yours forever" },
+                  { icon: Box, label: "Bundle · $29" },
                 ].map((b) => (
                   <div key={b.label} className="glass p-4">
                     <b.icon className="size-4 mx-auto text-bronze-bright" strokeWidth={1.5} />

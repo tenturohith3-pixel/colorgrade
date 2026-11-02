@@ -1,21 +1,23 @@
 import type { Metadata } from "next";
 import Link from "next/link";
-import { Check, ShieldCheck } from "lucide-react";
+import { Check, ShieldCheck, Boxes } from "lucide-react";
 import { Reveal } from "@/components/site/Reveal";
 import { PricingTools } from "@/components/pricing/PricingTools";
 
 export const metadata: Metadata = {
   title: "Pricing & Keys",
   description:
-    "Start free forever. One key unlocks Pro, Studio or Lifetime — no accounts, no uploads.",
+    "Start free forever. Pro $9 · Studio $19 · Lifetime $59 · Prism Plugin Bundle $29 — one key, no accounts, no uploads.",
 };
+
+const MAIL = "support@effectcraft.studio";
 
 const TIERS: {
   name: string;
   price: string;
   note: string;
   perks: string[];
-  cta: { label: string; href?: string; tier?: "pro" | "studio" | "lifetime" };
+  cta: { label: string; href: string };
   featured: boolean;
 }[] = [
   {
@@ -34,52 +36,74 @@ const TIERS: {
   },
   {
     name: "Pro",
-    price: "₹499",
+    price: "$9",
     note: "30-day key",
     perks: [
       "Everything in Basic",
-      "8 more film looks (10 total)",
+      "All 10 film looks",
       "3-way color wheels",
       "8-channel HSL isolation",
       ".cube 3D LUT import",
       "4K export (3840px)",
     ],
-    cta: { label: "Demo-generate Pro", tier: "pro" as const },
+    cta: {
+      label: "Get Pro — $9",
+      href: `mailto:${MAIL}?subject=${encodeURIComponent("Order: Pro key ($9)")}`,
+    },
     featured: true,
   },
   {
     name: "Studio",
-    price: "₹1,499",
+    price: "$19",
     note: "365-day key",
     perks: [
       "Everything in Pro",
       "Film grain · halation · bloom",
       "HDR curve & highlight recovery",
-      "Everglade Studio look",
-      "4K export, priority pipeline",
+      "Prism Bundle included — free",
+      "4K export, priority support",
     ],
-    cta: { label: "Demo-generate Studio", tier: "studio" as const },
+    cta: {
+      label: "Get Studio — $19",
+      href: `mailto:${MAIL}?subject=${encodeURIComponent("Order: Studio key ($19)")}`,
+    },
     featured: false,
   },
   {
     name: "Lifetime",
-    price: "₹4,999",
+    price: "$59",
     note: "one key · never expires",
     perks: [
       "Everything in Studio, forever",
-      "All future looks & plugins",
+      "Prism Bundle included — free",
+      "All future looks & modules",
       "Commercial usage license",
-      "Everglade + roadmap modules",
+      "Best value — one payment",
     ],
-    cta: { label: "Demo-generate Lifetime", tier: "lifetime" as const },
+    cta: {
+      label: "Own it — $59",
+      href: `mailto:${MAIL}?subject=${encodeURIComponent("Order: Lifetime key ($59)")}`,
+    },
     featured: false,
   },
 ];
 
 const STEPS = [
-  { n: "01", title: "Pick the tier", body: "Free needs nothing. Pro, Studio and Lifetime are single-purchase keys — no subscriptions hiding in the fine print." },
-  { n: "02", title: "Enter in Studio", body: "Paste the key once — verification is instant and local. The tier badge lights up in the top bar and every locked control comes online." },
-  { n: "03", title: "Grade to the limit", body: "Until expiry (or forever, on Lifetime), export up to your tier's ceiling — 4K included." },
+  {
+    n: "01",
+    title: "Pick your unlock",
+    body: "Grading tools ride on Pro, Studio or Lifetime keys. Plugins are never sold one-by-one — the whole catalog ships as the Prism Bundle ($29), already included free with Studio and Lifetime.",
+  },
+  {
+    n: "02",
+    title: "Get your key",
+    body: "Keys are minted privately by the EffectCraft team (HMAC-signed, hard to forge). Hit a purchase button above or write to support — you'll get your key by email, usually within a day.",
+  },
+  {
+    n: "03",
+    title: "Activate & grade",
+    body: "Paste the key into Studio, the badge lights up, every locked control unlocks. Devices are independent — activate each machine you grade on.",
+  },
 ];
 
 export default function PricingPage() {
@@ -98,22 +122,19 @@ export default function PricingPage() {
       <section className="px-6 md:px-12">
         <div className="max-w-4xl mx-auto text-center">
           <Reveal>
-            <span className="pill-badge">PRICING</span>
+            <span className="pill-badge">PRICING — USD</span>
             <h1 className="display text-5xl md:text-7xl gradient-text mt-8 text-balance">
               Free until you need more.
             </h1>
             <p className="mt-6 text-lg text-ink-muted font-light leading-relaxed">
-              One key. No accounts, no uploads, no device locks. Verified
-              client-side in seconds.
+              No accounts, no subscriptions, no device locks. Keys are
+              server-verified in seconds.
             </p>
           </Reveal>
           <Reveal delay={130}>
             <div className="mt-10 flex justify-center">
               <PricingTools />
             </div>
-            <p className="mono-label !text-[9px] mt-4">
-              THIS BUILD ISSUES SELF-VERIFIED KEYS FOR DEMO/DEV
-            </p>
           </Reveal>
         </div>
       </section>
@@ -149,22 +170,9 @@ export default function PricingPage() {
                   ))}
                 </ul>
                 <div className="mt-8">
-                  {t.cta.href ? (
-                    <Link href={t.cta.href} className={t.featured ? "btn-primary w-full justify-center text-[13px]" : "btn-ghost w-full justify-center text-[13px]"}>
-                      {t.cta.label}
-                    </Link>
-                  ) : (
-                    <span
-                      className={
-                        t.featured
-                          ? "btn-primary w-full justify-center text-[13px] pointer-events-none opacity-90"
-                          : "btn-ghost w-full justify-center text-[13px] pointer-events-none opacity-60"
-                      }
-                      title="Generate above using the demo keys"
-                    >
-                      {t.cta.label}
-                    </span>
-                  )}
+                  <Link href={t.cta.href} className={t.featured ? "btn-primary w-full justify-center text-[13px]" : "btn-ghost w-full justify-center text-[13px]"}>
+                    {t.cta.label}
+                  </Link>
                 </div>
               </div>
             </Reveal>
@@ -172,13 +180,53 @@ export default function PricingPage() {
         </div>
       </section>
 
+      {/* ── Prism Bundle ── */}
+      <section id="bundle" className="relative py-16 px-6 md:px-12 scroll-mt-24">
+        <div className="max-w-5xl mx-auto">
+          <Reveal>
+            <div className="glass p-8 md:p-12 border-bronze/30 relative overflow-hidden">
+              <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_top_right,rgba(201,160,106,0.09),transparent_60%)] pointer-events-none" />
+              <div className="grid grid-cols-1 md:grid-cols-[1.5fr_1fr] gap-8 items-center relative">
+                <div>
+                  <p className="mono-label !text-[9px] !text-bronze-bright flex items-center gap-2">
+                    <Boxes className="size-4" /> PLUGINS ARE PAID · ONE BUNDLE
+                  </p>
+                  <h2 className="display text-3xl md:text-5xl mt-4 gradient-text">
+                    The Prism Bundle.
+                  </h2>
+                  <p className="mt-4 text-[15px] text-ink-muted leading-relaxed max-w-xl">
+                    All 65 WASM modules — S_Glow, S_Light Rays, Twixtor Pro, the
+                    whole catalog — plus every module we add later. Never sold
+                    individually: one key unlocks every binary, forever. Server-
+                    verified on each download, unwatermarked, yours to keep.
+                  </p>
+                  <p className="mono-num text-[11px] text-ink-faint mt-4">
+                    INCLUDED FREE WITH STUDIO &amp; LIFETIME KEYS
+                  </p>
+                </div>
+                <div className="md:text-right">
+                  <p className="display text-6xl prism-text">$29</p>
+                  <p className="mono-label !text-[9px] mt-2">ONE-TIME · NO SUBSCRIPTION</p>
+                  <Link
+                    href={`mailto:${MAIL}?subject=${encodeURIComponent("Order: Prism Bundle ($29)")}`}
+                    className="btn-primary mt-6 w-full md:w-auto justify-center gap-2"
+                  >
+                    Get the bundle — $29
+                  </Link>
+                </div>
+              </div>
+            </div>
+          </Reveal>
+        </div>
+      </section>
+
       {/* ── How keys work ── */}
       <section id="how-keys-work" className="relative py-24 px-6 md:px-12 border-t border-line/60">
         <div className="max-w-7xl mx-auto">
           <Reveal>
-            <p className="mono-label mb-4">How access works</p>
+            <p className="mono-label mb-4">How keys work</p>
             <h2 className="display text-4xl md:text-5xl gradient-text max-w-2xl">
-              Keys are honor systems, enforced.
+              Minted privately. Verified publicly.
             </h2>
           </Reveal>
           <div className="mt-14 grid grid-cols-1 md:grid-cols-3 gap-4">
@@ -198,12 +246,11 @@ export default function PricingPage() {
               <ShieldCheck className="size-5 text-bronze-bright shrink-0 mt-0.5" strokeWidth={1.5} />
               <div>
                 <p className="text-sm text-ink leading-relaxed">
-                  Keys are checksum-verified strings tied to a tier and duration.
-                  In this build the whole verification loop runs client-side so
-                  the platform stays fully functional without any paid backend.
-                  Production wiring (Stripe checkout + email delivery) plugs into
-                  the same <span className="mono-num text-[12px]">buildLicense()</span>{" "}
-                  interface.
+                  Keys are cryptographically signed with a secret that lives only
+                  on the server — activation checks that signature through the
+                  key service, and plugin downloads re-verify it again per
+                  download. Reverse-engineering the site doesn&rsquo;t reveal how
+                  to mint one.
                 </p>
               </div>
             </div>
@@ -223,20 +270,24 @@ export default function PricingPage() {
           <div className="mt-12 space-y-3">
             {[
               {
+                q: "How do I buy a key?",
+                a: "Click any tier's button (or the Prism Bundle card) — it opens a pre-filled email to support. We confirm payment and send your key by email, usually within 24 hours. Then paste it into Studio.",
+              },
+              {
                 q: "Do I need an account?",
-                a: "No. The Studio runs entirely in your browser — nothing to sign up for, nothing to log into. Keys are the only state.",
+                a: "No. The Studio runs entirely in your browser — nothing to sign up for. Your key is the only state, and it lives in your browser.",
+              },
+              {
+                q: "Can I buy plugins individually?",
+                a: "No — that's the point of the bundle. All 65 modules ship together for $29 (one-time), and the bundle is already included free with Studio and Lifetime keys.",
               },
               {
                 q: "What happens when my key expires?",
-                a: "The Studio quietly drops back to free tier — your parameters stay, locked tools grey out, exports ceiling to 1080p. Reactivate any time with a fresh key.",
+                a: "The Studio quietly drops back to Free — your parameters stay, locked tools grey out, exports ceiling to 1080p, plugin downloads pause. Activate a fresh key and everything returns.",
               },
               {
                 q: "Can I use exports commercially?",
                 a: "Graded outputs you create are yours. The Lifetime tier explicitly includes a commercial license; free-tier exports are for personal and evaluation use.",
-              },
-              {
-                q: "Is the demo key flow safe to test?",
-                a: "It's designed for it — checksum-verified, local-only, and revocable from the key panel any time.",
               },
             ].map((f, i) => (
               <Reveal key={f.q} delay={i * 60}>

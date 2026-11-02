@@ -201,7 +201,7 @@ export function StudioWorkspace() {
       const prev = paramsRef.current;
       const next: GradeParams = { ...prev, ...p };
       if (p.hsl) next.hsl = p.hsl;
-      if (rank < 2) {
+      if (rank < 3) {
         next.filmGrain = 0;
         next.halation = 0;
         next.bloom = 0;
@@ -489,7 +489,7 @@ export function StudioWorkspace() {
       </div>
 
       {/* ── Body ── */}
-      <div className="flex-1 lg:grid lg:grid-cols-[240px_1fr_320px] min-h-[calc(100vh-7rem)]">
+      <div className="flex-1 lg:grid lg:grid-cols-[260px_1fr_330px] min-h-[calc(100vh-7rem)]">
         {/* Left rail */}
         <aside className="hidden lg:block border-r border-line overflow-y-auto max-h-[calc(100vh-7rem)]">
           <LooksRail
@@ -646,13 +646,13 @@ export function StudioWorkspace() {
         {/* Right rail (desktop) */}
         <aside className="hidden lg:block border-l border-line overflow-y-auto max-h-[calc(100vh-7rem)]">
           <PrimaryPanel params={params} patch={patch} />
-          <WheelsPanel params={params} patch={patch} hasKey={rank >= 1} />
-          <HslPanel params={params} patch={patch} hasKey={rank >= 1} />
+          <WheelsPanel params={params} patch={patch} hasKey={rank >= 2} />
+          <HslPanel params={params} patch={patch} hasKey={rank >= 2} />
           <FxPanel
             params={params}
             patch={patch}
             tier={tier}
-            hasKey={rank >= 1}
+            hasKey={rank >= 2}
             cubeName={cubeName}
             onCubeFile={importCube}
             clearCube={() => {
@@ -703,14 +703,14 @@ export function StudioWorkspace() {
               />
             ) : null}
             {tab === "primary" ? <PrimaryPanel params={params} patch={patch} /> : null}
-            {tab === "wheels" ? <WheelsPanel params={params} patch={patch} hasKey={rank >= 1} /> : null}
-            {tab === "hsl" ? <HslPanel params={params} patch={patch} hasKey={rank >= 1} /> : null}
+            {tab === "wheels" ? <WheelsPanel params={params} patch={patch} hasKey={rank >= 2} /> : null}
+            {tab === "hsl" ? <HslPanel params={params} patch={patch} hasKey={rank >= 2} /> : null}
             {tab === "fx" ? (
               <FxPanel
                 params={params}
                 patch={patch}
                 tier={tier}
-                hasKey={rank >= 1}
+                hasKey={rank >= 2}
                 cubeName={cubeName}
                 onCubeFile={importCube}
                 clearCube={() => {

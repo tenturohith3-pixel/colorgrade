@@ -10,7 +10,7 @@ import {
   type GradeParams,
   type HslBandKey,
 } from "@/lib/grade/params";
-import type { Tier } from "@/lib/license";
+import { TIER_RANK, type Tier } from "@/lib/license";
 
 export interface InspectorProps {
   params: GradeParams;
@@ -251,8 +251,8 @@ export function FxPanel({
   onCubeFile,
   clearCube,
 }: InspectorProps) {
-  const studioOk = tier === "studio" || tier === "lifetime";
-  const proLutsOk = hasKey;
+  const studioOk = TIER_RANK[tier] >= TIER_RANK.studio;
+  const proLutsOk = TIER_RANK[tier] >= TIER_RANK.pro;
   const inputRef = useRef<HTMLInputElement>(null);
 
   return (
