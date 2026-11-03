@@ -66,18 +66,18 @@ export function HorizontalLooks() {
   );
 
   return (
-    <section ref={sectionRef} className="relative hl-pin h-[100svh] overflow-hidden py-10">
+    <section ref={sectionRef} id="scene-palette" className="relative hl-pin h-[100svh] overflow-hidden py-10">
       <div className="hl-viewport h-full flex flex-col justify-center">
         {/* header pinned together with the track */}
         <div className="px-6 md:px-12 flex items-end justify-between max-w-7xl mx-auto w-full">
           <div>
-            <p className="mono-label !text-[10px]">PALETTE — THE FILM EMULATIONS</p>
+            <p className="mono-label !text-[10px]">SCENE 04 — THE PALETTE</p>
             <h2 className="display text-4xl md:text-6xl mt-3 gradient-text">
               Ten looks, engineered one by one.
             </h2>
           </div>
           <p className="hidden md:block mono-num text-[11px] text-ink-faint pb-2">
-            SCROLL ↓ — HORIZONTAL PIN
+            SCROLL ↓ — THE REEL TRAVELS SIDEWAYS
           </p>
         </div>
 

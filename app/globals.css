@@ -365,9 +365,6 @@ html.lenis body {
     transform: translate3d(-50%, 0, 0);
   }
 }
-.ticker-track {
-  animation: ticker 30s linear infinite;
-}
 .ticker-outline {
   -webkit-text-stroke: 1.5px rgba(201, 160, 106, 0.38);
   color: transparent;
@@ -384,10 +381,21 @@ html.lenis body {
   will-change: transform;
 }
 
+@keyframes scrolldot {
+  0%,
+  100% {
+    transform: translateY(0);
+    opacity: 1;
+  }
+  50% {
+    transform: translateY(1.7rem);
+    opacity: 0.35;
+  }
+}
+
 /* ── Reduced-motion: unpin & unwrap ──────── */
 @media (prefers-reduced-motion: reduce) {
-  .marquee-track,
-  .ticker-track {
+  .marquee-track {
     animation: none;
   }
   .hl-pin {

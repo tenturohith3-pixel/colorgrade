@@ -35,6 +35,8 @@ export function SmoothScroll({ children }: { children: ReactNode }) {
         wheelMultiplier: 1,
         smoothWheel: true,
       });
+      // exposed for scene navigation (ChapterRail)
+      (window as unknown as { __ecLenis?: Lenis }).__ecLenis = lenis;
       raf = (time: number) => {
         lenis?.raf(time * 1000);
       };

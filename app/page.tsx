@@ -1,11 +1,13 @@
-import { Hero } from "@/components/landing/Hero";
+import { ActOpen } from "@/components/landing/ActOpen";
 import { Ticker } from "@/components/landing/Ticker";
-import { CompareShowcase } from "@/components/landing/CompareShowcase";
-import { Capabilities } from "@/components/landing/Capabilities";
-import { HorizontalLooks } from "@/components/landing/HorizontalLooks";
-import { PinnedManifesto } from "@/components/landing/PinnedManifesto";
+import { ActAssembly } from "@/components/landing/ActAssembly";
 import { PinnedGradeReveal } from "@/components/landing/PinnedGradeReveal";
-import { NumberedEditorial } from "@/components/landing/NumberedEditorial";
+import { PinnedManifesto } from "@/components/landing/PinnedManifesto";
+import { HorizontalLooks } from "@/components/landing/HorizontalLooks";
+import { ActTexture } from "@/components/landing/ActTexture";
+import { ActFinal } from "@/components/landing/ActFinal";
+import { ChapterRail } from "@/components/landing/ChapterRail";
+import { CompareShowcase } from "@/components/landing/CompareShowcase";
 import { PluginsTeaser } from "@/components/landing/PluginsTeaser";
 import { PricingPreview } from "@/components/landing/PricingPreview";
 import { Reveal } from "@/components/site/Reveal";
@@ -14,7 +16,7 @@ import { ArrowRight } from "lucide-react";
 
 export default function Home() {
   return (
-    <main className="relative overflow-hidden">
+    <main className="relative overflow-hidden noise min-h-screen">
       {/* ── Ambient backdrop ── */}
       <div className="fixed inset-0 pointer-events-none" aria-hidden>
         <div
@@ -36,69 +38,40 @@ export default function Home() {
         </div>
       </div>
 
-      {/* ── Hero: masked reveals + dual-speed parallax exit ── */}
-      <Hero />
+      {/* ── The story ── */}
+      <ChapterRail />
 
-      {/* ── Oversized display ticker ── */}
+      {/* Scene 01 — cold open: every shot starts flat */}
+      <ActOpen />
+
+      {/* Story spine */}
       <Ticker />
 
-      {/* ── Marquee ── */}
-      <section className="relative py-14 overflow-hidden border-y border-line/50">
-        <p className="text-center mono-label mb-8">
-          Trusted in pipelines by creators of
-        </p>
-        <div className="relative w-full overflow-hidden [mask-image:linear-gradient(90deg,transparent,black_15%,black_85%,transparent)]">
-          <div className="marquee-track flex items-center gap-16 w-max px-6">
-            {[0, 1].map((half) => (
-              <div key={half} className="flex items-center gap-16">
-                {[
-                  "LOOMIS FILMS",
-                  "ASTRA DYNAMICS",
-                  "HALCYON WEST",
-                  "MAHORA STUDIO",
-                  "NORTHWIND POST",
-                  "KAIROS MOTION",
-                  "VERITE HOUSE",
-                  "AURELUS",
-                ].map((name) => (
-                  <span
-                    key={`${half}-${name}`}
-                    className="font-mono text-[13px] tracking-[0.3em] text-ink-faint whitespace-nowrap"
-                  >
-                    {name}
-                  </span>
-                ))}
-              </div>
-            ))}
-          </div>
-        </div>
-      </section>
+      {/* Scene 02 — the tools fly together around the frame */}
+      <ActAssembly />
 
-      {/* ── Capabilities ── */}
-      <Capabilities />
-
-      {/* ── Pinned horizontal palette ── */}
-      <HorizontalLooks />
-
-      {/* ── Pinned manifesto: line-wipe scrub ── */}
-      <PinnedManifesto />
-
-      {/* ── Numbered craft sections ── */}
-      <NumberedEditorial />
-
-      {/* ── Pinned scroll-to-grade frame ── */}
+      {/* Scene 03 — the grade, scrubbed by scroll */}
       <PinnedGradeReveal />
 
-      {/* ── Interactive showcase: drag compare ── */}
-      <section className="relative py-32 px-6 md:px-12">
+      {/* Interlude — the doctrine */}
+      <PinnedManifesto />
+
+      {/* Scene 04 — the palette travels sideways */}
+      <HorizontalLooks />
+
+      {/* Scene 05 — texture & tone + the 65 */}
+      <ActTexture />
+
+      {/* Scene 06 — proof: your hands on the wheel */}
+      <section id="scene-proof" className="relative py-32 px-6 md:px-12">
         <Reveal className="text-center max-w-2xl mx-auto mb-14">
-          <p className="mono-label mb-4">Proof of engine</p>
+          <p className="mono-label mb-4">SCENE 06 — PROOF, IN YOUR HANDS</p>
           <h2 className="display text-4xl md:text-5xl gradient-text">
-            See the transformation.
+            The engine is loaded. Pull the wheel.
           </h2>
           <p className="mt-4 text-ink-muted font-light">
-            These aren&rsquo;t static before/after images — you are dragging the
-            grading engine itself.
+            This is not a video loop — you are dragging the grading engine
+            itself, the same one waiting inside the Studio.
           </p>
         </Reveal>
         <Reveal delay={100}>
@@ -106,36 +79,14 @@ export default function Home() {
         </Reveal>
       </section>
 
-      {/* ── Plugin teaser ── */}
+      {/* Scene 07 — the vault */}
       <PluginsTeaser />
 
-      {/* ── Pricing preview ── */}
+      {/* Scene 08 — ownership */}
       <PricingPreview />
 
-      {/* ── Final CTA ── */}
-      <section className="relative py-36 px-6 md:px-12 text-center">
-        <Reveal className="max-w-3xl mx-auto">
-          <div className="vlines hidden md:grid">
-            <span /><span /><span /><span />
-          </div>
-          <p className="mono-label mb-5">VOL. 01 — FINAL CUT</p>
-          <h2 className="display text-4xl md:text-6xl lg:text-7xl gradient-text">
-            Make every frame cinematic.
-          </h2>
-          <p className="mt-6 text-lg text-ink-muted font-light max-w-xl mx-auto">
-            The whole pipeline is live in your browser right now. Walk in,
-            drop a frame, and grade it properly.
-          </p>
-          <div className="flex flex-wrap justify-center gap-3 mt-10">
-            <Link href="/studio" className="btn-primary gap-2">
-              Start grading — free <ArrowRight className="size-4" />
-            </Link>
-            <Link href="/pricing" className="btn-ghost">
-              View pricing
-            </Link>
-          </div>
-        </Reveal>
-      </section>
+      {/* Final scene — cut to your frame */}
+      <ActFinal />
     </main>
   );
 }

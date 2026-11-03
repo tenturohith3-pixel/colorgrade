@@ -58,10 +58,10 @@ export function PinnedManifesto() {
   );
 
   return (
-    <section ref={sectionRef} className="relative h-[100svh] overflow-hidden px-6 md:px-12">
+    <section ref={sectionRef} id="scene-thesis" className="relative h-[100svh] overflow-hidden px-6 md:px-12">
       <div className="h-full max-w-5xl mx-auto flex flex-col justify-center">
         <div className="flex items-center justify-between mb-10 md:mb-14">
-          <p className="mono-label !text-[10px]">THE WAY WE GRADE</p>
+          <p className="mono-label !text-[10px]">SCENE 03½ — THE DOCTRINE</p>
           <div className="flex items-center gap-3">
             <div className="w-28 md:w-44 h-px bg-line/60 relative overflow-hidden">
               <div className="mp-progress absolute inset-0 origin-left scale-x-0 bg-bronze-bright" />

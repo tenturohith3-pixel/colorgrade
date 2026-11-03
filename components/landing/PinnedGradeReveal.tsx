@@ -86,10 +86,10 @@ export function PinnedGradeReveal() {
   );
 
   return (
-    <section ref={sectionRef} className="relative h-[100svh] overflow-hidden px-4 md:px-10">
+    <section ref={sectionRef} id="scene-grade" className="relative h-[100svh] overflow-hidden px-4 md:px-10">
       <div className="h-full max-w-6xl mx-auto flex flex-col justify-center">
         <div className="flex items-center justify-between mb-5 px-2">
-          <p className="mono-label !text-[10px]">SCROLL TO GRADE — TEAL &amp; ORANGE, 100% INTENSITY</p>
+          <p className="mono-label !text-[10px]">SCENE 03 — THE GRADE · TEAL &amp; ORANGE, 100% INTENSITY</p>
           <span className="mono-num text-[10px] text-ink-faint hidden md:block">WASM · REAL-TIME</span>
         </div>
 
