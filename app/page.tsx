@@ -6,7 +6,6 @@ import { PinnedManifesto } from "@/components/landing/PinnedManifesto";
 import { HorizontalLooks } from "@/components/landing/HorizontalLooks";
 import { ActTexture } from "@/components/landing/ActTexture";
 import { ActFinal } from "@/components/landing/ActFinal";
-import { ChapterRail } from "@/components/landing/ChapterRail";
 import { CompareShowcase } from "@/components/landing/CompareShowcase";
 import { PluginsTeaser } from "@/components/landing/PluginsTeaser";
 import { PricingPreview } from "@/components/landing/PricingPreview";
@@ -39,8 +38,6 @@ export default function Home() {
       </div>
 
       {/* ── The story ── */}
-      <ChapterRail />
-
       {/* Scene 01 — cold open: every shot starts flat */}
       <ActOpen />
 
