@@ -10,6 +10,7 @@ import { CompareShowcase } from "@/components/landing/CompareShowcase";
 import { PluginsTeaser } from "@/components/landing/PluginsTeaser";
 import { PricingPreview } from "@/components/landing/PricingPreview";
 import { Reveal } from "@/components/site/Reveal";
+import { AmbientCanvas } from "@/components/landing/AmbientCanvas";
 import Link from "next/link";
 import { ArrowRight } from "lucide-react";
 
@@ -18,6 +19,7 @@ export default function Home() {
     <main className="relative overflow-hidden noise min-h-screen">
       {/* ── Ambient backdrop ── */}
       <div className="fixed inset-0 pointer-events-none" aria-hidden>
+        <AmbientCanvas />
         <div
           className="ambient-a absolute -top-40 -left-40 size-[42rem] rounded-full blur-[140px] opacity-[0.16]"
           style={{

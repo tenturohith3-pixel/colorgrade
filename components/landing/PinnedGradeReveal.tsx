@@ -1,6 +1,6 @@
 "use client";
 
-import { useRef } from "react";
+import { useEffect, useRef, useState } from "react";
 import { gsap } from "gsap";
 import { ScrollTrigger } from "gsap/ScrollTrigger";
 import { useGSAP } from "@gsap/react";
@@ -12,6 +12,7 @@ import {
 } from "@/lib/grade/stage";
 import { applyLook, LOOKS } from "@/lib/grade/looks";
 import { defaultParams } from "@/lib/grade/params";
+import { preloadKernel } from "@/lib/grade/kernel";
 
 gsap.registerPlugin(ScrollTrigger, useGSAP);
 
@@ -27,6 +28,18 @@ export function PinnedGradeReveal() {
   const sectionRef = useRef<HTMLElement>(null);
   const boardRef = useRef<HTMLDivElement>(null);
   const gradedRef = useRef<HTMLCanvasElement>(null);
+
+  /* the rust badge only claims WASM if the kernel actually boots */
+  const [kernelLive, setKernelLive] = useState(true);
+  useEffect(() => {
+    let alive = true;
+    void preloadKernel().then((ok) => {
+      if (alive) setKernelLive(ok);
+    });
+    return () => {
+      alive = false;
+    };
+  }, []);
 
   useGSAP(
     () => {
@@ -98,7 +111,9 @@ export function PinnedGradeReveal() {
       <div className="h-full max-w-6xl mx-auto flex flex-col justify-center">
         <div className="flex items-center justify-between mb-5 px-2">
           <p className="mono-label !text-[10px]">SCENE 03 — THE GRADE · TEAL &amp; ORANGE, 100% INTENSITY</p>
-          <span className="mono-num text-[10px] text-ink-faint hidden md:block">WASM · REAL-TIME</span>
+          <span className="mono-num text-[10px] text-ink-faint hidden md:block">
+            {kernelLive ? "RUST KERNEL · WASM32 · REAL-TIME" : "ENGINE · JS FALLBACK · REAL-TIME"}
+          </span>
         </div>
 
         <div ref={boardRef} className="pgc-board relative rounded-2xl border border-line bg-bg-raised overflow-hidden shadow-[0_50px_140px_-40px_rgba(0,0,0,0.9)]">

@@ -5,6 +5,7 @@
  */
 
 import { gradePass, glowsThreshold } from "./engine";
+import { gradeKernelInto } from "./kernel";
 import { paintSampleFrame } from "./sample";
 import type { GradeParams } from "./params";
 
@@ -81,7 +82,14 @@ export function renderGrade(stage: Stage, params: GradeParams, opts?: StageRende
   const src = stage.sourceData!;
   if (!stage.outData) stage.outData = stage.gradedCtx.createImageData(stage.w, stage.h);
   const out = stage.outData;
-  gradePass(src.data, out.data, stage.w, stage.h, params, opts?.cube ?? null, opts?.seed ?? 11);
+  const seed = opts?.seed ?? 11;
+  /* Pixel core: Rust/WASM kernel if it's up, otherwise the identical
+     JS pass. `.cube` sampling stays JS-only by design. */
+  if (!opts?.cube && gradeKernelInto(src.data, out.data, stage.w, stage.h, params, seed)) {
+    /* kernel wrote straight into out.data */
+  } else {
+    gradePass(src.data, out.data, stage.w, stage.h, params, opts?.cube ?? null, seed);
+  }
   stage.gradedCtx.putImageData(out, 0, 0);
   if (!opts?.skipPostFx) {
     applyGlows(stage, params);
