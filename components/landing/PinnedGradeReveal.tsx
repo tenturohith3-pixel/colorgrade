@@ -33,14 +33,22 @@ export function PinnedGradeReveal() {
       const reduced = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
 
       /* ── Paint once (raw + graded) — home turf of the real engine ── */
-      const stage: Stage | null = createStage(W, H);
+      /* phones render the whole rig at ~30% of the pixel cost */
+      const small = window.matchMedia("(max-width: 640px)").matches;
+      const PW = small ? Math.round(W * 0.45) : W;
+      const PH = small ? Math.round(H * 0.45) : H;
+      const rawEl = sectionRef.current?.querySelector<HTMLCanvasElement>(".pgc-raw");
+      if (rawEl) { rawEl.width = PW; rawEl.height = PH; }
+      if (gradedRef.current) { gradedRef.current.width = PW; gradedRef.current.height = PH; }
+
+      const stage: Stage | null = createStage(PW, PH);
       if (stage) {
         paintSource(stage);
         const look = LOOKS.find((l) => l.id === "teal-orange");
         if (look) {
           renderGrade(stage, applyLook(defaultParams(), look, 1));
         }
-        const raw = boardRef.current?.querySelector<HTMLCanvasElement>(".pgc-raw");
+        const raw = rawEl;
         const bctx = raw?.getContext("2d");
         bctx?.drawImage(stage.source, 0, 0);
         const gctx = gradedRef.current?.getContext("2d");
@@ -58,7 +66,7 @@ export function PinnedGradeReveal() {
         scrollTrigger: {
           trigger: sectionRef.current,
           start: "top top",
-          end: "+=1500",
+          end: small ? "+=850" : "+=1500",
           scrub: 0.6,
           pin: true,
           anticipatePin: 1,

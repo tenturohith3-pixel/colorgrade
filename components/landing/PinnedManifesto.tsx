@@ -34,11 +34,12 @@ export function PinnedManifesto() {
       }
 
       gsap.set(wipes, { clipPath: "inset(0 100% 0 0)" });
+      const mobile = window.matchMedia("(max-width: 767px)").matches;
       const tl = gsap.timeline({
         scrollTrigger: {
           trigger: sectionRef.current,
           start: "top top",
-          end: "+=1700",
+          end: mobile ? "+=1000" : "+=1700",
           scrub: 0.55,
           pin: true,
           anticipatePin: 1,

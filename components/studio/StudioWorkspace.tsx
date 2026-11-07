@@ -20,6 +20,12 @@ import {
   Eye,
   EyeOff,
   Sparkles,
+  Settings2,
+  Palette,
+  SlidersHorizontal,
+  Aperture,
+  Blend,
+  X,
 } from "lucide-react";
 import {
   createStage,
@@ -35,6 +41,13 @@ import {
   downloadBlob,
 } from "@/lib/grade/export";
 import { useLicense } from "@/hooks/useLicense";
+import {
+  loadSettings,
+  saveSettings,
+  PREVIEW_LONG_MAP,
+  type MotionPref,
+  type PreviewQuality,
+} from "@/lib/settings";
 import { TIER_LABEL, TIER_MAX_EXPORT, tierRankOf, type Tier } from "@/lib/license";
 import { paramsSignature } from "@/lib/grade/params";
 import { cn } from "@/lib/cn";
@@ -49,8 +62,16 @@ import { ExportPanel } from "./ExportPanel";
 import { KeyEntryModal } from "./KeyEntryModal";
 import { Panel } from "./ui";
 
-const PREVIEW_LONG = 1280;
 type Mode = "split" | "graded" | "original";
+
+const MOBILE_TABS = [
+  ["looks", "Looks", Palette],
+  ["primary", "Image", SlidersHorizontal],
+  ["wheels", "Wheels", Aperture],
+  ["hsl", "HSL", Blend],
+  ["fx", "FX", Sparkles],
+  ["settings", "Setup", Settings2],
+] as [MobileTab, string, typeof Palette][];
 
 interface SourceState {
   img: HTMLImageElement | null;
@@ -59,7 +80,7 @@ interface SourceState {
   h: number;
 }
 
-type MobileTab = "looks" | "primary" | "wheels" | "hsl" | "fx";
+type MobileTab = "looks" | "primary" | "wheels" | "hsl" | "fx" | "settings";
 
 export function StudioWorkspace() {
   const { license, hydrated } = useLicense();
@@ -77,6 +98,10 @@ export function StudioWorkspace() {
   const [dragOver, setDragOver] = useState(false);
   const [status, setStatus] = useState<{ kind: "ok" | "err"; msg: string } | null>(null);
   const [tab, setTab] = useState<MobileTab>("primary");
+  const [sheetOpen, setSheetOpen] = useState(false);
+  const [settingsOpen, setSettingsOpen] = useState(false);
+  const [previewQ, setPreviewQ] = useState<PreviewQuality>("balanced");
+  const [motion, setMotion] = useState<MotionPref>("smooth");
 
   // history
   const past = useRef<GradeParams[]>([]);
@@ -125,7 +150,7 @@ export function StudioWorkspace() {
     (src: SourceState): Stage | null => {
       if (!src.img) return null;
       const long = Math.max(src.w, src.h) || 1;
-      const scale = Math.min(1, PREVIEW_LONG / long);
+      const scale = Math.min(1, previewLongRef.current / long);
       const w = Math.max(2, Math.round(src.w * scale));
       const h = Math.max(2, Math.round(src.h * scale));
       const stage = createStage(w, h);
@@ -319,6 +344,33 @@ export function StudioWorkspace() {
     [tier],
   );
 
+  /* ── Settings: hydrate once, then react ── */
+  const qRef = useRef<PreviewQuality>("balanced");
+  const previewLongRef = useRef<number>(PREVIEW_LONG_MAP.balanced);
+  useEffect(() => {
+    const st = loadSettings();
+    setPreviewQ(st.preview);
+    setMotion(st.motion);
+    previewLongRef.current = PREVIEW_LONG_MAP[st.preview];
+    qRef.current = st.preview;
+  }, []);
+
+  /* changing preview quality rebuilds the live stage */
+  useEffect(() => {
+    if (qRef.current === previewQ) return;
+    qRef.current = previewQ;
+    previewLongRef.current = PREVIEW_LONG_MAP[previewQ];
+    if (source) {
+      void buildStageFor(source);
+      schedule();
+    }
+  }, [previewQ, source, buildStageFor, schedule]);
+
+  /* phones default to the calmer "graded" view — split stays one tap away */
+  useEffect(() => {
+    if (window.matchMedia("(max-width: 1023px)").matches) setMode("graded");
+  }, []);
+
   /* Keyboard shortcuts */
   useEffect(() => {
     const onKey = (e: KeyboardEvent) => {
@@ -353,9 +405,122 @@ export function StudioWorkspace() {
         : { opacity: 0 };
 
   const previewLong = source ? Math.max(source.w, source.h) : 1;
-  const previewScale = Math.min(1, PREVIEW_LONG / previewLong);
+  const previewScale = Math.min(1, previewLongRef.current / previewLong);
   const dispW = source ? Math.round(source.w * previewScale) : 0;
   const dispH = source ? Math.round(source.h * previewScale) : 0;
+
+  /* ── Settings (shared by mobile sheet & desktop modal) ── */
+  const settingsContent = (
+    <div className="space-y-4">
+      <div>
+        <p className="mono-label !text-[9px] mb-2.5">PREVIEW QUALITY</p>
+        <div className="grid grid-cols-3 gap-2">
+          {(["fast", "balanced", "sharp"] as PreviewQuality[]).map((q) => (
+            <button
+              key={q}
+              onClick={() => {
+                setPreviewQ(q);
+                saveSettings({ preview: q });
+              }}
+              className={cn(
+                "py-3 rounded-lg border text-center transition-colors",
+                previewQ === q
+                  ? "border-bronze/50 bg-bronze/10 text-bronze-bright"
+                  : "border-line text-ink-muted hover:text-ink",
+              )}
+            >
+              <span className="mono-num text-[11px] block">
+                {q === "fast" ? "FAST" : q === "balanced" ? "BALANCED" : "SHARP"}
+              </span>
+              <span className="mono-label !text-[8px] mt-1 block !text-ink-faint">
+                {PREVIEW_LONG_MAP[q]}PX
+              </span>
+            </button>
+          ))}
+        </div>
+        <p className="mono-label !text-[8px] mt-2 !text-ink-faint">
+          CANVAS PREVIEW ONLY — EXPORTS ALWAYS RENDER FULL RESOLUTION
+        </p>
+      </div>
+
+      <div>
+        <p className="mono-label !text-[9px] mb-2.5">SCROLL FEEL — MARKETING PAGES</p>
+        <div className="grid grid-cols-2 gap-2">
+          {(["smooth", "off"] as MotionPref[]).map((m) => (
+            <button
+              key={m}
+              onClick={() => {
+                setMotion(m);
+                saveSettings({ motion: m });
+              }}
+              className={cn(
+                "py-3 rounded-lg border text-[12px] transition-colors",
+                motion === m
+                  ? "border-bronze/50 bg-bronze/10 text-bronze-bright"
+                  : "border-line text-ink-muted hover:text-ink",
+              )}
+            >
+              {m === "smooth" ? "Smooth (momentum)" : "Instant (native)"}
+            </button>
+          ))}
+        </div>
+        <p className="mono-label !text-[8px] mt-2 !text-ink-faint">
+          THE STUDIO ALWAYS RESPONDS NATIVELY — THIS ONLY TOUCHES THE STORY PAGES
+        </p>
+      </div>
+
+      <div>
+        <p className="mono-label !text-[9px] mb-2.5">SESSION</p>
+        <button onClick={resetAll} className="btn-ghost w-full justify-center !py-2.5 text-[12px] gap-2">
+          <RotateCcw className="size-3.5" />
+          Reset every parameter
+        </button>
+        <button onClick={() => setKeyOpen(true)} className="btn-ghost w-full justify-center !py-2.5 text-[12px] gap-2 mt-2">
+          <Sparkles className="size-3.5 text-bronze-bright" />
+          {hydrated && license ? `${TIER_LABEL[license.tier]} key — manage` : "Manage license key"}
+        </button>
+      </div>
+    </div>
+  );
+
+  /* ── Mobile sheet panel (one tab's content at a time) ── */
+  const mobilePanel = (() => {
+    switch (tab) {
+      case "looks":
+        return (
+          <LooksRail
+            activeLook={params.look}
+            lookIntensity={params.lookIntensity}
+            onSelect={pickLook}
+            onIntensity={intensity}
+            tier={tier}
+          />
+        );
+      case "primary":
+        return <PrimaryPanel params={params} patch={patch} />;
+      case "wheels":
+        return <WheelsPanel params={params} patch={patch} hasKey={rank >= 2} />;
+      case "hsl":
+        return <HslPanel params={params} patch={patch} hasKey={rank >= 2} />;
+      case "fx":
+        return (
+          <FxPanel
+            params={params}
+            patch={patch}
+            tier={tier}
+            hasKey={rank >= 2}
+            cubeName={cubeName}
+            onCubeFile={importCube}
+            clearCube={() => {
+              setCube(null);
+              setCubeName(null);
+            }}
+          />
+        );
+      case "settings":
+        return settingsContent;
+    }
+  })();
 
   return (
     <div className="pt-14 min-h-screen flex flex-col">
@@ -408,6 +573,14 @@ export function StudioWorkspace() {
               </button>
             ))}
           </div>
+          <button
+            onClick={() => fileInputRef.current?.click()}
+            className="p-2 text-bronze-bright hover:text-ink"
+            title="Open image"
+            aria-label="Open image"
+          >
+            <ImagePlus className="size-4" />
+          </button>
           <button onClick={undo} disabled={histLen.p === 0} className="p-2 text-ink-muted disabled:opacity-30 hover:text-ink" title="Undo (⌘Z)">
             <Undo2 className="size-4" />
           </button>
@@ -534,6 +707,7 @@ export function StudioWorkspace() {
                   {/* split drag surface */}
                   <div
                     className={cn("absolute inset-0", mode === "split" && "cursor-ew-resize")}
+                    style={{ touchAction: mode === "split" ? "pan-y" : "auto" }}
                     onPointerDown={(e) => {
                       if (mode !== "split") return;
                       e.currentTarget.setPointerCapture(e.pointerId);
@@ -602,6 +776,9 @@ export function StudioWorkspace() {
             </div>
           </div>
           ) : null}
+
+          {/* clearance — the mobile editor dock lives here */}
+          <div className="h-16 lg:hidden shrink-0" aria-hidden />
         </div>
 
         {/* Right rail (desktop) */}
@@ -621,76 +798,115 @@ export function StudioWorkspace() {
               setCubeName(null);
             }}
           />
-          <div className="px-5 py-5">
+          <div className="px-5 py-5 grid grid-cols-2 gap-2.5">
             <button onClick={() => setKeyOpen(true)} className="btn-ghost w-full justify-center !py-2.5 text-[13px] gap-2">
               <Sparkles className="size-4 text-bronze-bright" />
               Manage key
             </button>
+            <button onClick={() => setSettingsOpen(true)} className="btn-ghost w-full justify-center !py-2.5 text-[13px] gap-2">
+              <Settings2 className="size-4" />
+              Settings
+            </button>
           </div>
         </aside>
 
-        {/* Mobile panel tabs */}
-        <div className="lg:hidden border-t border-line">
-          <div className="flex overflow-x-auto">
-            {(
-              [
-                ["looks", "Looks"],
-                ["primary", "Primary"],
-                ["wheels", "Wheels"],
-                ["hsl", "HSL"],
-                ["fx", "FX"],
-              ] as [MobileTab, string][]
-            ).map(([id, label]) => (
+        {/* ── Mobile editor dock + sheet ── */}
+        <div className="lg:hidden fixed bottom-0 inset-x-0 z-50 border-t border-line bg-bg/95 backdrop-blur-xl">
+          {/* panel sheet */}
+          {sheetOpen ? (
+            <div className="absolute bottom-full inset-x-0 border-t border-line bg-bg-raised shadow-[0_-40px_90px_-20px_rgba(0,0,0,0.85)]">
+              <div className="flex items-center justify-between px-3 py-2.5 border-b border-line">
+                <div className="flex rounded-lg border border-line overflow-hidden">
+                  {(
+                    [
+                      ["original", EyeOff],
+                      ["split", Columns2],
+                      ["graded", Eye],
+                    ] as [Mode, typeof Eye][]
+                  ).map(([m, Icon]) => (
+                    <button
+                      key={m}
+                      onClick={() => setMode(m)}
+                      title={m}
+                      className={cn(
+                        "px-3 py-1.5",
+                        mode === m ? "bg-bronze/15 text-bronze-bright" : "text-ink-muted",
+                      )}
+                    >
+                      <Icon className="size-3.5" />
+                    </button>
+                  ))}
+                </div>
+                <div className="flex items-center gap-2">
+                  <button
+                    onClick={() => fileInputRef.current?.click()}
+                    className="btn-ghost !py-1.5 !px-3 text-[12px] gap-1.5"
+                  >
+                    <ImagePlus className="size-3.5" />
+                    Open
+                  </button>
+                  <button
+                    onClick={() => source && setExportOpen(true)}
+                    disabled={!source}
+                    className="btn-primary !py-1.5 !px-3 text-[12px] gap-1.5 disabled:opacity-40"
+                  >
+                    <Download className="size-3.5" />
+                    Export
+                  </button>
+                  <button onClick={() => setSheetOpen(false)} className="p-1.5 text-ink-muted hover:text-ink" aria-label="Close panel">
+                    <X className="size-4" />
+                  </button>
+                </div>
+              </div>
+              <div className="overflow-y-auto max-h-[48svh] px-1 pb-2" style={{ WebkitOverflowScrolling: "touch" }}>
+                {mobilePanel}
+              </div>
+            </div>
+          ) : null}
+
+          {/* the dock itself */}
+          <div className="grid grid-cols-6">
+            {MOBILE_TABS.map(([id, label, Icon]) => (
               <button
                 key={id}
-                onClick={() => setTab(id)}
+                onClick={() => {
+                  if (tab === id && sheetOpen) setSheetOpen(false);
+                  else {
+                    setTab(id);
+                    setSheetOpen(true);
+                  }
+                }}
                 className={cn(
-                  "shrink-0 px-5 py-3 text-[12px] border-b-2",
-                  tab === id ? "border-bronze text-ink" : "border-transparent text-ink-muted",
+                  "py-2.5 flex flex-col items-center gap-1 text-[9.5px] tracking-[0.12em] uppercase",
+                  tab === id && sheetOpen ? "text-bronze-bright" : "text-ink-faint hover:text-ink-muted",
                 )}
               >
+                <Icon className="size-4" strokeWidth={1.75} />
                 {label}
               </button>
             ))}
           </div>
-          <div className="max-h-[52vh] overflow-y-auto">
-            {tab === "looks" ? (
-              <LooksRail
-                activeLook={params.look}
-                lookIntensity={params.lookIntensity}
-                onSelect={pickLook}
-                onIntensity={intensity}
-                tier={tier}
-              />
-            ) : null}
-            {tab === "primary" ? <PrimaryPanel params={params} patch={patch} /> : null}
-            {tab === "wheels" ? <WheelsPanel params={params} patch={patch} hasKey={rank >= 2} /> : null}
-            {tab === "hsl" ? <HslPanel params={params} patch={patch} hasKey={rank >= 2} /> : null}
-            {tab === "fx" ? (
-              <FxPanel
-                params={params}
-                patch={patch}
-                tier={tier}
-                hasKey={rank >= 2}
-                cubeName={cubeName}
-                onCubeFile={importCube}
-                clearCube={() => {
-                  setCube(null);
-                  setCubeName(null);
-                }}
-              />
-            ) : null}
-            {tab === "fx" ? (
-              <Panel title="Key">
-                <button onClick={() => setKeyOpen(true)} className="btn-ghost w-full justify-center !py-2.5 text-[13px] gap-2">
-                  <Sparkles className="size-4 text-bronze-bright" />
-                  {hydrated && license ? `${TIER_LABEL[license.tier]} active — manage` : "Add a key"}
-                </button>
-              </Panel>
-            ) : null}
-          </div>
         </div>
       </div>
+
+      {/* ── Desktop settings modal ── */}
+      {settingsOpen ? (
+        <div className="fixed inset-0 z-[70] grid place-items-center px-4" role="dialog">
+          <div className="absolute inset-0 bg-black/70 backdrop-blur-sm" onClick={() => setSettingsOpen(false)} />
+          <div className="relative w-full max-w-md rounded-2xl border border-line bg-bg-raised shadow-2xl overflow-hidden">
+            <header className="px-6 py-4 border-b border-line flex items-center justify-between">
+              <div>
+                <p className="mono-label !text-[9px]">STUDIO SETTINGS</p>
+                <h2 className="display text-base mt-1">Tune your workspace</h2>
+              </div>
+              <button onClick={() => setSettingsOpen(false)} className="text-ink-muted hover:text-ink text-xl" aria-label="Close settings">
+                ×
+              </button>
+            </header>
+            <div className="px-6 py-5 max-h-[70svh] overflow-y-auto">{settingsContent}</div>
+          </div>
+        </div>
+      ) : null}
 
       {/* ── Modals ── */}
       {exportOpen && source ? (

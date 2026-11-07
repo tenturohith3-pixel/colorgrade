@@ -28,12 +28,13 @@ export function ActTexture() {
     () => {
       const reduced = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
       if (reduced || !sectionRef.current) return;
+      const mobile = window.matchMedia("(max-width: 767px)").matches;
 
       const tl = gsap.timeline({
         scrollTrigger: {
           trigger: sectionRef.current,
           start: "top top",
-          end: "+=1600",
+          end: mobile ? "+=950" : "+=1600",
           scrub: 0.6,
           pin: true,
           anticipatePin: 1,

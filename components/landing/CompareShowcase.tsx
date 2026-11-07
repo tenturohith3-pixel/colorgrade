@@ -26,7 +26,16 @@ export function CompareShowcase() {
   const [grabbing, setGrabbing] = useState(false);
 
   useEffect(() => {
-    const stage = createStage(W, H);
+    /* phones: half-resolution canvases CSS-scales back up — same look,
+       a quarter of the memory and paint cost */
+    const small = window.matchMedia("(max-width: 640px)").matches;
+    const sw = small ? Math.round(W / 2) : W;
+    const sh = small ? Math.round(H / 2) : H;
+    const b = baseRef.current;
+    const g = gradedRef.current;
+    if (b) { b.width = sw; b.height = sh; }
+    if (g) { g.width = sw; g.height = sh; }
+    const stage = createStage(sw, sh);
     if (!stage) return;
     stageRef.current = stage;
     paintSource(stage);
@@ -38,6 +47,7 @@ export function CompareShowcase() {
       const gctx = gradedRef.current?.getContext("2d");
       gctx?.drawImage(stage.graded, 0, 0);
     }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   const applyLookId = useCallback((id: string) => {
@@ -52,22 +62,51 @@ export function CompareShowcase() {
     gctx?.drawImage(stage.graded, 0, 0);
   }, []);
 
-  const onPointerDown = (e: React.PointerEvent<HTMLDivElement>) => {
-    setGrabbing(true);
-    (e.target as Element).setPointerCapture?.(e.pointerId);
-    moveTo(e.clientX);
-  };
-  const onPointerMove = (e: React.PointerEvent<HTMLDivElement>) => {
-    if (!grabbing) return;
-    moveTo(e.clientX);
-  };
-  const end = () => setGrabbing(false);
   const moveTo = (clientX: number) => {
     const el = cardRef.current?.querySelector<HTMLElement>("[data-stage]") ?? null;
     if (!el) return;
     const r = el.getBoundingClientRect();
     const pct = ((clientX - r.left) / r.width) * 100;
     setSplit(Math.min(95, Math.max(5, pct)));
+  };
+
+  /* Touch-safe dragging: a touch down never steals the gesture — the drag
+     engages only after clear horizontal intent, so vertical swipes keep
+     scrolling the page. */
+  const startPos = useRef<{ x: number; y: number } | null>(null);
+  const engaged = useRef(false);
+
+  const onPointerDown = (e: React.PointerEvent<HTMLDivElement>) => {
+    startPos.current = { x: e.clientX, y: e.clientY };
+    engaged.current = e.pointerType !== "touch";
+    if (!engaged.current) return;
+    setGrabbing(true);
+    (e.target as Element).setPointerCapture?.(e.pointerId);
+    moveTo(e.clientX);
+  };
+  const onPointerMove = (e: React.PointerEvent<HTMLDivElement>) => {
+    const sp = startPos.current;
+    if (!sp) return;
+    if (!engaged.current) {
+      const dx = Math.abs(e.clientX - sp.x);
+      const dy = Math.abs(e.clientY - sp.y);
+      if (dx > 10 && dx > dy * 1.4) {
+        engaged.current = true;
+        setGrabbing(true);
+        (e.target as Element).setPointerCapture?.(e.pointerId);
+      } else if (dy > 12 && dy > dx) {
+        startPos.current = null; // vertical intent → let the page scroll
+        return;
+      } else {
+        return;
+      }
+    }
+    moveTo(e.clientX);
+  };
+  const end = () => {
+    engaged.current = false;
+    startPos.current = null;
+    setGrabbing(false);
   };
 
   const activeLook = LOOKS.find((l) => l.id === lookId);
@@ -103,7 +142,7 @@ export function CompareShowcase() {
         onPointerMove={onPointerMove}
         onPointerUp={end}
         onPointerLeave={end}
-        style={{ touchAction: grabbing ? "none" : "auto" }}
+        style={{ touchAction: grabbing ? "none" : "pan-y" }}
       >
         <div data-stage className="relative aspect-[16/9]">
           <canvas

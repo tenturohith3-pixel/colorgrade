@@ -52,11 +52,13 @@ export function ActAssembly() {
       }
       if (reduced) return; /* fragments already sit in place (SSR default) */
 
+      const mobile = window.matchMedia("(max-width: 767px)").matches;
+
       const tl = gsap.timeline({
         scrollTrigger: {
           trigger: sectionRef.current,
           start: "top top",
-          end: "+=2400",
+          end: mobile ? "+=1300" : "+=2400",
           scrub: 0.6,
           pin: true,
           anticipatePin: 1,

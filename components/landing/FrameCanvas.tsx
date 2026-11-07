@@ -33,14 +33,28 @@ export function FrameCanvas({
   const ref = useRef<HTMLCanvasElement>(null);
 
   useEffect(() => {
-    const stage: Stage | null = createStage(w, h);
+    /* phones: render at half resolution — the CSS box stays identical,
+       memory & paint cost drop to ~25% */
+    const small =
+      typeof window !== "undefined" &&
+      window.matchMedia("(max-width: 640px)").matches;
+    const scale = small ? 0.5 : 1;
+    const sw = Math.max(160, Math.round(w * scale));
+    const sh = Math.max(90, Math.round(h * scale));
+
+    const canvas = ref.current;
+    if (!canvas) return;
+    canvas.width = sw;
+    canvas.height = sh;
+
+    const stage: Stage | null = createStage(sw, sh);
     if (!stage) return;
     paintSource(stage);
     if (look) {
       const L = LOOKS.find((l) => l.id === look);
       if (L) renderGrade(stage, applyLook(defaultParams(), L, intensity));
     }
-    const ctx = ref.current?.getContext("2d");
+    const ctx = canvas.getContext("2d");
     if (ctx) ctx.drawImage(look ? stage.graded : stage.source, 0, 0);
   }, [w, h, look, intensity]);
 
